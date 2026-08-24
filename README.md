@@ -69,18 +69,11 @@ course-en/
 ├── notebooks/
 │   ├── README.md                Notebook index, runtimes, conventions
 │   └── week-01-*.ipynb …        Runnable live-coding notebooks, one per week
-├── projects/
-│   ├── duel-1-search.md         16 %, due wk 6
-│   ├── duel-2-formalizer.md     16 %, due wk 9
-│   ├── duel-3-optimization.md   16 %, due wk 11
-│   ├── capstone.md              20 %, due wk 14
-│   └── checkpoints.md           12 % each, wks 7 and 13
 └── resources/
     ├── setup.md                 Toolchain, incl. the three LLM backends
     ├── duel-scorecard.md        The rubric reused all 14 weeks
     ├── reading-list.md          Every reading, with links
     ├── ai-policy.md             AI use + the disclosure log
-    ├── teaching-guide.md        Why the A/B split; virtual-classroom mechanics
-    └── coverage-map.md          Original decks → these weeks; what was added/dropped
+added/dropped
 ```
 
