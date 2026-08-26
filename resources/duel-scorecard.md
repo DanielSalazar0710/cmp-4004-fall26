@@ -24,9 +24,7 @@ that survives a hostile reader.
 
 ### Axis 2 is the one students undervalue
 
-"Correct on my 30 test cases" and "provably optimal whenever *h* is admissible"
-are not the same kind of claim, and the difference is the entire subject of this
-course. Push students to state the guarantee as a conditional:
+"Correct on my 30 test cases" and "provably optimal whenever *h* is admissible" are not the same kind of claim, and the difference is the entire subject of this course. Push students to state the guarantee as a conditional:
 
 > A* returns a lowest-cost path **provided** *h* never overestimates the true
 > remaining cost. No claim is made about runtime.
@@ -36,11 +34,7 @@ course. Push students to state the guarantee as a conditional:
 
 ### Axis 6 is where the course lands
 
-**One data point is not a result.** Every duel must report performance across a
-range of problem sizes. The characteristic finding — which students discover
-rather than being told — is that LLM performance looks competitive on small
-instances and then falls off a cliff, while classical algorithms degrade along a
-predictable curve.
+**One data point is not a result.** Every duel must report performance across a range of problem sizes. The characteristic finding is that LLM performance looks competitive on small instances and then falls off a cliff, while classical algorithms degrade along a predictable curve.
 
 Minimum requirement: **at least four problem sizes, at least ten instances each.**
 
@@ -55,8 +49,7 @@ solve rate
         4    8   12   16    problem size
 ```
 
-If a student's plot shows no cliff, that is an interesting result and they should
-say so — but they must show the plot.
+If a student's plot shows no cliff, that is an interesting result and they should say so and they must show the plot.
 
 ---
 
@@ -72,9 +65,7 @@ Each axis is scored on evidence quality, **not** on which system won:
 | 3 | Measured across instances, with a summary statistic |
 | 4 | Measured across instances *and* sizes, with variance reported and a stated limitation |
 
-A student who runs a careful study concluding "the LLM won on this task" scores
-higher than one who runs a sloppy study concluding "classical won." **We grade
-the experiment, not the verdict.**
+A student who runs a careful study concluding "the LLM won on this task" scores higher than one who runs a sloppy study concluding "classical won." **We grade the experiment, not the verdict.**
 
 ---
 
@@ -102,12 +93,10 @@ Every report must include a section titled **"Where we may have been unfair."**
 Ideas that belong there:
 
 - Did you give both systems the same information?
-- Did you tune the classical algorithm's parameters but use a default prompt (or
-  the reverse)?
+- Did you tune the classical algorithm's parameters but use a default prompt (or the reverse)?
 - Is your instance distribution accidentally favorable to one side?
 - Did you count the time you spent writing the prompt? The time writing the
   heuristic?
-- Would a larger model change the result — and can you know without running it?
+- Would a larger model change the result, and can you know without running it?
 
-This section is worth real credit. A student who identifies a genuine flaw in
-their own experiment has learned the thing this course is actually teaching.
+This section is worth real credit. A student who identifies a genuine flaw in their own experiment has learned the thing this course is actually teaching.
