@@ -1,0 +1,15 @@
+{
+  "text": "It's completely normal to feel anxious sometimes, but it can be overwhelming and affect your daily life if you experience it all the time. Here are some tips that might help:\n\n1. Identify what triggers your anxiety: Try to pinpoint specific situations or thoughts that cause you to feel anxious. Understanding what triggers your anxiety can help you avoid those situations or change how you react.\n\n2. Practice relaxation techniques: Deep breathing, meditation, and progressive muscle relaxation can all help reduce anxiety symptoms.\n\n3. Exercise regularly: Physical activity releases endorphins, which are chemicals in the brain that can improve mood and reduce stress.\n\n4. Get enough sleep: Lack of sleep can increase feelings of anxiety. Try to establish a regular sleep routine and stick to it as much as possible.\n\n5. Seek professional help: If your anxiety is severe or interfering with your daily life, consider seeking help from a mental health professional such as a therapist or counselor.\n\nRemember that everyone experiences anxiety at some point in their lives, but if you find yourself feeling anxious most of the time, it's important to seek support and take steps to manage your symptoms.",
+  "backend": "ollama",
+  "model": "qwen2.5:1.5b",
+  "prompt": "I feel anxious most of the time",
+  "temperature": 0.0,
+  "seed": 0,
+  "elapsed": 29.865541199978907,
+  "meta": {
+    "eval_count": 225,
+    "prompt_eval_count": 36,
+    "total_duration": 27792294200
+  },
+  "cached_at": "2026-08-30T23:47:52"
+}

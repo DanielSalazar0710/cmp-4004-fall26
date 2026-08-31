@@ -1,0 +1,15 @@
+{
+  "text": "It's understandable that you feel disappointed after doing poorly on an exam or assignment due to lack of sleep. Sleep is crucial for cognitive function and memory consolidation, which can significantly impact your performance in academic tasks.\n\nHere are a few tips to help improve your sleep quality:\n\n1. Establish a consistent bedtime routine: This helps regulate your body's internal clock.\n2. Create a comfortable sleeping environment: Make sure your room is dark, quiet, and cool.\n3. Avoid stimulating activities before bed: Limit caffeine, alcohol, and heavy meals.\n4. Exercise regularly but avoid vigorous workouts close to bedtime.\n5. Practice relaxation techniques like meditation or deep breathing.\n\nIf you consistently struggle with sleep, consider speaking with a healthcare professional for further guidance.",
+  "backend": "ollama",
+  "model": "qwen2.5:1.5b",
+  "prompt": "I did badly because I did not sleep",
+  "temperature": 0.0,
+  "seed": 0,
+  "elapsed": 11.123375199967995,
+  "meta": {
+    "eval_count": 148,
+    "prompt_eval_count": 37,
+    "total_duration": 9068261800
+  },
+  "cached_at": "2026-08-30T23:48:13"
+}

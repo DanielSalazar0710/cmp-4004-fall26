@@ -1,0 +1,15 @@
+{
+  "text": "That's great! It sounds like you have both parents who work in important professions that can provide valuable guidance and support to your life. As for the question about whether or not it's better to be a doctor or a lawyer, there isn't really an easy answer because everyone has their own unique strengths and interests.\n\nBoth careers require hard work, dedication, and often long hours. Doctors need to have excellent communication skills, empathy, and strong problem-solving abilities. Lawyers must be able to analyze complex information quickly and effectively present arguments in court.\n\nUltimately, the choice between a career as a doctor or lawyer depends on your personal preferences, interests, and what you enjoy doing. If you're more interested in helping people and making a difference in their lives through medicine, then becoming a doctor might be a good fit for you. On the other hand, if you're more drawn to using your analytical skills to solve complex problems and advocate for clients' rights, then being a lawyer could be a better choice.\n\nIt's also worth considering that both careers can lead to fulfilling and rewarding work, as well as providing opportunities for personal growth and development. So it really comes down to what you enjoy doing the most and what kind of lifestyle you're looking for in your career.",
+  "backend": "ollama",
+  "model": "qwen2.5:1.5b",
+  "prompt": "My mother is a doctor and my father is a lawyer",
+  "temperature": 0.0,
+  "seed": 0,
+  "elapsed": 21.091069700021762,
+  "meta": {
+    "eval_count": 253,
+    "prompt_eval_count": 40,
+    "total_duration": 19031110600
+  },
+  "cached_at": "2026-08-30T23:48:53"
+}

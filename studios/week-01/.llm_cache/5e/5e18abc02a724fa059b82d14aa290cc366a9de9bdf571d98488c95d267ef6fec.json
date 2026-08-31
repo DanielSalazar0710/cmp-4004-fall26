@@ -1,0 +1,15 @@
+{
+  "text": "It's not uncommon to feel like you're your own worst enemy sometimes. This can be due to various reasons such as stress, anxiety, or self-doubt. It's important to recognize these feelings and work on finding ways to manage them effectively.\n\nHere are a few strategies that might help:\n\n1. **Self-Compassion**: Treat yourself with the same kindness you would offer to a friend who was going through a tough time. Remind yourself that everyone has days when they feel like their worst enemy.\n\n2. **Mindfulness and Meditation**: Practice mindfulness or meditation to stay present in the moment, which can help reduce negative self-talk and increase positive thinking.\n\n3. **Journaling**: Write down your thoughts and feelings about challenging situations. This can be a way of processing emotions without immediately reacting to them.\n\n4. **Exercise**: Physical activity can release endorphins, which are chemicals in the brain that act as natural painkillers and mood elevators.\n\n5. **Seek Support**: Talk to friends or family members who understand what you're going through. Sometimes just sharing your feelings with someone else can make a big difference.\n\n6. **Professional Help**: If these feelings become overwhelming, consider seeking help from a therapist or counselor who specializes in dealing with self-doubt and negative thinking patterns.\n\nRemember, it's okay to struggle sometimes, but taking steps to manage these feelings is important for overall well-being.",
+  "backend": "ollama",
+  "model": "qwen2.5:1.5b",
+  "prompt": "I am my own worst enemy",
+  "temperature": 0.0,
+  "seed": 0,
+  "elapsed": 25.448332600004505,
+  "meta": {
+    "eval_count": 288,
+    "prompt_eval_count": 35,
+    "total_duration": 23380721800
+  },
+  "cached_at": "2026-08-30T23:49:18"
+}

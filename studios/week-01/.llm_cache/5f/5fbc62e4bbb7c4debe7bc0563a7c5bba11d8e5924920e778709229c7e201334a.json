@@ -1,0 +1,15 @@
+{
+  "text": "It's completely normal to feel nervous or anxious before an exam. Here are some tips that might help you feel more prepared and confident:\n\n1. **Prepare Well**: Make sure you have studied thoroughly for your exams. This includes understanding the material, practicing problems, and reviewing notes.\n\n2. **Get Enough Sleep**: Ensure you get enough rest leading up to the exam day. Lack of sleep can make you feel tired and less focused during the test.\n\n3. **Eat Healthily**: Eat a balanced meal before the exam. Avoid heavy or fatty foods that might cause indigestion.\n\n4. **Relax Beforehand**: Spend some time relaxing, listening to music, or doing something enjoyable right before the exam. This can help calm your nerves and make you feel more relaxed.\n\n5. **Stay Hydrated**: Drink water throughout the day leading up to the exam. Dehydration can affect your concentration.\n\n6. **Focus on Your Exam**: Try to focus on what is being asked in the exam rather than worrying about how well you will do. This can help reduce anxiety and make the process more manageable.\n\n7. **Take a Deep Breath**: If you feel overwhelmed, take a few deep breaths. This can help calm your nerves temporarily.\n\nRemember, exams are just one part of your academic journey. It's okay to not perform perfectly every time. The important thing is that you've done everything you can to prepare and try your best. Good luck!",
+  "backend": "ollama",
+  "model": "qwen2.5:1.5b",
+  "prompt": "I am not feeling great about the exam",
+  "temperature": 0.0,
+  "seed": 0,
+  "elapsed": 27.437115299981087,
+  "meta": {
+    "eval_count": 295,
+    "prompt_eval_count": 37,
+    "total_duration": 25178264500
+  },
+  "cached_at": "2026-08-30T23:47:22"
+}

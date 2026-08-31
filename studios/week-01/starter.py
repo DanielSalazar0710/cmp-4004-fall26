@@ -9,8 +9,12 @@ insists your ELIZA break in a specific way is not a mistake; being able to
 
 Task 2 (first contact) lives at the bottom as a sketch — you run it in your own
 script and write ``first_contact.md``. Prompts are in ``prompts.json``.
+
+Declared failure: ELIZA matches the first family clause and answers fluently,
+but first-match-wins makes it ignore the second clause about grades entirely.
 """
 import re
+import random
 
 from eliza import RULES, FALLBACK, REFLECT, reflect, respond
 
@@ -31,8 +35,20 @@ def new_rules():
     Example (delete it and write your own):
         (r"\\bI want (.*)", ["What would it mean to you to get {0}?"])
     """
-    # TODO: return a list of >= 3 (pattern, [templates]) tuples.
-    raise NotImplementedError
+    return [
+        (r"\bI want (.*)", [
+            "What would change for you if you got {0}?",
+            "Why do you want {0}?",
+        ]),
+        (r"\bexam\b", [
+            "What worries you most about the exam?",
+            "How have you been preparing for the exam?",
+        ]),
+        (r"\bI need (.*)", [
+            "What would help you get {0}?",
+            "Why do you feel you need {0}?",
+        ]),
+    ]
 
 
 # ---- Task 1b — the extended responder ---------------------------------------
@@ -43,9 +59,12 @@ def extended_respond(text):
     ``eliza.reflect`` for the pronoun swap — do not reinvent it. The shortest
     correct body is ``eliza.respond``'s loop run over ``RULES + new_rules()``.
     """
-    # TODO: loop over RULES + new_rules(); on first regex match, reflect the
-    #       groups and format a random template; else fall back.
-    raise NotImplementedError
+    for pattern, templates in RULES + new_rules():
+        m = re.search(pattern, text, re.IGNORECASE)
+        if m:
+            groups = [reflect(g) for g in m.groups()]
+            return random.choice(templates).format(*groups)
+    return random.choice(FALLBACK)
 
 
 # ---- Task 1c — declare your deliberate failure ------------------------------
@@ -63,8 +82,10 @@ def failure_case():
     into your ``eliza.py`` docstring for the commit the plan asks for
     (``week01/eliza.py`` with the failure documented).
     """
-    # TODO: return (input_text, why_it_fails)
-    raise NotImplementedError
+    return (
+        "My family is pressuring me and my grades are falling",
+        "ELIZA matches the first family clause and answers fluently, but first-match-wins makes it ignore the second clause about grades entirely.",
+    )
 
 
 # ---- Task 2 sketch — first contact (see README §"Task 2") -------------------
