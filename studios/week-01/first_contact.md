@@ -1,12 +1,12 @@
-# Week 1 first contact: ELIZA vs. local LLM
-## Setup
-- ELIZA: extended responder from `starter.py`, with base rules first and three added rules.
-- LLM backend: `ollama`.
-- LLM model: `qwen2.5:1.5b`.
-- Prompts: verbatim from `prompts.json` under `first_contact` (7 qualitative prompts, not a 30-instance benchmark).
-- Failure case declared in `starter.py`: `My family is pressuring me and my grades are falling`.
+# Week 1 first contact: ELIZA vs. modelo local
+## Configuracion
+- ELIZA: responder extendido de `starter.py`, usando primero las reglas base y luego tres reglas agregadas.
+- Backend del LLM: `ollama`.
+- Modelo del LLM: `qwen2.5:1.5b`.
+- Prompts: tomados literalmente de `prompts.json`, seccion `first_contact` (7 prompts cualitativos, no un benchmark de 30 instancias).
+- Caso de fallo declarado en `starter.py`: `My family is pressuring me and my grades are falling`.
 
-## Transcript
+## Transcripcion
 ### Prompt: I am not feeling great about the exam
 **you >** I am not feeling great about the exam
 
@@ -145,29 +145,29 @@ Here are a few strategies that might help:
 
 Remember, it's okay to struggle sometimes, but taking steps to manage these feelings is important for overall well-being.
 
-## Answers
-### 1. Where does the LLM obviously beat ELIZA?
-The LLM obviously beats ELIZA when the input asks for advice or contains context that requires understanding more than one phrase. For example, when asked whether the student should drop the course, the LLM responds with a cautious, contextual answer instead of a generic deflection. It can also connect anxiety, sleep, studying, and exams in a way ELIZA cannot because ELIZA only matches regular expressions.
+## Respuestas
+### 1. Donde el LLM supera claramente a ELIZA
+El LLM supera claramente a ELIZA cuando la entrada pide consejo o contiene contexto que requiere entender mas de una frase. Por ejemplo, cuando se le pregunta si el estudiante deberia abandonar el curso, el LLM responde con una respuesta cautelosa y contextual en vez de una desviacion generica. Tambien puede conectar ansiedad, sueno, estudio y examenes de una forma que ELIZA no puede, porque ELIZA solo compara expresiones regulares.
 
-### 2. One input where the LLM failure is recognizably ELIZA-like
-The prompt "I am my own worst enemy" is the most ELIZA-like LLM case. The LLM gives a fluent and supportive answer, but it stays fairly generic and does not really know what concrete situation produced that sentence. It sounds helpful, yet much of the response could fit many unrelated problems.
+### 2. Un input donde el fallo del LLM se parece a ELIZA
+El prompt "I am my own worst enemy" es el caso del LLM que mas se parece a ELIZA. El LLM da una respuesta fluida y de apoyo, pero se mantiene bastante generica y no sabe realmente que situacion concreta produjo esa frase. Suena util, pero gran parte de la respuesta podria encajar con muchos problemas distintos.
 
-### 3. Which system has failures that are easier to predict in advance?
-ELIZA failures are easier to predict because its behavior is just a small ordered list of regex rules plus a fallback. If a sentence has two clauses, a first-match rule can make the second clause disappear, and we can predict that before running it. That matters in a shipped system because predictable failures can be tested, documented, and bounded, while LLM failures may look fluent even when they are hollow or wrong.
+### 3. Que sistema tiene fallos mas faciles de predecir de antemano
+Los fallos de ELIZA son mas faciles de predecir porque su comportamiento es solo una lista pequena y ordenada de reglas regex mas un fallback. Si una oracion tiene dos clausulas, una regla first-match puede hacer que la segunda desaparezca, y eso se puede predecir antes de ejecutar el sistema. Esto importa en un sistema real porque los fallos predecibles se pueden probar, documentar y acotar, mientras que los fallos del LLM pueden verse fluidos incluso cuando son vacios o incorrectos.
 
 ## Duel Scorecard
 
 | Axis | Classical: ELIZA | LLM: `qwen2.5:1.5b` | Hybrid | Evidence |
 |------|------------------|---------------------|--------|----------|
-| Correctness | No single ground-truth answer for all prompts; it produced a fluent response on 7/7 prompts but dropped important context in known cases. | No single ground-truth answer for all prompts; it produced a fluent response on 7/7 prompts and handled advice/context better than ELIZA. | Not tested. | Transcript above; `prompts.json`; `test_eliza.py`. This is qualitative evidence, not the >=30 exact-instance benchmark used in later duels. |
-| Guarantee | If a regex matches, ELIZA returns one of that rule's templates with reflected groups; otherwise it returns fallback. It does not guarantee semantic understanding. | No formal guarantee before running. The model may answer fluently, but the next similar prompt is not covered by a proof. | Not tested. | `starter.py`; transcript above. |
-| Cost | One ordered regex scan plus template formatting; very small local CPU cost. | Seven local model calls; total uncached LLM time was about 143.49s. | Not tested. | `.llm_cache/`; local run. |
-| Latency | Effectively instant for these prompts. | 21.09s median / 29.87s p95 across the 7 uncached local-model calls. | Not tested. | Transcript generated through `aicourse.llm`; `.llm_cache/`. |
-| Reproducibility | Predictable under fixed rule order and random seed. | Cached outputs are reproducible for this run, but the model itself has no ELIZA-style rule guarantee. | Not tested. | `eliza.py` seed; `.llm_cache/`. |
-| Scaling | Longer or compound inputs do not increase understanding; first-match-wins can ignore later clauses. | Handles longer natural-language context better, but may become verbose and generic. | Not tested. | Compound prompt: "My mother is a doctor and my father is a lawyer". No size curve was run in this studio. |
-| Interpretability | High: we can point to the exact regex rule and template that fired. | Low: the answer is generated text, not a checkable certificate. | Not tested. | `starter.py`; `eliza.py`; transcript above. |
-| Failure mode | Fluent but hollow; first matching rule can drop the rest of the input. | Fluent and more contextual, but sometimes generic or over-advisory in an ELIZA-like way. | Not tested. | Declared failure case; transcript above. |
+| Correctness | No hay una respuesta correcta unica para todos los prompts; produjo una respuesta fluida en 7/7 prompts, pero perdio contexto importante en casos conocidos. | No hay una respuesta correcta unica para todos los prompts; produjo una respuesta fluida en 7/7 prompts y manejo mejor el consejo/contexto que ELIZA. | No probado. | Transcripcion anterior; `prompts.json`; `test_eliza.py`. Es evidencia cualitativa, no el benchmark exacto de >=30 instancias usado en duelos posteriores. |
+| Guarantee | Si una regex coincide, ELIZA devuelve una de las plantillas de esa regla con grupos reflejados; si no, devuelve fallback. No garantiza comprension semantica. | No hay garantia formal antes de ejecutar. El modelo puede responder con fluidez, pero el siguiente prompt similar no esta cubierto por una prueba. | No probado. | `starter.py`; transcripcion anterior. |
+| Cost | Un recorrido ordenado de regex mas formato de plantilla; costo local de CPU muy bajo. | Siete llamadas al modelo local; el tiempo total sin cache del LLM fue aproximadamente 143.49s. | No probado. | `.llm_cache/`; corrida local. |
+| Latency | Practicamente instantaneo para estos prompts. | 21.09s de mediana / 29.87s p95 en las 7 llamadas sin cache al modelo local. | No probado. | Transcripcion generada con `aicourse.llm`; `.llm_cache/`. |
+| Reproducibility | Predecible con orden fijo de reglas y semilla aleatoria fija. | Las salidas cacheadas son reproducibles para esta corrida, pero el modelo en si no tiene una garantia de reglas como ELIZA. | No probado. | Semilla de `eliza.py`; `.llm_cache/`. |
+| Scaling | Entradas mas largas o compuestas no aumentan la comprension; first-match-wins puede ignorar clausulas posteriores. | Maneja mejor contexto de lenguaje natural mas largo, pero puede volverse verboso y generico. | No probado. | Prompt compuesto: "My mother is a doctor and my father is a lawyer". En este studio no se corrio una curva por tamano. |
+| Interpretability | Alta: podemos senalar la regla regex exacta y la plantilla que se activo. | Baja: la respuesta es texto generado, no un certificado verificable. | No probado. | `starter.py`; `eliza.py`; transcripcion anterior. |
+| Failure mode | Fluido pero vacio; la primera regla que coincide puede descartar el resto de la entrada. | Fluido y mas contextual, pero a veces generico o demasiado orientado a consejos de una forma parecida a ELIZA. | No probado. | Caso de fallo declarado; transcripcion anterior. |
 
 ## Where we may have been unfair
 
-ELIZA was extended with only three simple rules, while the LLM brought a large pretrained language model to the same prompts. The prompts were conversational rather than a task with exact ground truth, so correctness is judged qualitatively instead of by an automatic verifier. This studio used 7 shared prompts, not the later-course standard of at least 30 instances and a scaling curve. Also, the LLM was not constrained to short answers, so it had more room to sound helpful than ELIZA's template-based replies.
+ELIZA fue extendida con solo tres reglas simples, mientras que el LLM trajo un modelo de lenguaje preentrenado grande a los mismos prompts. Los prompts eran conversacionales y no una tarea con verdad exacta, asi que la correctitud se juzga cualitativamente en vez de con un verificador automatico. Este studio uso 7 prompts compartidos, no el estandar posterior del curso de al menos 30 instancias y una curva de escalamiento. Ademas, el LLM no fue restringido a respuestas cortas, asi que tuvo mas espacio para sonar util que las respuestas basadas en plantillas de ELIZA.

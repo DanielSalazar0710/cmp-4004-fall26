@@ -10,8 +10,9 @@ insists your ELIZA break in a specific way is not a mistake; being able to
 Task 2 (first contact) lives at the bottom as a sketch — you run it in your own
 script and write ``first_contact.md``. Prompts are in ``prompts.json``.
 
-Declared failure: ELIZA matches the first family clause and answers fluently,
-but first-match-wins makes it ignore the second clause about grades entirely.
+Fallo declarado: ELIZA coincide con la primera clausula sobre la familia y
+responde con fluidez, pero la regla first-match-wins hace que ignore por completo
+la segunda clausula sobre las calificaciones.
 """
 import re
 import random
@@ -84,7 +85,7 @@ def failure_case():
     """
     return (
         "My family is pressuring me and my grades are falling",
-        "ELIZA matches the first family clause and answers fluently, but first-match-wins makes it ignore the second clause about grades entirely.",
+        "ELIZA coincide con la primera clausula sobre la familia y responde con fluidez, pero la regla first-match-wins hace que ignore por completo la segunda clausula sobre las calificaciones.",
     )
 
 
