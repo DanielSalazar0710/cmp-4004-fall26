@@ -1,0 +1,15 @@
+{
+  "text": "Suck",
+  "backend": "ollama",
+  "model": "qwen2.5:1.5b",
+  "prompt": "Valid actions: Left, Right, Suck, NoOp.\nCurrent room is Dirty.\nReply with one valid action only.",
+  "temperature": 0.0,
+  "seed": 0,
+  "elapsed": 5.763506299990695,
+  "meta": {
+    "eval_count": 3,
+    "prompt_eval_count": 54,
+    "total_duration": 3679129900
+  },
+  "cached_at": "2026-09-02T14:11:55"
+}

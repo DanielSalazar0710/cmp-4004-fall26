@@ -1,0 +1,15 @@
+{
+  "text": "Suck",
+  "backend": "ollama",
+  "model": "qwen2.5:1.5b",
+  "prompt": "You control a vacuum robot in a 2-room world.\nRooms 0 and 1. Each is Clean or Dirty.\nActions: Left, Right, Suck, NoOp.\nHistory of (percept, action) so far:\n(none)\nCurrent percept: location=1, status=Dirty\nReply with exactly one action word and nothing else.",
+  "temperature": 0.0,
+  "seed": 0,
+  "elapsed": 3.16956609999761,
+  "meta": {
+    "eval_count": 3,
+    "prompt_eval_count": 101,
+    "total_duration": 1115535800
+  },
+  "cached_at": "2026-09-02T14:47:41"
+}
