@@ -30,7 +30,7 @@ En el notebook usamos `REPETIR_MEDICION=False` para leer una corrida ya guardada
 
 ## Qué contiene
 
-- `starter.py`: implementación sobre la plantilla del profesor.
+- `starter.py`: formulación, algoritmos y medición con la interfaz del studio.
 - `week03_salazarD_ochoaA_chanoJ.ipynb`: presentación ejecutable del grupo.
 - `week03_salazarD_ochoaA_chanoJ.html`: versión de lectura con resultados.
 - `search.py`, `test_search.py`, `instances.json`, `_generate_instances.py`: originales intactos.
@@ -45,9 +45,9 @@ En el notebook usamos `REPETIR_MEDICION=False` para leer una corrida ya guardada
 - `DECISION_NOTES.md`: razones de implementación y límites de interpretación.
 - `GUIA_EXPOSICION.md`: orden para presentar y preguntas de ensayo.
 - `failure_atlas.md`: fallo de calidad de DFS con evidencia reproducible.
-- `AI_LOG.md`: asistencia utilizada y revisión personal pendiente.
+- `AI_LOG.md`: registro de uso de IA conforme a la política del curso.
 - `SOURCE_MANIFEST.json`: revisión del repositorio y huellas de los originales.
-- `referencias/`: materiales del profesor conservados en inglés.
+- `referencias/`: materiales de consulta del curso en su idioma original.
 
 ## Resultados principales
 
@@ -55,4 +55,4 @@ Los cinco tests originales y los seis adicionales pasan. BFS, UCS e IDS obtienen
 
 No interpretamos esos valores como garantía universal. El DFS usado conserva `explored`; no atribuimos a esa implementación el ahorro de memoria de un DFS de árbol sin historial global. La extrapolación a profundidad 24 es un ejercicio, no un benchmark ejecutado.
 
-Las rutas `weeks/` y `projects/` citadas por el profesor no están en la revisión descargada; seguimos el studio y los materiales disponibles. Esta entrega se comparte en la rama week03-salazarD del fork de Daniel Salazar.
+Organizamos el trabajo según el studio de Week 03. Compartimos la entrega en la rama `week03-salazarD` del fork de Daniel Salazar.

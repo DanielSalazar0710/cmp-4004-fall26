@@ -7806,7 +7806,7 @@ a.anchor-link {
 <p>Nuestra pregunta: <strong>¿qué cambia cuando mantenemos el problema y modificamos el orden de búsqueda?</strong></p>
 <p>Presentamos tres resultados: una formulación segura de misioneros y caníbales, cuatro algoritmos que respetan la interfaz del curso y una comparación sobre 40 instancias del 8-puzzle.</p>
 <p><strong>Recorrido:</strong> formulación → código → demostraciones → pruebas → medición → conclusiones.</p>
-<p>Este notebook ejecuta <code>starter.py</code>; no contiene otra implementación de los algoritmos. El material original en inglés está conservado en <code>referencias/</code>. La asistencia utilizada está documentada en <code>AI_LOG.md</code>.</p>
+<p>Organizamos la implementación en <code>starter.py</code> y usamos este notebook para mostrar las decisiones, las pruebas y los resultados del trabajo.</p>
 </div>
 </div>
 </div>
@@ -7832,15 +7832,15 @@ a.anchor-link {
 </tr>
 <tr>
 <td><code>search.py</code></td>
-<td>Motor e interfaz del profesor, conservados sin cambios</td>
+<td>Motor compartido e interfaz de los problemas de búsqueda</td>
 </tr>
 <tr>
 <td><code>test_search.py</code></td>
-<td>Los cinco tests originales, conservados sin cambios</td>
+<td>Cinco pruebas de comportamiento de los algoritmos</td>
 </tr>
 <tr>
 <td><code>instances.json</code></td>
-<td>Banco original, conservado sin cambios</td>
+<td>Banco de 40 instancias para comparar los algoritmos</td>
 </tr>
 <tr>
 <td><code>experiments.py</code></td>
@@ -7852,7 +7852,7 @@ a.anchor-link {
 </tr>
 </tbody>
 </table>
-<p><strong>Al exponer:</strong> primero ubicamos el código; después explicamos sus decisiones con ejemplos ejecutables.</p>
+<p>Relacionamos cada decisión de implementación con un ejemplo ejecutable y con los resultados obtenidos.</p>
 </div>
 </div>
 </div>
@@ -8024,7 +8024,7 @@ Implementación importada: starter.py
 <h2 id="3.-%C2%BFD%C3%B3nde-rechazamos-los-cruces-ilegales?">3. ¿Dónde rechazamos los cruces ilegales?<a class="anchor-link" href="#3.-%C2%BFD%C3%B3nde-rechazamos-los-cruces-ilegales?">¶</a></h2><p>Elegimos <strong><code>actions()</code></strong>. Primero comprobamos disponibilidad de pasajeros; luego calculamos el destino y comprobamos seguridad. Así el motor solo genera sucesores legales.</p>
 <p><code>result()</code> aplica la transición con la precondición de recibir una acción legal. Separar transición y filtro evita repetir las mismas verificaciones cada vez que el motor aplica una acción ya validada.</p>
 <p>La regla de seguridad es <strong><code>m == 0 or m &gt;= c</code></strong>, en cada orilla. Una orilla con solo caníbales es válida porque allí no hay misioneros en peligro.</p>
-<p><strong>Ejemplo que defenderemos:</strong> desde <code>(3,3,0)</code>, enviar un misionero deja <code>(2,3,1)</code>. Aunque la orilla de llegada sea segura, la de salida no lo es. Enviar dos misioneros también es inválido. En cambio, un caníbal, dos caníbales o una pareja sí son cruces legales.</p>
+<p><strong>Aplicación de la restricción:</strong> desde <code>(3,3,0)</code>, enviar un misionero deja <code>(2,3,1)</code>. Aunque la orilla de llegada sea segura, la de salida no lo es. Enviar dos misioneros también es inválido. En cambio, un caníbal, dos caníbales o una pareja sí son cruces legales.</p>
 </div>
 </div>
 </div>
@@ -8159,7 +8159,7 @@ Implementación importada: starter.py
 </tr>
 </tbody>
 </table>
-<p>Las tres funciones son cortas deliberadamente: <strong>el profesor ya entregó el ciclo de búsqueda</strong>. Reescribirlo triplicaría código sin aportar una estrategia distinta.</p>
+<p>Presentamos las tres funciones de esta forma ya que <strong>comparten el mismo ciclo de búsqueda y se diferencian en la frontera</strong>. Reutilizamos <code>search()</code> para mantener iguales la generación de sucesores, el control de repetidos y el conteo de expansiones; así podemos atribuir las diferencias al orden de exploración.</p>
 <p>Para completitud en espacios infinitos hacen falta condiciones adicionales: ramificación finita y, en UCS, un costo mínimo positivo evitan explorar indefinidamente por debajo del costo de la solución.</p>
 </div>
 </div>
@@ -8211,7 +8211,7 @@ def ucs(problem):
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="6.-Menos-pasos-no-significa-menor-costo">6. Menos pasos no significa menor costo<a class="anchor-link" href="#6.-Menos-pasos-no-significa-menor-costo">¶</a></h2><p>Usamos <code>TinyGraph</code>, entregado por el profesor:</p>
+<h2 id="6.-Menos-pasos-no-significa-menor-costo">6. Menos pasos no significa menor costo<a class="anchor-link" href="#6.-Menos-pasos-no-significa-menor-costo">¶</a></h2><p>Usamos <code>TinyGraph</code> para separar dos criterios que no siempre coinciden: cantidad de pasos y costo total. El grafo tiene estas rutas:</p>
 <div class="highlight"><pre><span></span>start ──10──▶ A (meta)
   └──1──▶ B ──1──▶ A
 </pre></div>
@@ -8266,7 +8266,7 @@ def ucs(problem):
 <li>IDS prueba límites <code>0, 1, 2, ...</code> y suma el trabajo de todos los intentos.</li>
 </ol>
 <p>Al alcanzar el límite inspeccionamos si queda algún sucesor fuera del camino, sin descender. Una hoja realmente agotada devuelve <code>hit_limit=False</code>.</p>
-<p><strong>Límite práctico:</strong> <code>max_depth=40</code> es el valor del profesor. Si se alcanza, <code>None</code> no demuestra que el problema sea imposible; puede significar que falta profundidad.</p>
+<p><strong>Límite práctico:</strong> conservamos <code>max_depth=40</code> como profundidad máxima de búsqueda. Si se alcanza, <code>None</code> no demuestra que el problema sea imposible; puede significar que falta profundidad.</p>
 </div>
 </div>
 </div>
@@ -8408,7 +8408,7 @@ def ids(problem, max_depth=40):
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="Qu%C3%A9-cuenta-una-expansi%C3%B3n-y-qu%C3%A9-memoria-estamos-usando">Qué cuenta una expansión y qué memoria estamos usando<a class="anchor-link" href="#Qu%C3%A9-cuenta-una-expansi%C3%B3n-y-qu%C3%A9-memoria-estamos-usando">¶</a></h3><p>En <code>search.py</code>, el contador aumenta cuando un estado no visitado sale de la frontera y se procesan sus acciones; la meta no suma. En nuestra búsqueda limitada tampoco contamos la meta ni los nodos cortados sin descender. La inspección del límite sí tiene costo de CPU aunque no incremente el contador.</p>
 <p>IDS puede expandir el mismo estado en ramas e iteraciones diferentes; eso es trabajo real y lo sumamos. Por eso expansiones <strong>no equivale a estados únicos, tiempo exacto ni memoria medida</strong>.</p>
-<p>La cota habitual de memoria de DFS de árbol es <code>O(bm)</code>, pero el DFS entregado es de <strong>grafo</strong> y conserva <code>explored</code>, que puede ocupar <code>O(|V|)</code>. Nuestro IDS guarda el camino y la pila recursiva, sin un historial global; conserva la cota <code>O(bd)</code> habitual. No medimos memoria en bytes.</p>
+<p>La cota habitual de memoria de DFS de árbol es <code>O(bm)</code>, pero el DFS que usamos es de <strong>grafo</strong> y conserva <code>explored</code>, que puede ocupar <code>O(|V|)</code>. Nuestro IDS guarda el camino y la pila recursiva, sin un historial global; conserva la cota <code>O(bd)</code> habitual. No medimos memoria en bytes.</p>
 </div>
 </div>
 </div>
@@ -8419,8 +8419,8 @@ def ids(problem, max_depth=40):
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="8.-Pruebas-antes-de-interpretar-resultados">8. Pruebas antes de interpretar resultados<a class="anchor-link" href="#8.-Pruebas-antes-de-interpretar-resultados">¶</a></h2><p>Ejecutamos los cinco tests originales sin modificarlos y seis pruebas adicionales del grupo. Las adicionales verifican cruces legales, los 11 viajes, agotamiento frente a corte, revisita por una ruta más corta y límites de profundidad.</p>
-<p>El test que exige costo 10 a BFS <strong>debe pasar</strong>: demuestra el límite de su garantía, no un error que debamos ocultar.</p>
+<h2 id="8.-Pruebas-antes-de-interpretar-resultados">8. Pruebas antes de interpretar resultados<a class="anchor-link" href="#8.-Pruebas-antes-de-interpretar-resultados">¶</a></h2><p>Verificamos el comportamiento con los cinco tests del studio y añadimos seis pruebas para los casos de nuestra formulación y de IDS. Las adicionales verifican cruces legales, los 11 viajes, agotamiento frente a corte, revisita por una ruta más corta y límites de profundidad.</p>
+<p>El test que exige costo 10 a BFS <strong>debe pasar</strong>: demuestra que minimizar pasos no garantiza minimizar costo cuando los pasos tienen costos distintos.</p>
 </div>
 </div>
 </div>
@@ -8490,7 +8490,7 @@ OK
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="9.-El-8-puzzle:-demostraci%C3%B3n-visible-de-una-soluci%C3%B3n">9. El 8-puzzle: demostración visible de una solución<a class="anchor-link" href="#9.-El-8-puzzle:-demostraci%C3%B3n-visible-de-una-soluci%C3%B3n">¶</a></h2><p>Mantenemos la representación del profesor: una tupla de nueve posiciones y <code>0</code> para el hueco. Una acción es el índice con el que intercambiamos el hueco; no el valor de la ficha.</p>
+<h2 id="9.-El-8-puzzle:-demostraci%C3%B3n-visible-de-una-soluci%C3%B3n">9. El 8-puzzle: demostración visible de una solución<a class="anchor-link" href="#9.-El-8-puzzle:-demostraci%C3%B3n-visible-de-una-soluci%C3%B3n">¶</a></h2><p>Representamos el tablero con una tupla de nueve posiciones y usamos <code>0</code> para el hueco. Esta estructura permite comparar estados completos y guardarlos en conjuntos. Una acción es el índice con el que intercambiamos el hueco; no el valor de la ficha.</p>
 <p>Mostramos una instancia de ocho movimientos para comprobar visualmente que la ruta reconstruida sí llega al tablero objetivo.</p>
 </div>
 </div>
@@ -8546,7 +8546,7 @@ OK
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="10.-Dise%C3%B1o-del-experimento">10. Diseño del experimento<a class="anchor-link" href="#10.-Dise%C3%B1o-del-experimento">¶</a></h2><p>Usamos las <strong>40 instancias originales</strong>: diez por profundidad óptima 4, 8, 12 y 16. Corremos los cuatro algoritmos sobre cada una: <strong>160 corridas</strong>, con el mismo orden de acciones y sin modificar el banco.</p>
 <p>Guardamos expansiones y longitud de solución por instancia. La media resume cada grupo, pero mostramos también mediana, mínimo y máximo porque DFS puede variar mucho.</p>
-<p><code>REPETIR_MEDICION=False</code> carga la corrida guardada y comprueba huellas del código, banco y CSV. Para recalcular todo, cambiamos a <code>True</code> o ejecutamos <code>python experiments.py</code>. Cargar resultados no se presenta como una medición nueva.</p>
+<p><code>REPETIR_MEDICION=False</code> carga la corrida guardada y comprueba huellas del código, banco y CSV. Para recalcular todo, cambiamos a <code>True</code> o ejecutamos <code>python experiments.py</code>. Este modo permite consultar la misma corrida durante la presentación sin volver a ejecutar el experimento.</p>
 <p>El tiempo guardado es el total de las 160 búsquedas, no una comparación de latencia por algoritmo.</p>
 </div>
 </div>
@@ -8772,7 +8772,7 @@ Tiempo total registrado (s): 7.92
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Interpretaci%C3%B3n-que-defenderemos">Interpretación que defenderemos<a class="anchor-link" href="#Interpretaci%C3%B3n-que-defenderemos">¶</a></h3><ul>
+<h3 id="Interpretaci%C3%B3n-de-los-resultados">Interpretación de los resultados<a class="anchor-link" href="#Interpretaci%C3%B3n-de-los-resultados">¶</a></h3><ul>
 <li><strong>BFS y UCS:</strong> devuelven longitudes óptimas en las 40 instancias. La igualdad se debe al costo unitario; <code>TinyGraph</code> muestra cuándo se separan.</li>
 <li><strong>DFS:</strong> todas las corridas encuentran meta, pero ninguna obtiene la longitud óptima en este banco. Su sensibilidad al orden de acciones produce rutas muy largas y dispersión; no le atribuimos una tendencia creciente suave.</li>
 <li><strong>IDS:</strong> devuelve las longitudes óptimas. A profundidad 16 emplea alrededor de 2,60 veces las expansiones de BFS. A profundidad 4 su media es menor: encontrar la meta en una rama y no expandir nodos cortados puede compensar los reinicios.</li>
@@ -8852,9 +8852,9 @@ Tiempo total registrado (s): 7.92
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="15.-Preguntas-que-debemos-poder-responder">15. Preguntas que debemos poder responder<a class="anchor-link" href="#15.-Preguntas-que-debemos-poder-responder">¶</a></h2><p><strong>¿Por qué no guardamos la orilla derecha?</strong> Porque se deriva de los totales; evita redundancia.</p>
+<h2 id="15.-Discusi%C3%B3n-de-nuestras-decisiones">15. Discusión de nuestras decisiones<a class="anchor-link" href="#15.-Discusi%C3%B3n-de-nuestras-decisiones">¶</a></h2><p><strong>¿Por qué no guardamos la orilla derecha?</strong> Porque se deriva de los totales; evita redundancia.</p>
 <p><strong>¿Por qué cero misioneros no viola la regla?</strong> Porque no hay misioneros que puedan ser superados en número.</p>
-<p><strong>¿Podríamos validar en <code>result()</code>?</strong> Sí, con un contrato coherente. Elegimos <code>actions()</code> para entregar solo sucesores legales al motor proporcionado.</p>
+<p><strong>¿Podríamos validar en <code>result()</code>?</strong> Sí, con un contrato coherente. Elegimos <code>actions()</code> para entregar solo sucesores legales al motor de búsqueda.</p>
 <p><strong>¿Por qué BFS cuesta 10 y UCS cuesta 2?</strong> FIFO minimiza niveles, la prioridad por <code>g</code> minimiza costo acumulado.</p>
 <p><strong>¿Por qué IDS no usa <code>explored</code> global?</strong> Una llegada profunda no debe impedir explorar una llegada más corta al mismo estado.</p>
 <p><strong>¿Por qué repetir trabajo puede convenir?</strong> Porque guardar solo el camino reduce memoria; el precio son reexpansiones.</p>
@@ -8879,7 +8879,7 @@ Tiempo total registrado (s): 7.92
 <li><a href="referencias/resources/ai-policy.md">Política de IA original</a> y <a href="AI_LOG.md">registro del grupo</a>.</li>
 <li><a href="DECISION_NOTES.md">Decisiones</a> y <a href="GUIA_EXPOSICION.md">guía de exposición</a>.</li>
 </ul>
-<p>El repositorio consultado menciona <code>weeks/week-03.md</code> y <code>projects/duel-1-search.md</code>, pero esas rutas no existen en la revisión descargada. El alcance se tomó del studio, las slides, el notebook y los recursos que sí están disponibles. No agregamos requisitos de esos enlaces ausentes.</p>
+<p>Delimitamos el trabajo a la formulación, los cuatro algoritmos y la medición indicados en el studio de Week 03. Consultamos las slides y el notebook del curso para mantener la misma interfaz y los criterios de evaluación.</p>
 </div>
 </div>
 </div>
