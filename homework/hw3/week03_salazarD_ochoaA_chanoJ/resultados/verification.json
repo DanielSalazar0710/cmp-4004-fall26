@@ -1,0 +1,11 @@
+{
+  "reachable_states": 181440,
+  "bank_depths_verified": 40,
+  "routes_verified": 160,
+  "legal_moves_replayed": 1096882,
+  "fingerprints": {
+    "starter.py": "980ca3543bb4cb0ad7755d26b2913e463f29ac0d0dd33ac40729abd789e3f58d",
+    "search.py": "d90690a578a3f07eabc2420809dccd1eefca23ed483d07cff843c2085222384d",
+    "instances.json": "bb483234a3ca09ca4d14ca73f457648b97f71d350faa6dbb59df9058ed3eecc3"
+  }
+}
