@@ -1,0 +1,5 @@
+depth_max,depth_min,winner,plies
+2,5,MIN,38
+4,5,MIN,38
+5,5,MIN,34
+6,4,MAX,39

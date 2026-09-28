@@ -1,0 +1,3 @@
+# El .gitignore de la raíz ignora carpetas ocultas; la caché LLM es evidencia y se versiona.
+!.llm_cache/
+!.llm_cache/**

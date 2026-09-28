@@ -1,0 +1,23 @@
+{
+  "backend": "ollama",
+  "prompt": "Connect-4. You are 'X'. Columns numbered 0-6, left to right.\nBoard (bottom row last):\n{board}\nLegal columns: {legal}\nReply with one column number and nothing else.",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "ollama_options": "temperature y seed; resto por defecto del harness",
+  "runs": {
+    "qwen2.5:3b": {
+      "seconds": {
+        "tactics": 176.0,
+        "repro": 433.7,
+        "games": 96.2
+      },
+      "last_run_utc": "2026-09-28T19:07:48.270291+00:00"
+    },
+    "qwen2.5:1.5b": {
+      "seconds": {
+        "tactics": 179.3
+      },
+      "last_run_utc": "2026-09-28T19:10:48.296789+00:00"
+    }
+  }
+}

@@ -1,0 +1,73 @@
+x,o,opening,winner,reason,plies,x_max_ms,o_max_ms,moves
+ID-αβ (nuestro),αβ fijo d6,33,ID-αβ (nuestro),tiempo,8,171.8,1368.9,3 3 3 2 2 3 5 6
+αβ fijo d6,ID-αβ (nuestro),33,ID-αβ (nuestro),tiempo,5,671.1,400.1,3 3 3 3 1
+ID-αβ (nuestro),αβ fijo d6,14,ID-αβ (nuestro),tiempo,8,315.4,543.4,1 4 3 4 4 3 3 4
+αβ fijo d6,ID-αβ (nuestro),14,ID-αβ (nuestro),tiempo,11,568.2,351.7,1 4 4 4 3 3 2 0 3 3 4
+ID-αβ (nuestro),αβ fijo d6,50,ID-αβ (nuestro),tiempo,8,284.1,704.3,5 0 3 6 3 3 5 2
+αβ fijo d6,ID-αβ (nuestro),50,ID-αβ (nuestro),tiempo,7,740.2,351.6,5 0 3 6 3 3 5
+ID-αβ (nuestro),αβ fijo d6,12,αβ fijo d6,cuatro en línea,40,400.1,382.1,1 2 2 2 1 2 3 3 3 3 3 2 2 3 6 4 5 5 6 6 6 6 5 4 4 4 5 4 4 0 6 0 0 0 0 5 5 0 1 1
+αβ fijo d6,ID-αβ (nuestro),12,ID-αβ (nuestro),tiempo,7,683.5,104.6,1 2 2 2 3 1 1
+ID-αβ (nuestro),αβ fijo d6,56,ID-αβ (nuestro),tiempo,10,370.8,1098.7,5 6 3 5 2 4 3 3 3 2
+αβ fijo d6,ID-αβ (nuestro),56,ID-αβ (nuestro),tiempo,7,559.0,400.0,5 6 2 6 6 4 4
+ID-αβ (nuestro),αβ fijo d6,36,ID-αβ (nuestro),tiempo,8,218.6,543.7,3 6 2 4 3 2 4 3
+αβ fijo d6,ID-αβ (nuestro),36,ID-αβ (nuestro),tiempo,5,565.4,159.2,3 6 3 3 2
+ID-αβ (nuestro),αβ fijo d4,33,αβ fijo d4,cuatro en línea,38,400.1,66.5,3 3 3 3 2 4 4 4 4 2 2 2 2 3 3 6 2 0 0 0 0 1 6 1 1 1 6 6 6 6 0 0 1 4 4 1 5 5
+αβ fijo d4,ID-αβ (nuestro),33,ID-αβ (nuestro),cuatro en línea,38,70.5,400.1,3 3 3 3 2 4 4 4 4 2 2 2 2 3 3 6 1 0 0 0 0 2 0 0 6 4 4 1 1 1 6 6 6 6 1 1 5 5
+ID-αβ (nuestro),αβ fijo d4,14,αβ fijo d4,cuatro en línea,38,298.1,47.5,1 4 3 4 4 3 3 4 1 3 3 1 1 4 3 4 1 2 2 2 2 2 0 2 1 0 0 0 6 6 6 6 6 6 0 0 5 5
+αβ fijo d4,ID-αβ (nuestro),14,ID-αβ (nuestro),cuatro en línea,34,121.9,383.6,1 4 5 5 5 6 6 5 1 1 1 0 0 6 6 4 4 4 4 5 0 0 3 3 3 3 3 3 1 4 1 5 2 2
+ID-αβ (nuestro),αβ fijo d4,50,αβ fijo d4,cuatro en línea,36,377.2,67.3,5 0 3 2 3 3 2 5 2 3 6 4 4 3 3 5 0 5 5 2 2 2 0 0 0 6 6 6 0 5 6 6 1 1 1 1
+αβ fijo d4,ID-αβ (nuestro),50,αβ fijo d4,cuatro en línea,37,60.5,364.2,5 0 3 6 3 3 3 5 5 2 2 0 0 0 2 2 3 0 3 6 2 2 5 5 5 0 6 6 4 4 4 6 6 1 4 4 4
+ID-αβ (nuestro),αβ fijo d4,12,ID-αβ (nuestro),cuatro en línea,33,316.9,101.2,1 2 2 1 2 2 4 4 1 1 3 5 1 2 4 4 4 5 5 5 0 0 4 2 1 6 6 6 6 6 6 3 3
+αβ fijo d4,ID-αβ (nuestro),12,αβ fijo d4,cuatro en línea,41,54.3,300.0,1 2 1 1 2 2 1 2 2 5 3 1 1 2 6 6 5 5 5 6 5 5 6 3 3 3 3 3 0 0 0 0 0 0 4 6 6 4 4 4 4
+ID-αβ (nuestro),αβ fijo d4,56,ID-αβ (nuestro),cuatro en línea,33,250.2,97.2,5 6 3 2 2 5 2 2 3 3 3 3 1 1 1 1 1 5 5 2 6 6 3 2 6 5 6 4 5 6 1 4 4
+αβ fijo d4,ID-αβ (nuestro),56,αβ fijo d4,cuatro en línea,39,32.1,341.1,5 6 2 6 6 5 3 4 3 2 1 0 2 2 3 3 5 6 5 3 2 3 6 5 0 2 5 0 0 0 0 6 1 1 1 1 1 4 4
+ID-αβ (nuestro),αβ fijo d4,36,ID-αβ (nuestro),cuatro en línea,17,381.1,45.6,3 6 2 1 3 1 4 5 4 5 4 4 3 3 5 3 5
+αβ fijo d4,ID-αβ (nuestro),36,αβ fijo d4,cuatro en línea,41,57.5,319.0,3 6 2 4 3 2 3 3 2 2 3 6 2 3 6 2 6 6 1 0 6 1 4 4 4 4 4 5 5 5 1 1 0 0 0 1 1 0 0 5 5
+ID-αβ (nuestro),aleatorio,33,ID-αβ (nuestro),cuatro en línea,9,351.8,0.0,3 3 3 6 2 3 1 6 4
+aleatorio,ID-αβ (nuestro),33,ID-αβ (nuestro),cuatro en línea,18,0.0,374.9,3 3 6 3 3 4 6 2 3 6 0 2 2 4 4 4 3 1
+ID-αβ (nuestro),aleatorio,14,ID-αβ (nuestro),cuatro en línea,11,134.9,0.0,1 4 3 6 3 3 4 6 2 3 0
+aleatorio,ID-αβ (nuestro),14,ID-αβ (nuestro),cuatro en línea,12,0.0,101.6,1 4 6 3 3 3 6 4 3 5 0 2
+ID-αβ (nuestro),aleatorio,50,ID-αβ (nuestro),cuatro en línea,11,146.2,0.0,5 0 3 6 3 3 5 6 4 3 2
+aleatorio,ID-αβ (nuestro),50,ID-αβ (nuestro),cuatro en línea,14,0.0,277.9,5 0 6 3 3 3 6 5 3 5 0 5 2 5
+ID-αβ (nuestro),aleatorio,12,ID-αβ (nuestro),cuatro en línea,13,205.8,0.0,1 2 2 6 2 3 4 6 3 3 1 0 4
+aleatorio,ID-αβ (nuestro),12,ID-αβ (nuestro),cuatro en línea,10,0.0,231.9,1 2 6 2 3 3 6 2 3 2
+ID-αβ (nuestro),aleatorio,56,ID-αβ (nuestro),cuatro en línea,9,198.0,0.0,5 6 3 6 3 3 2 6 4
+aleatorio,ID-αβ (nuestro),56,ID-αβ (nuestro),cuatro en línea,14,0.0,220.3,5 6 6 5 3 3 6 4 3 4 0 4 2 3
+ID-αβ (nuestro),aleatorio,36,ID-αβ (nuestro),cuatro en línea,7,119.9,0.0,3 6 2 6 4 3 1
+aleatorio,ID-αβ (nuestro),36,ID-αβ (nuestro),cuatro en línea,14,0.0,336.1,3 6 6 3 3 1 6 3 3 1 0 1 2 1
+αβ fijo d6,αβ fijo d4,33,αβ fijo d4,tiempo,5,786.5,51.9,3 3 3 3 1
+αβ fijo d4,αβ fijo d6,33,αβ fijo d4,tiempo,12,47.1,732.5,3 3 3 2 2 3 2 2 3 2 1 5
+αβ fijo d6,αβ fijo d4,14,αβ fijo d4,tiempo,5,876.3,20.6,1 4 4 3 5
+αβ fijo d4,αβ fijo d6,14,αβ fijo d4,tiempo,4,23.3,605.3,1 4 5 5
+αβ fijo d6,αβ fijo d4,50,αβ fijo d4,tiempo,5,875.2,42.0,5 0 3 2 3
+αβ fijo d4,αβ fijo d6,50,αβ fijo d4,tiempo,4,19.6,666.1,5 0 3 6
+αβ fijo d6,αβ fijo d4,12,αβ fijo d4,tiempo,9,670.4,51.4,1 2 2 1 2 2 4 4 4
+αβ fijo d4,αβ fijo d6,12,αβ fijo d4,tiempo,16,71.2,677.1,1 2 1 1 2 2 1 2 2 4 4 6 4 4 5 5
+αβ fijo d6,αβ fijo d4,56,αβ fijo d4,tiempo,5,679.9,17.6,5 6 2 4 4
+αβ fijo d4,αβ fijo d6,56,αβ fijo d4,tiempo,8,41.2,949.8,5 6 2 2 3 4 4 6
+αβ fijo d6,αβ fijo d4,36,αβ fijo d4,tiempo,5,524.0,33.8,3 6 3 3 2
+αβ fijo d4,αβ fijo d6,36,αβ fijo d4,tiempo,4,40.0,509.5,3 6 2 4
+αβ fijo d6,aleatorio,33,αβ fijo d6,cuatro en línea,17,464.1,0.0,3 3 3 6 2 3 4 6 3 3 2 0 2 2 2 5 1
+aleatorio,αβ fijo d6,33,aleatorio,tiempo,6,0.0,862.8,3 3 6 3 3 4
+αβ fijo d6,aleatorio,14,aleatorio,tiempo,7,840.5,0.0,1 4 4 6 4 3 5
+aleatorio,αβ fijo d6,14,aleatorio,tiempo,8,0.0,807.1,1 4 6 3 3 3 6 4
+αβ fijo d6,aleatorio,50,aleatorio,tiempo,7,571.2,0.0,5 0 3 6 3 3 5
+aleatorio,αβ fijo d6,50,aleatorio,tiempo,8,0.0,586.3,5 0 6 3 3 3 6 5
+αβ fijo d6,aleatorio,12,aleatorio,tiempo,11,551.3,0.0,1 2 2 6 2 3 4 6 3 3 1
+aleatorio,αβ fijo d6,12,aleatorio,tiempo,8,0.0,556.7,1 2 6 2 3 3 6 2
+αβ fijo d6,aleatorio,56,αβ fijo d6,cuatro en línea,13,400.5,0.0,5 6 2 6 6 3 3 6 2 3 2 0 2
+aleatorio,αβ fijo d6,56,aleatorio,tiempo,8,0.0,637.9,5 6 6 3 3 5 6 6
+αβ fijo d6,aleatorio,36,aleatorio,tiempo,7,590.6,0.0,3 6 3 6 2 3 4
+aleatorio,αβ fijo d6,36,aleatorio,tiempo,8,0.0,861.9,3 6 6 3 3 3 6 2
+αβ fijo d4,aleatorio,33,αβ fijo d4,cuatro en línea,17,38.1,0.0,3 3 3 6 2 3 4 6 3 3 2 0 2 2 2 5 1
+aleatorio,αβ fijo d4,33,αβ fijo d4,cuatro en línea,32,0.0,59.4,3 3 6 4 3 3 6 6 3 4 0 2 2 2 4 4 3 2 4 2 2 4 6 0 5 5 1 5 1 1 5 1
+αβ fijo d4,aleatorio,14,αβ fijo d4,cuatro en línea,15,64.5,0.0,1 4 5 6 4 3 3 6 3 3 5 0 1 2 2
+aleatorio,αβ fijo d4,14,αβ fijo d4,cuatro en línea,8,0.0,47.7,1 4 6 3 3 2 6 5
+αβ fijo d4,aleatorio,50,αβ fijo d4,cuatro en línea,35,89.4,0.0,5 0 3 6 3 3 3 6 6 3 3 0 0 2 2 5 5 4 4 4 1 2 2 4 2 2 4 6 4 1 1 1 1 5 0
+aleatorio,αβ fijo d4,50,αβ fijo d4,cuatro en línea,8,0.0,33.9,5 0 6 3 3 2 6 1
+αβ fijo d4,aleatorio,12,αβ fijo d4,cuatro en línea,21,66.8,0.0,1 2 1 6 2 3 3 6 3 3 1 0 3 2 3 5 4 4 2 4 4
+aleatorio,αβ fijo d4,12,αβ fijo d4,cuatro en línea,10,0.0,33.8,1 2 6 2 3 3 6 2 3 2
+αβ fijo d4,aleatorio,56,αβ fijo d4,cuatro en línea,13,39.7,0.0,5 6 2 6 6 3 3 6 2 3 2 0 2
+aleatorio,αβ fijo d4,56,αβ fijo d4,cuatro en línea,24,0.0,54.7,5 6 6 5 3 2 6 5 3 3 0 3 2 2 4 5 3 4 3 2 2 2 5 4
+αβ fijo d4,aleatorio,36,αβ fijo d4,cuatro en línea,9,50.1,0.0,3 6 2 6 4 3 3 6 1
+aleatorio,αβ fijo d4,36,αβ fijo d4,cuatro en línea,16,0.0,92.5,3 6 6 3 3 1 6 3 3 6 0 1 2 2 4 4

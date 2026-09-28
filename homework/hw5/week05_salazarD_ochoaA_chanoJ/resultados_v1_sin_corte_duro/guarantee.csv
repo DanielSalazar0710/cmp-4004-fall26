@@ -1,0 +1,13 @@
+depth,algorithm,value,move,nodes,seconds
+2,minimax,-2,3,57,0.0022
+2,alfa-beta sin orden,-2,3,45,0.0017
+2,alfa-beta centro,-2,3,23,0.0008
+4,minimax,-4,3,2801,0.1106
+4,alfa-beta sin orden,-4,3,1002,0.0361
+4,alfa-beta centro,-4,3,319,0.0096
+5,minimax,46,3,19607,0.7811
+5,alfa-beta sin orden,46,3,4103,0.198
+5,alfa-beta centro,46,3,1792,0.0681
+6,minimax,-13,3,132179,10.7166
+6,alfa-beta sin orden,-13,3,17030,1.6231
+6,alfa-beta centro,-13,3,3700,0.3049

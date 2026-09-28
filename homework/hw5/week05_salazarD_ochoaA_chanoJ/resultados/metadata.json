@@ -1,0 +1,33 @@
+{
+  "utc": "2026-09-28T19:23:55.911775+00:00",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "processor": "AMD64 Family 26 Model 36 Stepping 0, AuthenticAMD",
+  "budget_ms": 500,
+  "safety": 0.6,
+  "n_openings": 6,
+  "seconds": {
+    "guarantee.csv": 13.87,
+    "ordering.csv": 31.36,
+    "agent_tactics.csv": 6.33,
+    "tournament.csv": 102.03,
+    "horizon.csv": 11.36,
+    "depth_no_clock.csv": 54.98
+  },
+  "fingerprints": {
+    "connect4.py": "7c860c09ec54040494c2c2c1a5bf3ae79090e0378500b2097aa526d39e5e0c34",
+    "starter.py": "8d6bd4bdf373570da5195995b0eed9819900aee990e46029d6b740c5d3671e4d",
+    "tactics.py": "d22e424f67f34daef1c00147b2dd938f1a96866ace0269e42b4204cd04c9a73a",
+    "tournament.py": "49957c104f97144c3bb291dd121ada6aead78c122988c711929393070c4d76b0",
+    "experiments.py": "b7e041090e9b2db5c00186cb0fdc63f6382a4c1b27c5f0cbd4eaad6922d2893b",
+    "tactical_bank.json": "218672ee750bd3d986fe93f924447934d96c0b2b7938c01c5297ffecac8853d2"
+  },
+  "csv_sha256": {
+    "guarantee.csv": "9582a1bec353e0c35c5bc2e67ffd367f6d8be4e5fc237a29c0619d3f12c51a47",
+    "ordering.csv": "5c7fe76892fe623b79b92d22ec4dec9a337ea908a444b5540253d572066bec91",
+    "agent_tactics.csv": "e0032d58cfe45e91a7719bb80d9562bfdc1f7966a4c25813744bb38d00944252",
+    "tournament.csv": "b1c844f8438b468e14e09fbd32460953f20b88dab49d198ddffc7d3702e2fa76",
+    "horizon.csv": "7aefddc092345d282b64c0b6b57c9c630d873920965b8d2893da83b2e12eeb08",
+    "depth_no_clock.csv": "50e73cfee7db4493b55260f5dec65ca2283efa88f8718132f47a2e9495481dfc"
+  }
+}

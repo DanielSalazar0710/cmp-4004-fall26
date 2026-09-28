@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/aproano2/cmp-4004-fall26",
+  "commit": "5197f6a797db80f852a09e8936b2a78542a683b0",
+  "preserved_files": {
+    "connect4.py": "7c860c09ec54040494c2c2c1a5bf3ae79090e0378500b2097aa526d39e5e0c34",
+    "test_alphabeta.py": "38f6e5f54e7da716b6f398c7e5ce2922f9940a857c3034fc39220c4f0c0c15db"
+  },
+  "starter_origin": "studios/week-05/starter.py (completado por el grupo)",
+  "aicourse_origin": "homework/hw2/week02_salazarD_ochoaA_chanoJ/aicourse (harness de Week 0, sin cambios)"
+}

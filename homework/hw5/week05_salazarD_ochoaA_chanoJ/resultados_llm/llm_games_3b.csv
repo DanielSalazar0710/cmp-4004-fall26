@@ -1,0 +1,9 @@
+game,llm_color,opening,winner,plies,moves
+g0X,X,33,agente,12,3 3 4 5 4 4 4 3 4 3 4 3
+g0O,O,33,agente,13,3 3 3 4 4 4 4 3 1 5 2 5 2
+g1X,X,14,agente,10,1 4 2 3 2 4 4 5 4 6
+g1O,O,14,agente,15,1 4 3 2 2 4 4 4 3 4 1 4 1 5 1
+g2X,X,50,agente,12,5 0 2 3 1 3 4 2 4 1 4 0
+g2O,O,50,agente,9,5 0 3 2 3 2 3 4 3
+g3X,X,12,agente,12,1 2 5 1 4 4 4 2 4 2 4 2
+g3O,O,12,agente,17,1 2 2 4 4 4 5 4 1 4 4 5 0 5 1 6 1

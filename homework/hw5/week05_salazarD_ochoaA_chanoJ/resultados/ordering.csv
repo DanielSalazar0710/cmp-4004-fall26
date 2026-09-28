@@ -1,0 +1,13 @@
+depth,order,value,move,nodes,seconds
+4,izquierda-derecha,-4,3,1002,0.0907
+4,centro-primero,-4,3,319,0.0266
+4,peor orden,-4,3,1736,0.1584
+5,izquierda-derecha,46,3,4103,0.3442
+5,centro-primero,46,3,1792,0.1724
+5,peor orden,46,3,6823,0.5813
+6,izquierda-derecha,-13,3,17030,1.3904
+6,centro-primero,-13,3,3700,0.214
+6,peor orden,-13,3,43267,3.5157
+7,izquierda-derecha,50,3,79463,7.2263
+7,centro-primero,50,3,23316,2.092
+7,peor orden,50,3,177443,15.5473

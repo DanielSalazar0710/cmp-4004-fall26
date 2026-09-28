@@ -1,0 +1,15 @@
+{
+  "text": "6",
+  "backend": "ollama",
+  "model": "qwen2.5:3b",
+  "prompt": "Connect-4. You are 'X'. Columns numbered 0-6, left to right.\nBoard (bottom row last):\n|X . . O . . .|\n|X . . X . . .|\n|X . . O . . .|\n|O . X O . O .|\n|O X O X X O O|\n|X X O O X X O|\n 0 1 2 3 4 5 6\nLegal columns: [1, 2, 4, 5, 6]\nReply with one column number and nothing else.",
+  "temperature": 0.0,
+  "seed": 0,
+  "elapsed": 2.1162595999776386,
+  "meta": {
+    "eval_count": 2,
+    "prompt_eval_count": 151,
+    "total_duration": 66214900
+  },
+  "cached_at": "2026-09-28T13:58:53"
+}
