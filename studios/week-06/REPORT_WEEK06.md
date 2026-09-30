@@ -1,6 +1,6 @@
 # Week 06 — CSP y comparación A/B/C
 
-**Equipo:** Daniel Salazar y Andretty Ochoa
+**Equipo:** Daniel Salazar, Andretty Ochoa y Jalil Chano
 **Ejecución original del experimento:** Andretty Ochoa
 **Curso:** CMP-4004
 **Fecha:** 30 de septiembre de 2026

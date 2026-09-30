@@ -2,9 +2,9 @@
 
 ## Presentación del equipo
 
-**Daniel Salazar y Andretty Ochoa**
+**Daniel Salazar, Andretty Ochoa y Jalil Chano**
 
-Abrir [PRESENTACION_WEEK06.ipynb](PRESENTACION_WEEK06.ipynb) para consultar la exposición completa, las salidas ejecutadas y el apéndice de preguntas técnicas. GitHub permite leerlo sin ejecutar código. El notebook verifica el horario, el banco, las pruebas y A; analiza los CSV históricos de B y C sin llamar al modelo.
+Abrir [PRESENTACION_WEEK06.ipynb](PRESENTACION_WEEK06.ipynb) para consultar el estudio completo, los resultados y los fundamentos técnicos. GitHub permite leerlo sin ejecutar código. El notebook verifica el horario, el banco, las pruebas y A; analiza los CSV históricos de B y C sin llamar al modelo.
 
 - [Reporte](REPORT_WEEK06.md)
 - [Registro de asistencia de IA](../../AI_LOG.md)
