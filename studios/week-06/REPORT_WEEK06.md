@@ -1,7 +1,8 @@
 # Week 06 — CSP y comparación A/B/C
 
-**Estudiante:** Andretty Ochoa  
-**Curso:** CMP-4004  
+**Equipo:** Daniel Salazar y Andretty Ochoa
+**Ejecución original del experimento:** Andretty Ochoa
+**Curso:** CMP-4004
 **Fecha:** 30 de septiembre de 2026
 
 ## 1. Horario escolar
@@ -20,7 +21,7 @@ Horario obtenido: Math 2, English 3, Science 4, Sports 1, Art 5 y Music 6. Cumpl
 
 Las configuraciones son las del helper: LCV y AC-3 se añaden por separado a FC+MRV. Forward checking redujo una llamada. Las demás técnicas no redujeron más las llamadas en este horario. Los tiempos proceden de una ejecución y son demasiado pequeños para establecer diferencias fiables de rendimiento.
 
-El estudiante reportó que todas las pruebas de test_csp.py pasaron. La verificación del banco produjo ALL 20 PUZZLES SOUND. No se registraron aquí contadores propios para las pruebas de Sudoku.
+La verificación de la presentación confirmó que las cinco pruebas de test_csp.py pasan y que el banco produce ALL 20 PUZZLES SOUND. En HARD, FC+MRV+AC-3 resolvió en 34 478 llamadas; LCV aumentó las llamadas de FC+MRV de 34 478 a 56 813. Las salidas están guardadas en PRESENTACION_WEEK06.ipynb.
 
 ## 2. Método
 
@@ -80,9 +81,9 @@ El solver garantiza el cumplimiento del modelo formal recibido, bajo sus condici
 ## Evidencia y fuentes
 
 - Código local: starter.py, run_experiment.py, run_arm_a.py y run_arm_c.py.
-- Datos medidos por el estudiante: results_arm_a.csv, results_arm_b.csv, results_arm_c.csv y .llm_cache.
+- Datos de la ejecución original: results_arm_a.csv, results_arm_b.csv y results_arm_c.csv. La caché .llm_cache se utilizó localmente, pero no está incluida en esta entrega; faltan las traducciones y reintentos originales de B.
 - Material del curso: https://github.com/aproano2/cmp-4004-fall26/tree/main/studios/week-06
 - Política de IA: https://github.com/aproano2/cmp-4004-fall26/blob/main/resources/ai-policy.md
 - Documentación de la API: https://docs.ollama.com/api/generate
 
-Este reporte se preparó con las salidas compartidas por el estudiante; no representa una ejecución independiente adicional.
+El reporte conserva las mediciones originales. Para la presentación ejecutamos nuevamente el horario, las pruebas, la verificación del banco y los 15 modelos de A; además comprobamos los conteos de los CSV y las equivalencias declaradas. No realizamos una nueva ejecución de B o C. Corregimos el manejo de AttributeError ante restricciones mal estructuradas y verificamos el refinamiento con cuatro pruebas de respuestas controladas, sin modificar las mediciones históricas.

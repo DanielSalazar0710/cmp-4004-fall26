@@ -1,5 +1,54 @@
 # Week 6 Studio — Inference Beats Search, and the Solver Owns the Guarantee
 
+## Presentación del equipo
+
+**Daniel Salazar y Andretty Ochoa**
+
+Abrir [PRESENTACION_WEEK06.ipynb](PRESENTACION_WEEK06.ipynb) para consultar la exposición completa, las salidas ejecutadas y el apéndice de preguntas técnicas. GitHub permite leerlo sin ejecutar código. El notebook verifica el horario, el banco, las pruebas y A; analiza los CSV históricos de B y C sin llamar al modelo.
+
+- [Reporte](REPORT_WEEK06.md)
+- [Registro de asistencia de IA](../../AI_LOG.md)
+- Resultados originales: [A](results_arm_a.csv), [B](results_arm_b.csv), [C](results_arm_c.csv).
+- `results_arm_b_original_partial.csv` conserva una ejecución parcial anterior al ajuste del prompt; no se mezcla con el scorecard final.
+
+### Reproducir la presentación
+
+Con Python 3.10 o posterior y Jupyter instalado:
+
+```bash
+python -m pip install notebook ipykernel
+python -m notebook studios/week-06/PRESENTACION_WEEK06.ipynb
+```
+
+Ejecutar todas las celdas. El notebook no modifica los CSV ni necesita Ollama. Las mediciones originales del LLM se realizaron con Python 3.13.2; la verificación del notebook se realizó con Python 3.12.10.
+
+### Ejecutar nuevamente el experimento con Ollama
+
+Desde `studios/week-06`, con Ollama instalado y su servicio activo:
+
+```bash
+ollama pull qwen2.5:3b
+python run_arm_a.py
+python run_experiment.py
+python run_arm_c.py
+```
+
+Estos scripts **sobrescriben sus CSV de resultados**. Conservar una copia antes de una nueva medición. La caché se genera en `.llm_cache`; la caché histórica no está incluida, por lo que no se pueden recuperar desde esta entrega los CSP y reintentos originales de B. Una ejecución nueva debe identificarse como tal y conservar sus respuestas.
+
+### Verificación
+
+```bash
+python test_csp.py
+python _verify_puzzles.py
+python test_refinement.py
+```
+
+Las pruebas de refinamiento usan respuestas controladas; no representan una medición de calidad del LLM.
+
+---
+
+## Instrucciones originales del profesor
+
 **Companion to** [`../../weeks/week-06.md`](../../weeks/week-06.md) — Session 6B.
 **Time budget:** Recap 5 · Breakouts 45 · Demos 20 · Debrief 10 (80 min total).
 **Deliverables:** all provided tests pass, a Task-1 ablation table for your own

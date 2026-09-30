@@ -92,7 +92,6 @@ def run_ablation(make_csp):
 
 def solve_arm_b_with_refinement(model, puzzle, gold=None, max_retries=3):
     from logic_lm import (
-        MODEL_PROMPT,
         classify_arm_b,
         MALFORMED,
         NO_SOLUTION,
@@ -137,7 +136,7 @@ def solve_arm_b_with_refinement(model, puzzle, gold=None, max_retries=3):
         try:
             category, solution = classify_arm_b(reply, gold=gold)
 
-        except (TypeError, KeyError, ValueError) as error:
+        except (TypeError, KeyError, ValueError, AttributeError) as error:
             category, solution = MALFORMED, None
             error_detail = f"{type(error).__name__}: {error}"
             print(f"  CSP invalido: {error_detail}", flush=True)
