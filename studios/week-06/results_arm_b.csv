@@ -1,0 +1,16 @@
+id,without_refinement,with_refinement,attempts,solution
+p06,valid_json_wrong_model,valid_json_wrong_model,1,"{""black_car"": ""spot1"", ""red_car"": ""spot2"", ""silver_car"": ""spot3""}"
+p07,valid_json_wrong_model,valid_json_wrong_model,1,"{""Ben"": 1, ""Dee"": 4, ""Ada"": 3, ""Cy"": 1}"
+p08,valid_json_wrong_model,valid_json_wrong_model,1,"{""HouseA"": ""white"", ""HouseB"": ""gray"", ""HouseC"": ""white""}"
+p09,correct,correct,1,"{""Novel"": 1, ""Essays"": 3, ""Comic"": 5, ""Poems"": 4, ""Manual"": 2}"
+p10,correct,correct,1,"{""Dishes"": ""Mon"", ""Vacuum"": ""Thu"", ""Trash"": ""Wed"", ""Laundry"": ""Tue""}"
+p11,correct,correct,1,"{""X"": ""plum"", ""Y"": ""teal"", ""Z"": ""olive""}"
+p12,correct,correct,1,"{""R"": 2, ""S"": 4, ""Q"": 3, ""P"": 1}"
+p13,correct,correct,1,"{""Al"": 1, ""Cy"": 2, ""Ed"": 5, ""Bo"": 4, ""Di"": 3}"
+p14,correct,correct,1,"{""Lamp1"": ""on"", ""Lamp2"": ""off"", ""Lamp3"": ""on""}"
+p15,valid_json_wrong_model,valid_json_wrong_model,1,"{""N"": ""red"", ""S"": ""green"", ""E"": ""red"", ""W"": ""red""}"
+p16,valid_json_wrong_model,valid_json_wrong_model,1,"{""A"": ""Uma"", ""B"": ""Val"", ""C"": ""Tom""}"
+p17,valid_no_solution,valid_no_solution,3,null
+p18,valid_json_wrong_model,valid_json_wrong_model,1,"{""Bea"": 2, ""Eli"": 1, ""Ana"": 3, ""Cam"": 1, ""Dan"": 1}"
+p19,correct,correct,1,"{""Cup1"": ""tea"", ""Cup2"": ""milk"", ""Cup3"": ""tea""}"
+p20,valid_json_wrong_model,valid_json_wrong_model,1,"{""W"": ""red"", ""Y"": ""black"", ""X"": ""black"", ""Z"": ""black""}"
