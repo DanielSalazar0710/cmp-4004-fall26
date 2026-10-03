@@ -68,6 +68,13 @@ def test_frontera_maxima_positiva():
     assert r.max_frontier >= 1
 
 
+def test_b_estrella():
+    from analisis_optimalidad import b_estrella
+    assert abs(b_estrella(3, 3) - 1) < 1e-6          # cadena: N = d  ->  b* = 1
+    assert abs(b_estrella(14, 3) - 2) < 1e-6         # 1 + 2 + 4 + 8 = 15 = N + 1
+    assert b_estrella(10, 0) is None
+
+
 if __name__ == "__main__":
     pruebas = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for t in pruebas:

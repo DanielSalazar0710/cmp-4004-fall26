@@ -4,7 +4,7 @@
 **Consigna:** [`referencias/hw1/hw-1-search.md`](referencias/hw1/hw-1-search.md) · **Rúbrica en checklist:** [`RUBRICA.md`](RUBRICA.md)
 **Entrega:** lunes de la semana 7 (15 % de la nota). Las fechas internas están al final.
 
-Léanlo completo antes de empezar. La base ya está hecha y probada: el motor de búsqueda, los dos bancos de instancias, el benchmark y las pruebas. Cada uno completa **solo sus archivos**, porque así nadie pisa el trabajo de otro y los CSV encajan entre sí.
+Léanlo completo antes de empezar. Ya dejé hecha y probada la base: el motor de búsqueda, los dos bancos de instancias, el benchmark y las pruebas. Cada uno completa **solo sus archivos**, porque así nadie pisa el trabajo de otro y los CSV encajan entre sí.
 
 ---
 
@@ -81,7 +81,7 @@ Si usan ChatGPT, Claude, Copilot o cualquier otra IA, agreguen una entrada en `A
 
 ## 1. Daniel Salazar — base, análisis 1 y 4, brazo con herramienta, integración
 
-Ya hecho (base, con Claude Code): `code/motor.py`, `code/dominios.py`, `code/benchmark.py`, `code/estadistica.py`, `code/rutas.py` y `code/tests/test_group.py`.
+Ya hecho (base): `code/motor.py`, `code/dominios.py`, `code/benchmark.py`, `code/estadistica.py`, `code/rutas.py` y `code/tests/test_group.py`.
 
 Pendiente:
 - `code/analisis_optimalidad.py`
@@ -90,7 +90,7 @@ Pendiente:
 - `code/herramienta.py`: brazo con herramienta (JSON → nuestro A* → respuesta), validado con el validador de Jalil.
 - Corrida oficial de `benchmark.py` (timeout 30 s) cuando las heurísticas de Andretty estén integradas.
 - `REPORT.md`: scorecard de 3 columnas, integración de secciones y límite de 2 000 palabras.
-- Al final, con Claude: el notebook de presentación y completar lo que haya quedado pendiente.
+- Al final: el notebook de presentación y completar lo que haya quedado pendiente.
 
 ---
 
@@ -186,6 +186,7 @@ python code\tests\test_validador.py       # debe decir 7/7 pasan
 - Corre las 80 instancias (40 + 40) con temperatura 0 y semilla 0. Escribe `results/llm_respuestas.csv` con las columnas del docstring de `duelo_llm.py`, y agrega cada llamada a `results/llm_calls.jsonl` con la marca `cached`.
 - Empieza con `--por-nivel 2` para probar. La corrida completa con el modelo 3b en CPU puede tardar bastante; déjala corriendo.
 - **No reintentes ni corrijas a mano** una respuesta mala: se clasifica tal como salió.
+- Crea el cliente con `timeout=300`. En mis pruebas, una grilla de 16×16 superó los 120 s del harness porque el modelo se quedó generando sin parar. Si `r.error` no está vacío (timeout o error 500 de Ollama), guarda la fila con `category = "llm_error"` y el error en `reason`. Los errores no se guardan en la caché: si vuelves a correr el script, solo se repiten esas llamadas y las demás salen de la caché. Reporta cuántos timeouts hubo.
 
 ### Paso 3 — Reproducibilidad
 Una instancia (sugerencia: `grid-8-00`) y **cinco llamadas idénticas**: mismo prompt, temperatura y semilla.
@@ -209,6 +210,6 @@ Prepárate para explicar por qué nunca usamos al LLM para validarse a sí mismo
 |---|---|---|
 | 1 | Heurísticas (Andretty) y validador (Jalil) con sus pruebas en verde, en su rama con PR | sábado, 22:00 |
 | 2 | CSV, figuras y texto de cada sección en el PR | domingo, 18:00 |
-| 3 | Integración, scorecard, REPORT final y notebook de presentación (Daniel y Claude) | domingo en la noche |
+| 3 | Integración, scorecard, REPORT final y notebook de presentación (Daniel) | domingo en la noche |
 
-Si algo no alcanza, **avisen apenas lo sepan**. Daniel y Claude lo completan, y en `AI_LOG.md` y el README queda registrado quién hizo qué.
+Si algo no alcanza, **avisen apenas lo sepan**. Daniel lo completa, y en `AI_LOG.md` y el README queda registrado quién hizo qué.
