@@ -58,7 +58,7 @@ Formato de `referencias/resources/ai-policy.md`. Cada integrante agrega sus prop
 
 **Qué le pedí:** revisar la parte de Andretty (PR #4) y el borrador que nos pasó Jalil, integrar lo que sirviera y dejar el deber funcionando completo en local.
 
-**Qué recibí:** la revisión de ambos aportes (pruebas, reproducción de los análisis de Andretty, problemas de compatibilidad del borrador de Jalil). Después, el merge local del PR #4, la corrección de las medianas para excluir timeouts, `validador.py` y `duelo_llm.py` reescritos sobre la lógica del borrador de Jalil y adaptados a nuestra interfaz, el prompt del 8-puzzle en inglés, la latencia real de las respuestas en caché y las corridas con Ollama.
+**Qué recibí:** la revisión de ambos aportes (pruebas, reproducción de los análisis de Andretty y los ajustes necesarios para integrar las partes). Después, el merge local del PR #4, la corrección de las medianas para excluir timeouts, `validador.py` y `duelo_llm.py` reescritos sobre la lógica del borrador de Jalil y adaptados a nuestra interfaz, el prompt del 8-puzzle en inglés, la latencia real de las respuestas en caché y las corridas con Ollama.
 
 **Sobre el borrador de Jalil:** Jalil nos contó que lo preparó con Claude. Su entrada personal en este registro queda pendiente.
 

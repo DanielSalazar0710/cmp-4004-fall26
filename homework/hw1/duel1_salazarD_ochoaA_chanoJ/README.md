@@ -17,7 +17,7 @@ Las tres partes están completas y todas las pruebas pasan: 9 de la base, 6 de h
 | LLM `qwen2.5:3b` | 0 | `results/llm_respuestas.csv` |
 | LLM + nuestro A* como herramienta | 17 | `results/herramienta_respuestas.csv` |
 
-Quién hizo qué: Andretty Ochoa las heurísticas y los análisis 2 y 3 (PR #4); Jalil Chano el borrador del validador y del brazo LLM, que integramos; Daniel Salazar la base, los análisis 1 y 4, el brazo con herramienta, la integración y el reporte. El uso de IA está en `AI_LOG.md`.
+Quién hizo qué: Andretty Ochoa las heurísticas y los análisis 2 y 3 (PR #4); Jalil Chano el diseño del validador, del brazo LLM y de la reproducibilidad; Daniel Salazar la base, los análisis 1 y 4, el brazo con herramienta, la integración y el reporte. El uso de IA está en `AI_LOG.md`.
 
 Las corridas que descartamos están en `evidencia_descartada/`, cada una con un README que explica por qué: dos procesos a la vez contra Ollama, y un error de nuestra herramienta en el 8-puzzle que ya corregimos.
 
