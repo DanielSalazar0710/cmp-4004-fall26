@@ -164,6 +164,11 @@ def inflado_x3():
     return resultado
 
 
+COLORES = {"BFS": "#1f77b4", "DFS": "#9467bd", "UCS": "#e377c2", "IDS": "#8c564b",
+           "A*-misplaced": "#2ca02c", "A*-manhattan": "#d62728",
+           "A*-manhattan_x3": "#ff7f0e"}
+
+
 def figuras():
     """Genera las tres figuras requeridas para el análisis de la Parte 1."""
 
@@ -210,12 +215,13 @@ def figuras():
                 yerr=[error_inferior, error_superior],
                 marker="o",
                 capsize=4,
-                label=config
+                label=config,
+                color=COLORES.get(config)   # mismo color por config en ambos paneles
             )
 
             for f in datos:
                 ax.annotate(
-                    f"n={f['n']}",
+                    f"n={f['solved']}",      # la mediana usa solo corridas resueltas
                     (f["level"], f["expansions_med"]),
                     xytext=(0, 5),
                     textcoords="offset points",

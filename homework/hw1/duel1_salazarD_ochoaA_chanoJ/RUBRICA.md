@@ -13,37 +13,37 @@ Construida desde la tabla de calificación de la consigna, `resources/duel-score
 | Sección de honestidad | 10 % | "Where we may have been unfair" con fallas reales de nuestro experimento | todos |
 
 ## Parte 1 — clásico (40 %)
-- [ ] Por algoritmo y dominio: costo, longitud, expansiones, frontera máxima y tiempo (`results/parte1_mediciones.csv`)
-- [ ] 4 niveles por dominio, 10 instancias por nivel, medianas e IQR (`results/resumen_parte1.csv`)
-- [ ] Timeout duro declarado (30 s) y timeouts reportados como timeouts
-- [ ] Análisis 1: UCS = A* admisible en costo, y la instancia donde BFS es subóptimo (`results/optimalidad.csv`, `results/bfs_suboptimo.md`)
-- [ ] Análisis 2: dominancia de Manhattan sobre misplaced en **cada** instancia (`results/dominancia.csv`, `fig/dominancia.png`)
-- [ ] Análisis 3: h×3 con speedup **y** pérdida de calidad (`results/inflado_x3.csv`, `fig/inflado_x3.png`)
-- [ ] Análisis 4: b* de A* por heurística (`results/branching.csv`, `fig/branching.png`)
+- [x] Por algoritmo y dominio: costo, longitud, expansiones, frontera máxima y tiempo (`results/parte1_mediciones.csv`)
+- [x] 4 niveles por dominio, 10 instancias por nivel, medianas e IQR (`results/resumen_parte1.csv`)
+- [x] Timeout duro declarado (30 s) y timeouts reportados como timeouts
+- [x] Análisis 1: UCS = A* admisible en costo, y la instancia donde BFS es subóptimo (`results/optimalidad.csv`, `results/bfs_suboptimo.md`)
+- [x] Análisis 2: dominancia de Manhattan sobre misplaced en **cada** instancia (`results/dominancia.csv`, `fig/dominancia.png`)
+- [x] Análisis 3: h×3 con speedup **y** pérdida de calidad (`results/inflado_x3.csv`, `fig/inflado_x3.png`)
+- [x] Análisis 4: b* de A* por heurística (`results/branching.csv`, `fig/branching.png`)
 
 ## Parte 2 — duelo (40 %)
-- [ ] Validador propio: legalidad (contiguo, dentro, sin paredes), costo aritmético y optimalidad contra A*
-- [ ] Tres fallas contadas por separado: illegal, suboptimal y wrong_cost (además, malformed como modo de falla)
-- [ ] Reproducibilidad: 1 instancia, 5 llamadas idénticas **sin caché**, conteo de respuestas distintas
-- [ ] Gráfico de escalado: tasa de óptimos contra tamaño, 4 tamaños y los 3 sistemas (`fig/escalado_optimalidad.png`)
-- [ ] Brazo con herramienta medido como tercer sistema (`results/herramienta_respuestas.csv`)
-- [ ] `.llm_cache/` versionado
+- [x] Validador propio: legalidad (contiguo, dentro, sin paredes), costo aritmético y optimalidad contra A*
+- [x] Tres fallas contadas por separado: illegal, suboptimal y wrong_cost (además, malformed como modo de falla)
+- [x] Reproducibilidad: 1 instancia, 5 llamadas idénticas **sin caché**, conteo de respuestas distintas
+- [x] Gráfico de escalado: tasa de óptimos contra tamaño, 4 tamaños y los 3 sistemas (`fig/escalado_optimalidad.png`)
+- [x] Brazo con herramienta medido como tercer sistema (`results/herramienta_respuestas.csv`)
+- [x] `.llm_cache/` versionado
 
 ## Parte 3 — REPORT.md (20 %)
-- [ ] 2 000 palabras como máximo (contarlas antes de entregar)
-- [ ] Scorecard con 8 ejes × 3 columnas y una columna de evidencia que apunte a archivos
-- [ ] Al menos 3 figuras, cada una con una leyenda que diga qué concluir
-- [ ] "Where we may have been unfair": ¿heurística ajustada contra prompt sin ajustar? ¿distribución de instancias favorable a un lado? ¿contamos nuestro tiempo de desarrollo? ¿modelo de 3B en CPU? ¿grillas sin paredes? ¿latencia medida en laptops distintas?
-- [ ] Lo que la evidencia **no** permite afirmar (por ejemplo, nada sobre tamaños mayores a 16)
-- [ ] `AI_LOG.md` completo y reflexivo, con entradas de los tres
+- [x] 2 000 palabras como máximo (contarlas antes de entregar)
+- [x] Scorecard con 8 ejes × 3 columnas y una columna de evidencia que apunte a archivos
+- [x] Al menos 3 figuras, cada una con una leyenda que diga qué concluir
+- [x] "Where we may have been unfair": ¿heurística ajustada contra prompt sin ajustar? ¿distribución de instancias favorable a un lado? ¿contamos nuestro tiempo de desarrollo? ¿modelo de 3B en CPU? ¿grillas sin paredes? ¿latencia medida en laptops distintas?
+- [x] Lo que la evidencia **no** permite afirmar (por ejemplo, nada sobre tamaños mayores a 16)
+- [ ] `AI_LOG.md` completo y reflexivo, con entradas de los tres (falta la de Jalil y el "¿lo entendí?" de Daniel)
 
 ## Formas de perder puntos (de la consigna)
-- [ ] Ninguna medición de una sola instancia
-- [ ] Nunca solo promedios: siempre con varianza
-- [ ] Más de un tamaño, para poder hablar de escalado
-- [ ] El LLM nunca valida al LLM
-- [ ] BFS "óptimo" solo con la condición de costos uniformes
-- [ ] La honestidad no dice "fuimos justos"
+- [x] Ninguna medición de una sola instancia
+- [x] Nunca solo promedios: siempre con varianza
+- [x] Más de un tamaño, para poder hablar de escalado
+- [x] El LLM nunca valida al LLM
+- [x] BFS "óptimo" solo con la condición de costos uniformes
+- [x] La honestidad no dice "fuimos justos"
 
 ## Scorecard: cómo se puntúa cada eje (0–4)
 Para llegar a 4 en un eje necesitamos medir en varias instancias **y** varios tamaños, con varianza y una limitación declarada. Llevamos todos los ejes a ese nivel cuando se pueda:

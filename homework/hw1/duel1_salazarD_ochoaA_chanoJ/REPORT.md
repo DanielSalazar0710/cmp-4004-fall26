@@ -10,7 +10,7 @@ Comparamos tres sistemas sobre las mismas 80 instancias: los algoritmos clásico
 
 - **8-puzzle:** banco del curso (week 3), 10 instancias por profundidad óptima 4, 8, 12 y 16.
 - **Grilla con terrenos:** banco del curso (week 4), 10 grillas de 5×5, 8×8, 12×12 y 16×16. El costo se cobra al entrar a la celda: `.` = 1, `,` = 3 y `~` = 8. Los dos bancos usan la semilla 20260807.
-- **Motor:** el `search()` del curso con frontera máxima, tiempo de reloj y un **timeout duro de 30 s por corrida**. Un timeout se reporta como timeout, nunca como "sin solución". `test_group.py` comprueba que expandimos exactamente igual que el original.
+- **Motor:** el `search()` del curso, más frontera máxima, tiempo y un **timeout duro de 30 s por corrida** (reportado como timeout, nunca como "sin solución"). `test_group.py` comprueba que expande igual que el original.
 - **Validación del LLM:** un validador propio. El modelo nunca juzga sus propias respuestas.
 
 Reportamos medianas y rango intercuartil (IQR). La Parte 1 se midió en la laptop de Andretty (Intel) y los brazos LLM en la de Daniel (GPU RTX 5070 Ti).
@@ -34,6 +34,10 @@ Reportamos medianas y rango intercuartil (IQR). La Parte 1 se midió en la lapto
 
 UCS y A* con heurística admisible (misplaced y Manhattan) devolvieron **el mismo costo en las 80 instancias** (`results/optimalidad.csv`). BFS también fue óptimo en las 40 instancias del 8-puzzle, pero solo porque ahí todo paso cuesta 1. En la grilla, con costos no uniformes, BFS devolvió un camino más caro que el óptimo en **33 de 40 instancias**, y el sobrecosto mediano crece con el tamaño: 2 en 5×5 y 15 en 16×16.
 
+![Expansiones por nivel](fig/expansiones_vs_nivel.png)
+
+**Conclusión de la figura:** en el 8-puzzle, BFS, UCS e IDS crecen en línea recta en escala logarítmica, es decir, de forma exponencial. A*-Manhattan expande unas 100 veces menos. En la grilla, IDS se dispara: en 16×16 hizo timeout en 6 de 10.
+
 Elegimos el ejemplo de forma automática: la grilla con mayor sobrecosto relativo. En `grid-12-09`, BFS y UCS usan 11 pasos cada uno, pero el camino de BFS cuesta **32** porque cruza agua (`~`), y el de UCS cuesta **11**. Los dos caminos están dibujados en `results/bfs_suboptimo.md`. BFS minimiza pasos, no costo: su optimalidad depende de que los costos sean uniformes.
 
 ### 3.2 Dominancia de Manhattan sobre misplaced *(Andretty)*
@@ -41,6 +45,8 @@ Elegimos el ejemplo de forma automática: la grilla con mayor sobrecosto relativ
 Comparamos A*-misplaced y A*-manhattan en las 40 instancias del 8-puzzle, usando como medida principal el número de expansiones. Manhattan dominó a misplaced en las 40 instancias: en ningún caso expandió más nodos. Esto coincide con lo esperado porque ambas heurísticas son admisibles, pero Manhattan utiliza más información sobre el estado. Misplaced solo cuenta cuántas fichas están fuera de su posición, mientras Manhattan estima cuántos movimientos mínimos necesita cada ficha para llegar a su objetivo.
 
 La figura `fig/dominancia.png` muestra cada instancia con las expansiones de misplaced en el eje x y las de Manhattan en el eje y. La diagonal y=x representa igualdad. Todos los puntos quedan sobre o debajo de esa diagonal, por lo que nuestra evidencia respalda la dominancia de Manhattan en este banco. La diferencia se vuelve especialmente visible en las instancias más difíciles. Por ejemplo, en `8puzzle-16-00`, misplaced realizó 685 expansiones y Manhattan solo 169.
+
+![Dominancia](fig/dominancia.png)
 
 **Conclusión de la figura:** Manhattan nunca expandió más nodos que misplaced en las 40 instancias y su ventaja fue más evidente en los niveles difíciles.
 
@@ -61,6 +67,8 @@ También multiplicamos Manhattan por 3 para estudiar qué ocurre al usar una heu
 
 El efecto depende claramente del dominio. En grid, x3 redujo considerablemente las expansiones, llegando a un speedup mediano de 3.67× en nivel 16. En el 8-puzzle difícil ocurrió lo contrario: en nivel 16 el speedup mediano fue 0.695×, por lo que x3 expandió más nodos, y además perdió optimalidad con frecuencia. En total, 20 de las 80 instancias fueron subóptimas. El peor caso fue `8puzzle-16-07`: Manhattan encontró costo 16 con 99 expansiones, mientras x3 produjo costo 24 con 261 expansiones, una pérdida de costo del 50 %.
 
+![Inflado x3](fig/inflado_x3.png)
+
 **Conclusión de la figura:** inflar Manhattan puede acelerar considerablemente la búsqueda, especialmente en grid, pero no garantiza menos trabajo ni optimalidad; el intercambio entre velocidad y calidad depende del dominio y de la instancia.
 
 ### 3.4 Factor de ramificación efectivo b* *(Daniel)*
@@ -74,6 +82,8 @@ Resolvimos N + 1 = 1 + b* + … + (b*)^d por bisección, con N = nodos expandido
 | 16 | 1,67 | 1,37 | 1,22 |
 
 Manhattan tiene el b* más cercano a 1 en todos los niveles, de forma consistente con la dominancia de la sección 3.2. En la grilla, A*-manhattan queda entre 1,15 y 1,20 y UCS entre 1,25 y 1,36. Nuestros valores son menores que la tabla típica de las slides (~2,8 para UCS a d = 12) porque nuestro motor es búsqueda de grafo: no vuelve a expandir estados repetidos. No forzamos el número de la tabla.
+
+![b*](fig/branching.png)
 
 **Conclusión de la figura:** con mejor heurística, b* se acerca a 1, y la diferencia entre heurísticas se mantiene en todos los niveles.
 
@@ -95,11 +105,13 @@ El modelo nunca llegó a ser subóptimo ni a reportar mal el costo, porque ni si
 
 "No termina" no es un error de nuestra infraestructura. Repetimos en streaming las 15 llamadas cortadas con HTTP 500 (`results/diagnostico_500.csv`). En 7, Ollama devolvió *"token repeat limit reached"*: el modelo repetía `. . . .` sin parar. En 5 seguía generando a los 120 s, y solo 3 terminaron esta vez (el modelo no es determinista, ver 4.2). Cruzamos cada llamada sin texto con el log de Ollama (`results/auditoria_*.csv`). Solo 4 se cortaron sin haber generado ningún token; esas fueron fallas de infraestructura y se repitieron.
 
+![Escalado](fig/escalado_optimalidad.png)
+
 **Conclusión de la figura** (`fig/escalado_optimalidad.png`): A* se mantiene en 100 % en todos los tamaños y el LLM solo se queda en 0 %. Con 10 instancias por punto, la curva del LLM no puede ser peor.
 
 ### 4.2 Reproducibilidad *(Daniel, sobre el diseño de Jalil)*
 
-Hicimos 5 llamadas idénticas, sin caché (con la caché encendida, las llamadas 2 a 5 serían copias de la primera). En `grid-8-00`, la instancia fijada de antemano, el modelo entró en bucle las 5 veces. Como eso no deja caminos que comparar, repetimos la medición en `grid-5-00`, la primera grilla con respuesta. Ahí, **con temperatura 0 y la misma semilla, salieron 3 resultados distintos en 5 llamadas**, y ninguno coincide con la corrida principal. Con temperatura 0,7 y semillas 1 a 5 salieron 5 distintos de 5. A* dio el mismo camino las 5 veces.
+Hicimos 5 llamadas idénticas sin caché (con caché, las llamadas 2 a 5 serían copias de la primera). En `grid-8-00`, la instancia fijada de antemano, el modelo entró en bucle las 5 veces. Como eso no deja caminos que comparar, repetimos la medición en `grid-5-00`, la primera grilla con respuesta. Ahí, **con temperatura 0 y la misma semilla, salieron 3 resultados distintos en 5 llamadas**, y ninguno coincide con la corrida principal. Con temperatura 0,7 y semillas 1 a 5 salieron 5 distintos de 5. A* dio el mismo camino las 5 veces.
 
 ### 4.3 Brazo con herramienta *(Daniel)*
 
@@ -114,6 +126,8 @@ El modelo puede pedir nuestro A* con una línea de JSON. La herramienta resuelve
 
 Con el problema bien copiado, el resultado es casi siempre óptimo (16/19). El cuello de botella pasó a ser **transcribir la instancia**, y empeora con el tamaño: en 16×16 nunca lo logró. Es el patrón del curso: el LLM como *front-end* y el solver como dueño de la garantía.
 
+![Fallas](fig/fallas_llm.png)
+
 **Conclusión de la figura** (`fig/fallas_llm.png`): con la herramienta aparecen respuestas correctas en los tamaños pequeños. Las fallas ya no vienen de buscar, sino de copiar la instancia o de no terminar.
 
 ## 5. Where we may have been unfair *(todos; cada uno aporta al menos un punto propio)*
@@ -121,7 +135,7 @@ Con el problema bien copiado, el resultado es casi siempre óptimo (16/19). El c
 - **Heurísticas ajustadas contra prompt sin ajustar.** Usamos heurísticas conocidas y probadas (Manhattan), mientras que el modelo recibió un solo prompt por dominio, escrito una vez y nunca ajustado. Un prompt con ejemplos resueltos o con "piensa paso a paso" podría rendir distinto. No lo medimos.
 - **Un modelo pequeño.** `qwen2.5:3b` es el modelo que recomienda el curso, pero un modelo grande podría comportarse muy distinto. Nuestra evidencia no dice nada sobre él.
 - **Distribución de instancias.** Los bancos del curso son pequeños (grillas de hasta 16×16, profundidad 16 como máximo) y no tienen paredes. Favorecen a los algoritmos clásicos, que resuelven todo en milisegundos. Además, el validador revisa paredes que este banco nunca pone a prueba.
-- **Tiempo de desarrollo.** No contamos las horas que nos tomó escribir el motor, las heurísticas y el validador. Con ellas, el costo clásico sería mucho mayor que sus milisegundos.
+- **Tiempo de desarrollo.** No contamos las horas que nos tomó programar el motor, las heurísticas y el validador.
 - **Máquinas distintas.** La Parte 1 se midió en una laptop Intel y los brazos LLM en una laptop con GPU. Las latencias de un sistema y otro no son comparables entre sí en términos absolutos.
 - **Las respuestas que no terminan cuentan como falla.** Sin un tope de tokens, un bucle del modelo cuesta 300 s y se clasifica como `no_termina`. Con un tope, esas instancias seguirían fallando, pero mucho más rápido: la latencia del LLM que reportamos depende de esa decisión.
 
@@ -132,6 +146,6 @@ Con el problema bien copiado, el resultado es casi siempre óptimo (16/19). El c
 - **El modelo no "no sabe buscar".** Medimos un modelo de 3B, con un prompt por dominio y temperatura 0. 0/80 no dice nada de modelos más grandes, de otros prompts ni de grillas de 20×20.
 - **No hay una tasa precisa.** Con 10 instancias por punto, 17/80 de la herramienta tiene un margen amplio. Una o dos respuestas más o menos por nivel son ruido.
 - **La reproducibilidad no es general.** 3 resultados distintos en `grid-5-00` muestran que la temperatura 0 no garantiza la misma respuesta en nuestra máquina. No sabemos si en otra GPU pasaría igual.
-- **La latencia no es comparable entre sistemas.** El p95 de 302 s del LLM es nuestro límite de espera, no un tiempo propio del modelo. Además, en algunos tramos de la noche la GPU de la laptop bajó de velocidad.
+- **La latencia del LLM depende de nosotros.** Su p95 de 302 s es nuestro límite de espera, y en algunos tramos la GPU bajó de velocidad.
 
 **Andretty:** Nuestros resultados no permiten afirmar que Manhattan vaya a dominar a misplaced en cualquier implementación o conjunto de problemas, sino que observamos esa dominancia en las 40 instancias del 8-puzzle evaluadas. Tampoco podemos afirmar que inflar una heurística por 3 siempre mejore el rendimiento. En nuestros experimentos el efecto dependió del dominio y del nivel: x3 redujo considerablemente las expansiones en varias grillas, pero en el 8-puzzle de nivel 16 llegó a expandir más nodos y a producir soluciones subóptimas. Por tanto, estos resultados muestran el comportamiento en nuestros bancos y condiciones experimentales, no una garantía general sobre cualquier problema de búsqueda.
