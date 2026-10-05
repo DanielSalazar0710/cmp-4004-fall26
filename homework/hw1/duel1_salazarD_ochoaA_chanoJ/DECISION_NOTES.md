@@ -51,3 +51,18 @@ Para las grillas usamos distancia Manhattan multiplicada por `MIN_COST`. La dist
 En el análisis de dominancia comparamos A*-misplaced y A*-manhattan instancia por instancia en las 40 instancias del 8-puzzle. Manhattan tuvo un número de expansiones menor o igual que misplaced en las 40, sin excepciones. Esto es consistente con que Manhattan contiene más información: una ficha fuera de lugar aporta solamente 1 a misplaced, mientras Manhattan considera cuántos movimientos mínimos faltan para colocarla.
 
 También evaluamos `A*-manhattan_x3`, que multiplica Manhattan por 3. Esta modificación se hizo deliberadamente para romper la admisibilidad y observar el intercambio entre eficiencia y calidad de solución. En las 80 instancias de ambos dominios, 20 produjeron una solución subóptima. El peor caso fue `8puzzle-16-07`: A*-manhattan obtuvo costo 16 con 99 expansiones, mientras x3 obtuvo costo 24 con 261 expansiones. Por tanto, inflar la heurística no garantiza una mejora: puede reducir expansiones en muchos casos, pero también puede producir soluciones de mayor costo e incluso expandir más nodos en ciertas instancias.
+
+## Integración final del validador y del brazo LLM
+
+Jalil nos entregó un borrador de `validador.py`, `duelo_llm.py` y sus pruebas, pero no lo había corrido contra Ollama ni lo había conectado al repo. Conservamos su lógica: el recorrido paso a paso, el orden de las categorías, las banderas separadas para las tres fallas, la lectura estricta y tolerante, la UCS de respaldo para grillas con paredes y el diseño de la reproducibilidad. La adaptamos a la interfaz del grupo (`validar(dominio, instancia, camino, costo)`), a nuestros bancos y a los costos del curso (`~` = 8), y el óptimo sale de nuestro A* con Manhattan. Mantuvimos las 7 pruebas de aceptación y agregamos 2 adaptadas de las suyas.
+
+La lectura estricta acepta exactamente lo que pide el prompt del curso, `PATH: <letras sin separadores>` y `COST: <entero>`. Su borrador esperaba comas, y con eso toda respuesta de grilla habría caído en la lectura tolerante. La columna `tolerant` registra cuándo hizo falta la lectura flexible. Si falta `PATH` o `COST`, la respuesta es `malformed`.
+
+Su prompt del 8-puzzle estaba en español y pedía el camino con comas. Lo reescribimos en inglés con la misma estructura y el mismo formato de salida que el prompt del curso para la grilla, para que los dos dominios reciban instrucciones equivalentes. Ese cambio se hizo antes de ver cualquier respuesta del modelo sobre el 8-puzzle; el borrador nunca se corrió. El texto final está en `prompt_puzzle()`.
+
+Cuando una respuesta sale de la caché, `r.elapsed` vale 0. Para la latencia usamos el tiempo que la caché guardó cuando se generó la respuesta. Las 26 grillas del brazo con herramienta que se respondieron en la corrida interrumpida del 2 de octubre conservan su registro en `results/llm_calls_herramienta_corrida_parcial_2026-10-02.jsonl`.
+
+## Medianas de la Parte 1
+
+Las medianas de expansiones, frontera y tiempo se calculan solo sobre corridas resueltas. Un timeout detiene los contadores en un punto arbitrario y bajaba la mediana de IDS en 16×16. Los timeouts se cuentan en su propia columna (6, todos de IDS en grilla de 16×16).
+

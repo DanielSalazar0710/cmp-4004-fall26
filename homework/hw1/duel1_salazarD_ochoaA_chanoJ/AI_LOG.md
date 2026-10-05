@@ -50,3 +50,19 @@ Formato de `referencias/resources/ai-policy.md`. Cada integrante agrega sus prop
 **Qué hice con eso:** revisé el código antes de incorporarlo, ejecuté personalmente las pruebas de heurísticas y del grupo, corrí primero el benchmark rápido y después el benchmark completo de 520 mediciones. Verifiqué los resultados de dominancia y del experimento ×3 y regeneré los CSV y las figuras con los datos oficiales antes de usarlos en el reporte.
 
 **¿Lo entendí?** Sí. Puedo explicar por qué misplaced y Manhattan excluyen el espacio vacío, por qué Manhattan es admisible, por qué Manhattan domina informativamente a misplaced, por qué multiplicar la heurística por 3 rompe la garantía de admisibilidad y cómo interpretar los speedups y la pérdida de calidad observada.
+
+## Integración final: PR de Andretty, validador y brazo LLM
+
+**Quién:** Daniel Salazar.
+**Herramienta:** Claude Code (Anthropic), 4 de octubre de 2026.
+
+**Qué le pedí:** revisar la parte de Andretty (PR #4) y el borrador que nos pasó Jalil, integrar lo que sirviera y dejar el deber funcionando completo en local.
+
+**Qué recibí:** la revisión de ambos aportes (pruebas, reproducción de los análisis de Andretty, problemas de compatibilidad del borrador de Jalil). Después, el merge local del PR #4, la corrección de las medianas para excluir timeouts, `validador.py` y `duelo_llm.py` reescritos sobre la lógica del borrador de Jalil y adaptados a nuestra interfaz, el prompt del 8-puzzle en inglés, la latencia real de las respuestas en caché y las corridas con Ollama.
+
+**Sobre el borrador de Jalil:** Jalil nos contó que lo preparó con Claude. Su entrada personal en este registro queda pendiente.
+
+**Qué hice con eso:** pendiente de mi revisión con los resultados finales.
+
+**¿Lo entendí?** Pendiente. Debo poder explicar por qué un validador propio y no el modelo, la diferencia entre `suboptimal` y `wrong_cost`, y por qué la reproducibilidad se mide sin caché.
+
