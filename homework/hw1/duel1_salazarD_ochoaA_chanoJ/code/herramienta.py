@@ -41,7 +41,7 @@ import validador  # noqa: E402
 from aicourse import LLM  # noqa: E402
 from estadistica import escribir_csv  # noqa: E402
 from gridworld import TERRAIN  # noqa: E402
-from duelo_llm import latencia  # noqa: E402
+from duelo_llm import latencia, veredicto_error  # noqa: E402
 
 MODELO = "qwen2.5:3b"
 MAX_RONDAS = 2           # llamadas a la herramienta permitidas por instancia
@@ -188,7 +188,7 @@ def resolver_instancia(llm, id_inst, dominio, nivel, instancia, log):
                   "COST: <integer>\n")
 
     if r.error:                          # el modelo no respondió: no hay nada que validar
-        v = validador.Veredicto("llm_error", r.error, None, None, None, None)
+        v = veredicto_error(r.error)
     else:
         v = validador.validar_texto(dominio, instancia, texto)
     return {"instance": id_inst, "domain": dominio, "level": nivel, "system": "tool",

@@ -39,7 +39,7 @@ from estadistica import agrupar, escribir_csv, leer_csv  # noqa: E402
 
 MODELO = "qwen2.5:3b"
 TIMEOUT_LLM_S = 300      # el harness trae 120 s; una grilla de 16×16 a veces no alcanza
-CATS = ["correct", "wrong_cost", "suboptimal", "illegal", "malformed", "llm_error"]
+CATS = ["correct", "wrong_cost", "suboptimal", "illegal", "malformed", "no_termina", "llm_error"]
 COLUMNAS = ["instance", "domain", "level", "system", "model", "temperature", "seed",
             "cached", "seconds", "tokens_in", "tokens_out", "category", "reason", "path",
             "reported_cost", "checker_cost", "optimal_cost", "suboptimal",
@@ -100,10 +100,24 @@ def _log(registro):
         f.write(json.dumps(registro, ensure_ascii=False) + "\n")
 
 
+def veredicto_error(error):
+    """Clasifica una llamada que no devolvió texto.
+
+    no_termina: el modelo entró en un bucle y no terminó su respuesta. Ollama
+        corta la generación y responde HTTP 500, o pasamos los TIMEOUT_LLM_S
+        segundos. Es una falla del MODELO (eje 8 del scorecard: "times out"):
+        se reporta y NO se reintenta. Con temperatura 0 se repite igual.
+    llm_error:  falla de infraestructura (Ollama apagado, conexión rechazada).
+        No es una respuesta del modelo; esas llamadas se vuelven a correr."""
+    if "HTTP Error 500" in error or "timed out" in error.lower():
+        return validador.Veredicto("no_termina", error, None, None, None, None)
+    return validador.Veredicto("llm_error", error, None, None, None, None)
+
+
 def fila_de(id_inst, dominio, nivel, instancia, r, segundos, system="llm"):
     """Valida una respuesta del modelo y arma la fila del CSV."""
     if r.error:
-        v = validador.Veredicto("llm_error", r.error, None, None, None, None)
+        v = veredicto_error(r.error)
     else:
         v = validador.validar_texto(dominio, instancia, r.text)
     return {"instance": id_inst, "domain": dominio, "level": nivel, "system": system,
@@ -163,8 +177,8 @@ def reproducibilidad(id_inst="grid-8-00", n=5):
                 {"prompt": prompt, "modo": modo, "temperature": temp, "seed": semilla,
                  "text": r.text, "error": r.error, "meta": r.meta, "elapsed": r.elapsed,
                  "cached": r.cached}, ensure_ascii=False, indent=2), encoding="utf-8")
-            v = (validador.Veredicto("llm_error", r.error, None, None, None, None)
-                 if r.error else validador.validar_texto(dominio, inst, r.text))
+            v = (veredicto_error(r.error) if r.error
+                 else validador.validar_texto(dominio, inst, r.text))
             grupo.append({"instance": id_inst, "modo": modo, "llamada": k,
                           "temperature": temp, "seed": semilla, "cached": r.cached,
                           "sha_texto": hashlib.sha256(r.text.encode()).hexdigest()[:12],
@@ -199,6 +213,7 @@ def tabla_fallas():
                     "suboptimal": sum(_si(f["suboptimal"]) for f in g),
                     "wrong_cost": sum(_si(f["wrong_cost"]) for f in g),
                     "malformed": sum(f["category"] == "malformed" for f in g),
+                    "no_termina": sum(f["category"] == "no_termina" for f in g),
                     "llm_error": sum(f["category"] == "llm_error" for f in g),
                     "correct": sum(f["category"] == "correct" for f in g),
                     "tolerant": sum(_si(f["tolerant"]) for f in g)})
