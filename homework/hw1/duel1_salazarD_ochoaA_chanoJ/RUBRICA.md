@@ -35,7 +35,7 @@ Construida desde la tabla de calificación de la consigna, `resources/duel-score
 - [x] Al menos 3 figuras, cada una con una leyenda que diga qué concluir
 - [x] "Where we may have been unfair": ¿heurística ajustada contra prompt sin ajustar? ¿distribución de instancias favorable a un lado? ¿contamos nuestro tiempo de desarrollo? ¿modelo de 3B en CPU? ¿grillas sin paredes? ¿latencia medida en laptops distintas?
 - [x] Lo que la evidencia **no** permite afirmar (por ejemplo, nada sobre tamaños mayores a 16)
-- [x] `AI_LOG.md` completo y reflexivo, con entradas de los tres (falta el "¿lo entendí?" de Jalil, con sus palabras)
+- [x] `AI_LOG.md` completo y reflexivo, con entradas de los tres
 
 ## Formas de perder puntos (de la consigna)
 - [x] Ninguna medición de una sola instancia
