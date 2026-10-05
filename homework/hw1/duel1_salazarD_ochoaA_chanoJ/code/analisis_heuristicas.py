@@ -17,6 +17,8 @@ Uso:  python code/analisis_heuristicas.py
 """
 from rutas import FIG, RESULTS, preparar_rutas
 from estadistica import escribir_csv, leer_csv, mediana_iqr, agrupar
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 preparar_rutas()
@@ -44,9 +46,11 @@ def resumen_parte1():
             "timeouts": sum(1 for f in grupo if f["status"] == "timeout"),
         }
 
+        # Solo corridas resueltas: un timeout corta el conteo en un punto
+        # arbitrario y bajaría la mediana. Los timeouts se cuentan aparte.
         for campo in ("expansions", "max_frontier", "seconds"):
             mediana, q1, q3, _ = mediana_iqr(
-                [f[campo] for f in grupo]
+                [f[campo] for f in resueltas]
             )
 
             fila_resumen[f"{campo}_med"] = mediana
