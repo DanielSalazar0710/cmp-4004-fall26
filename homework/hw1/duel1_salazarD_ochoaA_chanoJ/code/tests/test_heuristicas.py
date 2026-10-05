@@ -65,6 +65,15 @@ def test_inflar():
     assert set(H.registro()["8puzzle"]) == {"misplaced", "manhattan", "manhattan_x3"}
 
 
+def test_admisibles_y_consistentes_en_los_181440_estados():
+    # Garantía completa: BFS desde la meta da h* de cada estado alcanzable.
+    from admisibilidad_exhaustiva import comprobar
+    for f in comprobar():
+        assert f["estados"] == 181440
+        assert f["sobreestima"] == 0 and f["inconsistente"] == 0, f
+        assert f["manhattan_no_domina"] == 0, f
+
+
 if __name__ == "__main__":
     pruebas = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     fallas = 0

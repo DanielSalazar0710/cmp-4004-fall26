@@ -8,7 +8,7 @@ Comparación de BFS, DFS, UCS, IDS y A* entre sí, contra un LLM (`qwen2.5:3b` e
 
 ## Estado y resultados principales
 
-Las tres partes están completas y todas las pruebas pasan: 9 de la base, 6 de heurísticas y 9 del validador.
+Las tres partes están completas y todas las pruebas pasan: 9 de la base, 7 de heurísticas (incluida la comprobación en los 181 440 estados del 8-puzzle) y 9 del validador.
 
 | Sistema | Correctas (de 80) | Evidencia |
 |---|---|---|
@@ -59,6 +59,7 @@ code/
   validador.py          (Jalil)     duelo_llm.py          (Jalil)
   analisis_optimalidad.py (Daniel)  herramienta.py        (Daniel)
   auditoria_ollama.py, diagnostico_500.py, restaurar_primer_intento.py   auditoría de llamadas sin texto
+  admisibilidad_exhaustiva.py   garantía de las heurísticas en los 181 440 estados
   scorecard.py, construir_notebook.py   números del scorecard y notebook
   tests/                pruebas de la base y de aceptación de cada parte
   curso/week03, week04  archivos del profe, intactos
