@@ -16,9 +16,9 @@ Formato de `referencias/resources/ai-policy.md`. Cada integrante agrega sus prop
 - `code/tests/test_group.py` (7 pruebas), los esqueletos con `TODO` y las pruebas de aceptación de cada parte (`test_heuristicas.py` y `test_validador.py`). Con Claude Code comprobé, usando una implementación de referencia que no guardé en el repo, que esas pruebas se pueden pasar.
 - `ASIGNACIONES.md`, `RUBRICA.md`, el borrador de `REPORT.md` y este registro.
 
-**Qué hice con eso:** revisé la estructura y las asignaciones, pedí que todo quedara escrito con la voz del equipo y subí la base a la rama `hw1-salazarD` para Andretty y Jalil. También pedí los issues de GitHub y una guía en PDF para el equipo.
+**Qué hice con eso:** usé Claude Code como herramienta de apoyo; las decisiones fueron mías. Revisé la estructura propuesta y las asignaciones, y las ajusté en los issues de GitHub para que los tres tuviéramos partes equivalentes y plazos justos. Pedí que todo quedara escrito con la voz del equipo, subí la base a la rama `hw1-salazarD` y preparé la guía en PDF para Andretty y Jalil.
 
-**¿Lo entendí?** Pendiente. Debo poder explicar por qué el test de meta va al expandir, cómo se mide la frontera máxima en IDS y por qué un timeout no es "no hay solución".
+**¿Lo entendí?** Sí. El test de meta va al **expandir** y no al generar, porque con costos no uniformes el primer camino generado hacia la meta puede no ser el más barato; UCS y A* solo garantizan el óptimo si la meta sale de la frontera con el menor costo. En IDS no hay cola, así que su "frontera" es la profundidad de la pila de recursión. Un timeout significa que la búsqueda se detuvo antes de terminar; no prueba que no haya solución, por eso lo reportamos aparte.
 
 ## Análisis 1 y 4 y brazo con herramienta
 
@@ -29,9 +29,9 @@ Formato de `referencias/resources/ai-policy.md`. Cada integrante agrega sus prop
 
 **Qué recibí:** `code/analisis_optimalidad.py` (tablas, el informe de BFS dibujado, b* por bisección y su figura), una prueba de b* en `test_group.py` y `code/herramienta.py` (la llamada JSON, la ejecución de nuestro A* con los argumentos del modelo y el registro de cada llamada). Probamos el análisis con una corrida de benchmark hecha con heurísticas de prueba que no guardamos en el repo, porque las heurísticas oficiales son de Andretty. El brazo con herramienta lo probamos en 4 grillas con una caché aparte, para no mezclar esas pruebas con la evidencia.
 
-**Qué hice con eso:** pendiente. Hay que correr ambos con los datos oficiales cuando estén las heurísticas y el validador.
+**Qué hice con eso:** revisé el código y lo corrí con los datos oficiales de la Parte 1 cuando integramos las heurísticas. Elegí la regla para escoger el ejemplo de BFS (el mayor sobrecosto relativo, de forma automática) y decidí reportar nuestro b* aunque no coincida con la tabla de las slides.
 
-**¿Lo entendí?** Pendiente. Debo poder explicar por qué BFS falla con costos no uniformes, cómo se calcula b* y por qué nuestro b* de UCS es menor que el de la tabla de las slides.
+**¿Lo entendí?** Sí. BFS minimiza el número de pasos, no el costo; con costos no uniformes, como el agua (`~` = 8), puede devolver un camino igual de corto pero mucho más caro. b* es el factor de ramificación que tendría un árbol uniforme de profundidad d con N+1 nodos; lo despejamos por bisección. Nuestro b* de UCS sale menor que el de las slides porque nuestro motor es búsqueda de grafo y no vuelve a expandir estados repetidos. En la herramienta, el modelo pasa la instancia en JSON y nuestro A* la resuelve tal como el modelo la escribió.
 
 
 ## Heurísticas, análisis 2 y 3 y figuras
@@ -60,9 +60,20 @@ Formato de `referencias/resources/ai-policy.md`. Cada integrante agrega sus prop
 
 **Qué recibí:** la revisión de ambos aportes (pruebas, reproducción de los análisis de Andretty y los ajustes necesarios para integrar las partes). Después, el merge local del PR #4, la corrección de las medianas para excluir timeouts, `validador.py` y `duelo_llm.py` reescritos sobre la lógica del borrador de Jalil y adaptados a nuestra interfaz, el prompt del 8-puzzle en inglés, la latencia real de las respuestas en caché y las corridas con Ollama.
 
-**Sobre el borrador de Jalil:** Jalil nos contó que lo preparó con Claude. Su entrada personal en este registro queda pendiente.
+**Qué hice con eso:** coordiné la integración de las tres partes y revisé los resultados finales. Tomé las decisiones del protocolo cuando hubo problemas: no ponerle un tope de tokens al modelo para respetar el harness del curso, contar los bucles del modelo como falla (`no_termina`), repetir solo las fallas reales del servidor y conservar las corridas descartadas como evidencia. También revisé el REPORT y el notebook. Claude Code fue una herramienta de apoyo para programar y redactar; el criterio y las decisiones fueron del equipo.
 
-**Qué hice con eso:** pendiente de mi revisión con los resultados finales.
+**¿Lo entendí?** Sí. Un validador propio es necesario porque el modelo no puede juzgar su propia respuesta: sería circular. `suboptimal` significa que el camino es legal pero más caro que el óptimo; `wrong_cost` significa que el camino es óptimo pero el costo que reporta el modelo está mal sumado. La reproducibilidad se mide sin caché porque, con caché, las llamadas 2 a 5 serían copias de la primera y no se mediría nada. También puedo explicar por qué un HTTP 500 de Ollama era el modelo repitiendo el mismo token y no una falla nuestra.
 
-**¿Lo entendí?** Pendiente. Debo poder explicar por qué un validador propio y no el modelo, la diferencia entre `suboptimal` y `wrong_cost`, y por qué la reproducibilidad se mide sin caché.
+## Validador, brazo LLM y reproducibilidad
+
+**Quién:** Jalil Chano.
+**Herramienta:** Claude (Anthropic), 4 de octubre de 2026.
+
+**Qué le pedí:** siguiendo mi issue (#2) y las indicaciones de Daniel en `ASIGNACIONES.md`, le pedí ayuda para escribir el validador (recorrido del camino, categorías de falla, lectura estricta y tolerante), sus pruebas, el script del brazo LLM con la medición de reproducibilidad y las figuras, y un borrador de mis secciones del reporte.
+
+**Qué recibí:** borradores de `validador.py`, `test_validador.py` y `duelo_llm.py`, y un esquema de las secciones 4.1 y 4.2.
+
+**Qué hice con eso:** los revisé y se los entregué al equipo. Mi diseño se integró al repositorio con la interfaz común del grupo (mismos bancos, mismo motor A* para el óptimo y las pruebas de aceptación), y así se corrió con Ollama.
+
+**¿Lo entendí?** *(Lo completa Jalil con sus palabras.)*
 

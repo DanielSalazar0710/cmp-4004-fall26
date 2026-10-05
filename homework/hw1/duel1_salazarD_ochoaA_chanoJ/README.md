@@ -5,6 +5,7 @@ Comparación de BFS, DFS, UCS, IDS y A* entre sí, contra un LLM (`qwen2.5:3b` e
 - Consigna: [`referencias/hw1/hw-1-search.md`](referencias/hw1/hw-1-search.md)
 - Quién hace qué: [`ASIGNACIONES.md`](ASIGNACIONES.md)
 - Checklist de calificación: [`RUBRICA.md`](RUBRICA.md)
+- **Presentación:** [`duel1_salazarD_ochoaA_chanoJ.ipynb`](duel1_salazarD_ochoaA_chanoJ.ipynb) (ejecutado; versión de lectura en `.html`)
 - Reporte: [`REPORT.md`](REPORT.md) · Decisiones: [`DECISION_NOTES.md`](DECISION_NOTES.md) · IA: [`AI_LOG.md`](AI_LOG.md)
 
 ## Estado y resultados principales
@@ -44,6 +45,7 @@ python code\duelo_llm.py --repro grid-8-00   # reproducibilidad (también grid-5
 python code\duelo_llm.py --figuras       # figuras y conteo de fallas
 python code\auditoria_ollama.py --por-hora   # auditoría de llamadas sin texto
 python code\scorecard.py                 # números del scorecard
+python code\construir_notebook.py        # notebook de presentación (lee results/, no llama al LLM)
 ```
 
 ## Estructura
