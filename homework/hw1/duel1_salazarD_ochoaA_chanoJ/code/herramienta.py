@@ -21,8 +21,8 @@ JSON mal formado, argumentos equivocados, o copia mal el resultado.
 Uso:
     python code/herramienta.py --dominio grid --por-nivel 2     # prueba corta
     python code/herramienta.py                                  # corrida completa
-Si validador.py todavía no está listo, la categoría queda "pending"; al volver
-a correr, las respuestas salen de la caché y solo se valida.
+Al volver a correr, las respuestas salen de la caché y solo se vuelven a validar;
+los errores del modelo (timeout, error 500) no se guardan y se reintentan.
 """
 from __future__ import annotations
 
@@ -41,6 +41,7 @@ import validador  # noqa: E402
 from aicourse import LLM  # noqa: E402
 from estadistica import escribir_csv  # noqa: E402
 from gridworld import TERRAIN  # noqa: E402
+from duelo_llm import latencia  # noqa: E402
 
 MODELO = "qwen2.5:3b"
 MAX_RONDAS = 2           # llamadas a la herramienta permitidas por instancia
@@ -61,7 +62,8 @@ EJEMPLOS = {
 
 COLUMNAS = ["instance", "domain", "level", "system", "model", "temperature", "seed",
             "cached", "seconds", "tokens_in", "tokens_out", "category", "reason", "path",
-            "reported_cost", "checker_cost", "optimal_cost", "tool_called",
+            "reported_cost", "checker_cost", "optimal_cost", "suboptimal",
+            "wrong_cost", "tolerant", "tool_called",
             "tool_json_ok", "tool_args_match", "tool_rounds", "tool_h"]
 
 
@@ -70,7 +72,7 @@ def prompt_base(dominio, instancia):
     if dominio == "grid":
         import duel                      # curso/week04, prompt exacto del plan
         return duel.prompt_for(instancia)
-    import duelo_llm                     # prompt del 8-puzzle, escrito por Jalil
+    import duelo_llm                     # prompt del 8-puzzle del brazo puro
     return duelo_llm.prompt_puzzle(instancia)
 
 
@@ -158,7 +160,7 @@ def resolver_instancia(llm, id_inst, dominio, nivel, instancia, log):
                    "model": r.model, "temperature": r.temperature, "seed": r.seed,
                    "cached": r.cached, "elapsed": r.elapsed, "error": r.error,
                    "meta": r.meta, "prompt": prompt, "text": r.text})
-        seg += r.elapsed
+        seg += latencia(llm, prompt, r)     # tiempo real, aunque venga de la caché
         tok_in += r.meta.get("prompt_eval_count", 0) or 0
         tok_out += r.meta.get("eval_count", 0) or 0
         todas_cacheadas = todas_cacheadas and r.cached
@@ -185,29 +187,19 @@ def resolver_instancia(llm, id_inst, dominio, nivel, instancia, log):
                   "Now give your final answer as two lines:\nPATH: <letters, no separators>\n"
                   "COST: <integer>\n")
 
-    camino, costo = validador_seguro_extraer(texto)
     if r.error:                          # el modelo no respondió: no hay nada que validar
-        cat, motivo, chk, opt = "llm_error", r.error, None, None
+        v = validador.Veredicto("llm_error", r.error, None, None, None, None)
     else:
-        try:
-            v = validador.validar(dominio, instancia, camino, costo)
-            cat, motivo, chk, opt = v.category, v.reason, v.checker_cost, v.optimal_cost
-        except NotImplementedError:
-            cat, motivo, chk, opt = "pending", "validador.py aún no implementado", None, None
+        v = validador.validar_texto(dominio, instancia, texto)
     return {"instance": id_inst, "domain": dominio, "level": nivel, "system": "tool",
             "model": llm.model, "temperature": llm.temperature, "seed": llm.seed,
             "cached": todas_cacheadas, "seconds": round(seg, 3), "tokens_in": tok_in,
-            "tokens_out": tok_out, "category": cat, "reason": motivo, "path": camino,
-            "reported_cost": costo, "checker_cost": chk, "optimal_cost": opt,
+            "tokens_out": tok_out, "category": v.category, "reason": v.reason, "path": v.path,
+            "reported_cost": v.reported_cost, "checker_cost": v.checker_cost,
+            "optimal_cost": v.optimal_cost, "suboptimal": v.suboptimal,
+            "wrong_cost": v.wrong_cost, "tolerant": v.tolerant,
             "tool_called": llamo, "tool_json_ok": json_ok, "tool_args_match": args_ok,
             "tool_rounds": rondas, "tool_h": _heuristica(dominio)[1]}
-
-
-def validador_seguro_extraer(texto):
-    try:
-        return validador.extraer_respuesta(texto)
-    except NotImplementedError:
-        return None, None
 
 
 def correr_brazo_herramienta(doms=("8puzzle", "grid"), por_nivel=None, salida=None):

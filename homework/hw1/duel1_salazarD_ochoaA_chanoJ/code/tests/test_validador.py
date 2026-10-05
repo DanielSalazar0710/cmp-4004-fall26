@@ -72,6 +72,21 @@ def test_puzzle():
     assert V.validar("8puzzle", s, "D", 1).category == "illegal"     # sale del tablero
 
 
+# ---- adaptadas del borrador de Jalil ----------------------------------------------
+
+def test_lectura_estricta_y_tolerante():
+    assert V.extraer_detallado("PATH: DDRR\nCOST: 4") == ("DDRR", 4, False)
+    assert V.extraer_detallado("PATH: D, D, R, R\nCOST: 4") == ("DDRR", 4, True)
+    assert V.extraer_detallado("**PATH:** d -> r\ncost = 4") == ("DR", 4, True)
+    assert V.extraer_respuesta("PATH: DDRR") == (None, None)          # falta COST
+
+
+def test_suboptimo_y_costo_mal_a_la_vez():
+    camino, costo = _optimo_grid(GRID)
+    v = V.validar("grid", GRID, "LR" + camino, costo)                  # cuesta más y dice el óptimo
+    assert v.category == "suboptimal" and v.suboptimal and v.wrong_cost
+
+
 if __name__ == "__main__":
     pruebas = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     fallas = 0
