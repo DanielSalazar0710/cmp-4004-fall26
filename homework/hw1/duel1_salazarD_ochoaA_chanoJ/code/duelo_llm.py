@@ -228,6 +228,35 @@ def reproducibilidad(id_inst="grid-8-00", n=5):
     return filas
 
 
+def reintentar_repro(id_inst, semilla):
+    """Vuelve a hacer UNA llamada del complemento (temperatura 0.7) que la
+    auditoría marcó como falla de infraestructura, y reemplaza su fila."""
+    dominio, _, inst = dominios.buscar(id_inst)
+    llm = nuevo_llm()
+    prompt = prompt_de(dominio, inst)
+    r = llamar(llm, prompt, temperature=0.7, seed=semilla, use_cache=False)
+    (CACHE / "repro" / f"{id_inst}_t07_semilla_{semilla}.json").write_text(json.dumps(
+        {"prompt": prompt, "modo": "t0.7_semillas_1a5", "temperature": 0.7, "seed": semilla,
+         "text": r.text, "error": r.error, "meta": r.meta, "elapsed": r.elapsed,
+         "cached": r.cached, "reintento_por_infraestructura": True},
+        ensure_ascii=False, indent=2), encoding="utf-8")
+    v = veredicto_error(r.error) if r.error else validador.validar_texto(dominio, inst, r.text)
+    ruta = RESULTS / f"llm_reproducibilidad_{id_inst}.csv"
+    filas = leer_csv(ruta)
+    for f in filas:
+        if f["modo"] == "t0.7_semillas_1a5" and f["seed"] == semilla:
+            f.update(cached=r.cached, sha_texto=hashlib.sha256(r.text.encode()).hexdigest()[:12],
+                     path=v.path, reported_cost=v.reported_cost, category=v.category,
+                     seconds=round(r.elapsed, 3))
+    grupo = [f for f in filas if f["modo"] == "t0.7_semillas_1a5"]
+    textos = len({f["sha_texto"] for f in grupo})
+    resp = len({(f["path"], f["reported_cost"]) for f in grupo})
+    for f in grupo:
+        f.update(textos_distintos=textos, respuestas_distintas=resp)
+    escribir_csv(ruta, filas)
+    print(f"reintento semilla {semilla}: {v.category}", file=sys.stderr)
+
+
 # ---- tabla y figuras ---------------------------------------------------------------------
 
 def _si(x):
@@ -334,9 +363,13 @@ def main(argv=None):
     ap.add_argument("--por-nivel", type=int)
     ap.add_argument("--repro", nargs="?", const="grid-8-00", metavar="ID")
     ap.add_argument("--figuras", action="store_true")
+    ap.add_argument("--reintentar-repro", metavar="ID:SEMILLA")
     ap.add_argument("--solo", help="ids separados por coma (reintento de fallas de infraestructura)")
     a = ap.parse_args(argv)
-    if a.figuras:
+    if a.reintentar_repro:
+        id_, sem = a.reintentar_repro.split(":")
+        reintentar_repro(id_, int(sem))
+    elif a.figuras:
         tabla_fallas()
         figuras()
     elif a.repro:

@@ -89,12 +89,74 @@ def auditar(system, desde, hasta, log=LOG):
     return filas
 
 
+# ---- llamadas con hora registrada (desde el 5 de octubre) ---------------------------
+
+def _hora_log(iso):
+    """'2026-10-05T00:52:01' -> '2026/10/05 - 00:52:01' (formato del log de Ollama)."""
+    fecha, hora = iso.split("T")
+    return fecha.replace("-", "/") + " - " + hora
+
+
+def _a_segundos(hora_log):
+    from datetime import datetime
+    return datetime.strptime(hora_log, "%Y/%m/%d - %H:%M:%S").timestamp()
+
+
+def entradas_con_hora():
+    """Errores con t_fin: registro de llamadas (reintentos y herramienta) y
+    transcripciones de reproducibilidad."""
+    out = []
+    for l in (RESULTS / "llm_calls.jsonl").read_text(encoding="utf-8").splitlines():
+        e = json.loads(l) if l.strip() else {}
+        if e.get("error") and (e.get("meta") or {}).get("t_fin"):
+            out.append({"origen": e["system"], "instance": e["instance"],
+                        "detalle": f"ronda {e.get('round', 0)}", "error": e["error"],
+                        "t_fin": e["meta"]["t_fin"]})
+    from rutas import CACHE
+    for f in sorted((CACHE / "repro").glob("*.json")):
+        e = json.loads(f.read_text(encoding="utf-8"))
+        if e.get("error") and (e.get("meta") or {}).get("t_fin"):
+            out.append({"origen": "repro", "instance": f.stem, "detalle": e["modo"],
+                        "error": e["error"], "t_fin": e["meta"]["t_fin"]})
+    return out
+
+
+def auditar_por_hora(log=LOG, tolerancia_s=5):
+    entradas = entradas_con_hora()
+    if not entradas:
+        return []
+    horas = sorted(_hora_log(e["t_fin"]) for e in entradas)
+    cs = cortes(log, horas[0][:13] + "00:00", horas[-1])
+    filas = []
+    for e in entradas:
+        t = _a_segundos(_hora_log(e["t_fin"]))
+        cerca = [c for c in cs if abs(_a_segundos(c[0]) - t) <= tolerancia_s]
+        if not cerca:
+            filas.append({**e, "duracion_s": None, "tokens_generados": None,
+                          "tokens_por_s": None, "veredicto": "sin_corte_en_log"})
+            continue
+        hora, dur, ngen, tps, _ = min(cerca, key=lambda c: abs(_a_segundos(c[0]) - t))
+        bucle = ngen >= UMBRAL_TOKENS and dur > CORTE_INSTANTANEO_S
+        filas.append({**e, "duracion_s": round(dur, 1), "tokens_generados": ngen,
+                      "tokens_por_s": tps,
+                      "veredicto": "bucle_del_modelo" if bucle else "infraestructura"})
+    escribir_csv(RESULTS / "auditoria_por_hora.csv", filas)
+    return filas
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--system", default="llm", choices=("llm", "tool"))
-    ap.add_argument("--desde", required=True, help='"AAAA/MM/DD - HH:MM:SS" (hora del log)')
-    ap.add_argument("--hasta", required=True)
+    ap.add_argument("--desde", help='"AAAA/MM/DD - HH:MM:SS" (hora del log)')
+    ap.add_argument("--hasta")
+    ap.add_argument("--por-hora", action="store_true",
+                    help="auditar las llamadas con hora registrada (reintentos, repro, herramienta)")
     a = ap.parse_args(argv)
+    if a.por_hora:
+        filas = auditar_por_hora()
+        for f in filas:
+            print(f["origen"], f["instance"], f["detalle"], f["tokens_generados"], f["veredicto"])
+        return
     filas = auditar(a.system, a.desde, a.hasta)
     infra = sorted({f["instance"] for f in filas if f["veredicto"] == "infraestructura"})
     print(f"{len(filas)} errores: {len(filas) - len(infra)} bucles del modelo, "
