@@ -245,13 +245,41 @@ def correr_brazo_herramienta(doms=("8puzzle", "grid"), por_nivel=None, salida=No
     return filas
 
 
+def reproducibilidad_herramienta(id_inst="grid-5-00", n=5):
+    """Eje 5 para el brazo con herramienta: n corridas IDÉNTICAS de la misma
+    instancia (temperatura 0, semilla 0). Cada corrida usa una caché vacía propia
+    para que ninguna respuesta salga de la caché; esas cachés se guardan como
+    transcripciones en .llm_cache/repro_herramienta/."""
+    import hashlib
+    dominio, nivel, inst = dominios.buscar(id_inst)
+    filas = []
+    for k in range(1, n + 1):
+        carpeta = CACHE / "repro_herramienta" / f"{id_inst}_llamada_{k}"
+        llm = LLM(backend="ollama", model=MODELO, cache_dir=str(carpeta), timeout=TIMEOUT_LLM_S)
+        f = resolver_instancia(llm, id_inst, dominio, nivel, inst, RESULTS / "llm_calls.jsonl")
+        assert not f["cached"], "salió de la caché: la medición no vale"
+        filas.append({"instance": id_inst, "llamada": k, "category": f["category"],
+                      "path": f["path"], "reported_cost": f["reported_cost"],
+                      "tool_called": f["tool_called"], "tool_args_match": f["tool_args_match"],
+                      "seconds": f["seconds"]})
+        print(f"  #{k}: {f['category']} {f['path']} {f['reported_cost']}", file=sys.stderr)
+    distintas = len({(f["path"], f["reported_cost"]) for f in filas})
+    for f in filas:
+        f["respuestas_distintas"] = distintas
+    escribir_csv(RESULTS / f"herramienta_reproducibilidad_{id_inst}.csv", filas)
+    print(f"{distintas} respuestas distintas de {n}", file=sys.stderr)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Brazo con herramienta (LLM + nuestro A*)")
     ap.add_argument("--dominio", choices=dominios.DOMINIOS, action="append")
     ap.add_argument("--por-nivel", type=int, default=None)
     ap.add_argument("--salida", default=None)
     ap.add_argument("--solo", help="ids separados por coma (reintento de fallas de infraestructura)")
+    ap.add_argument("--repro", nargs="?", const="grid-5-00", metavar="ID")
     a = ap.parse_args(argv)
+    if a.repro:
+        return reproducibilidad_herramienta(a.repro)
     correr_brazo_herramienta(a.dominio or dominios.DOMINIOS, a.por_nivel, a.salida,
                              solo=set(a.solo.split(",")) if a.solo else None)
 
