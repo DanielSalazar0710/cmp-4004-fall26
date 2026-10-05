@@ -66,3 +66,7 @@ Cuando una respuesta sale de la caché, `r.elapsed` vale 0. Para la latencia usa
 
 Las medianas de expansiones, frontera y tiempo se calculan solo sobre corridas resueltas. Un timeout detiene los contadores en un punto arbitrario y bajaba la mediana de IDS en 16×16. Los timeouts se cuentan en su propia columna (6, todos de IDS en grilla de 16×16).
 
+## Respuestas que no terminan (`no_termina`)
+
+A veces el modelo entra en un bucle y genera texto sin parar. En el log de Ollama vimos una respuesta que pasó de 2 500 tokens antes de cortarse. En ese caso Ollama corta la generación y devuelve un error HTTP 500, o la llamada pasa de los 300 s. Decidimos no ponerle un tope de tokens al modelo, porque eso cambiaría la configuración del harness del curso. Lo tratamos como lo que es: una **falla del modelo**, que el scorecard nombra en el eje 8 ("times out"). Se clasifica como `no_termina`, se cuenta por nivel y no se reintenta. Con temperatura 0, al repetir la llamada se repite el bucle, así que el resultado es reproducible. Solo un error de infraestructura (Ollama apagado o conexión rechazada) se registra como `llm_error` y se vuelve a correr. Estas respuestas no se guardan en la caché, porque el harness no guarda errores; quedan registradas en `results/llm_calls.jsonl`.
+

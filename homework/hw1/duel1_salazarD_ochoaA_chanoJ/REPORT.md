@@ -6,7 +6,14 @@
 
 ## 1. Qué medimos y cómo *(Daniel)*
 
-Dominios, bancos (semilla 20260807), 4 niveles × 10 instancias, timeout de 30 s, máquina y modelo (`qwen2.5:3b`, temperatura 0, semilla 0).
+Comparamos tres sistemas sobre las mismas 80 instancias: los algoritmos clásicos (BFS, DFS, UCS, IDS y A*), un LLM local (`qwen2.5:3b` en Ollama, temperatura 0, semilla 0) y ese mismo LLM con nuestro A* como herramienta.
+
+- **8-puzzle:** banco del curso (week 3), 10 instancias por profundidad óptima 4, 8, 12 y 16.
+- **Grilla con terrenos:** banco del curso (week 4), 10 grillas de 5×5, 8×8, 12×12 y 16×16. El costo se cobra al entrar a la celda: `.` = 1, `,` = 3 y `~` = 8. Los dos bancos usan la semilla 20260807.
+- **Motor:** el `search()` del curso con frontera máxima, tiempo de reloj y un **timeout duro de 30 s por corrida**. Un timeout se reporta como timeout, nunca como "sin solución". `test_group.py` comprueba que expandimos exactamente igual que el original.
+- **Validación del LLM:** un validador propio. El modelo nunca juzga sus propias respuestas.
+
+Reportamos medianas y rango intercuartil (IQR). La Parte 1 se midió en la laptop de Andretty (Intel, Python 3.13) y los brazos LLM en la de Daniel (AMD con GPU RTX 5070 Ti, Python 3.12). Los tiempos de un sistema y otro no se comparan entre máquinas.
 
 ## 2. The Duel Scorecard *(Daniel, con datos de todos)*
 
@@ -24,6 +31,10 @@ Dominios, bancos (semilla 20260807), 4 niveles × 10 instancias, timeout de 30 s
 ## 3. Parte 1: comparación clásica
 
 ### 3.1 Optimalidad: UCS = A*, y BFS cuando los costos no son uniformes *(Daniel)*
+
+UCS y A* con heurística admisible (misplaced y Manhattan) devolvieron **el mismo costo en las 80 instancias** (`results/optimalidad.csv`). BFS también fue óptimo en las 40 instancias del 8-puzzle, pero solo porque ahí todo paso cuesta 1. En la grilla, con costos no uniformes, BFS devolvió un camino más caro que el óptimo en **33 de 40 instancias**, y el sobrecosto mediano crece con el tamaño: 2 en 5×5 y 15 en 16×16.
+
+Elegimos el ejemplo de forma automática: la grilla con mayor sobrecosto relativo. En `grid-12-09`, BFS y UCS usan 11 pasos cada uno, pero el camino de BFS cuesta **32** porque cruza agua (`~`), y el de UCS cuesta **11**. Los dos caminos están dibujados en `results/bfs_suboptimo.md`. BFS minimiza pasos, no costo: su optimalidad depende de que los costos sean uniformes.
 
 ### 3.2 Dominancia de Manhattan sobre misplaced *(Andretty)*
 
@@ -53,6 +64,18 @@ El efecto depende claramente del dominio. En grid, x3 redujo considerablemente l
 **Conclusión de la figura:** inflar Manhattan puede acelerar considerablemente la búsqueda, especialmente en grid, pero no garantiza menos trabajo ni optimalidad; el intercambio entre velocidad y calidad depende del dominio y de la instancia.
 
 ### 3.4 Factor de ramificación efectivo b* *(Daniel)*
+
+Resolvimos N + 1 = 1 + b* + … + (b*)^d por bisección, con N = nodos expandidos y d = longitud de la solución (`results/branching_resumen.csv`, `fig/branching.png`).
+
+| 8-puzzle, profundidad | UCS | A*-misplaced | A*-manhattan |
+|---|---:|---:|---:|
+| 8 | 1,78 | 1,17 | 1,08 |
+| 12 | 1,70 | 1,31 | 1,17 |
+| 16 | 1,67 | 1,37 | 1,22 |
+
+Manhattan tiene el b* más cercano a 1 en todos los niveles, de forma consistente con la dominancia de la sección 3.2. En la grilla, A*-manhattan queda entre 1,15 y 1,20 y UCS entre 1,25 y 1,36. Nuestros valores son menores que la tabla típica de las slides (~2,8 para UCS a d = 12) porque nuestro motor es búsqueda de grafo: no vuelve a expandir estados repetidos. No forzamos el número de la tabla.
+
+**Conclusión de la figura:** con mejor heurística, b* se acerca a 1, y la diferencia entre heurísticas se mantiene en todos los niveles.
 
 ## 4. Parte 2: el duelo
 
