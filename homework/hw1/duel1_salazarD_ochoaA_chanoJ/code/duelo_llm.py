@@ -26,6 +26,8 @@ import argparse
 import hashlib
 import json
 import sys
+import time
+from datetime import datetime
 
 from rutas import CACHE, FIG, RESULTS, preparar_rutas
 
@@ -85,6 +87,25 @@ def nuevo_llm():
     return LLM(backend="ollama", model=MODELO, cache_dir=str(CACHE), timeout=TIMEOUT_LLM_S)
 
 
+PAUSA_TRAS_ERROR_S = 10  # ver DECISION_NOTES: evita que el corte de una respuesta
+                         # en bucle afecte a la llamada siguiente
+
+
+def llamar(llm, prompt, **kw):
+    """llm.complete con hora de inicio y fin (para cruzar con el log de Ollama).
+
+    Si la llamada termina en error, esperamos PAUSA_TRAS_ERROR_S antes de seguir:
+    Ollama tarda unos segundos en cancelar una generación cortada, y una llamada
+    que llega en ese momento recibe un 500 que no es suyo."""
+    inicio = datetime.now().isoformat(timespec="seconds")
+    r = llm.complete(prompt, **kw)
+    r.meta = dict(r.meta or {}, t_inicio=inicio,
+                  t_fin=datetime.now().isoformat(timespec="seconds"))
+    if r.error:
+        time.sleep(PAUSA_TRAS_ERROR_S)
+    return r
+
+
 def latencia(llm, prompt, r):
     """Segundos que tardó la inferencia ORIGINAL. Si la respuesta salió de la caché,
     r.elapsed es 0, pero la caché guardó el tiempo real de cuando se generó."""
@@ -133,14 +154,20 @@ def fila_de(id_inst, dominio, nivel, instancia, r, segundos, system="llm"):
 
 # ---- corrida principal ------------------------------------------------------------------
 
-def correr_brazo_llm(doms=dominios.DOMINIOS, por_nivel=None, salida=None):
-    """Una llamada por instancia (temperatura 0, semilla 0), validada, sin reintentos."""
+def correr_brazo_llm(doms=dominios.DOMINIOS, por_nivel=None, salida=None, solo=None):
+    """Una llamada por instancia (temperatura 0, semilla 0), validada, sin reintentos.
+
+    ``solo``: lista de ids para volver a correr ÚNICAMENTE las llamadas que la
+    auditoría marcó como falla de infraestructura; sus filas se reemplazan en el
+    CSV y el resto queda igual."""
     llm = nuevo_llm()
     filas = []
     for dominio in doms:
         for id_inst, nivel, inst in dominios.instancias(dominio, por_nivel=por_nivel):
+            if solo is not None and id_inst not in solo:
+                continue
             prompt = prompt_de(dominio, inst)
-            r = llm.complete(prompt)
+            r = llamar(llm, prompt)
             _log({"system": "llm", "instance": id_inst, "model": r.model,
                   "temperature": r.temperature, "seed": r.seed, "cached": r.cached,
                   "elapsed": r.elapsed, "error": r.error, "meta": r.meta,
@@ -149,7 +176,11 @@ def correr_brazo_llm(doms=dominios.DOMINIOS, por_nivel=None, salida=None):
             filas.append(fila)
             tiempo = "cache" if r.cached else f"{r.elapsed:.1f}s"
             print(f"  {id_inst:<14} {fila['category']:<11} {tiempo}", file=sys.stderr)
-    escribir_csv(salida or RESULTS / "llm_respuestas.csv", filas, COLUMNAS)
+    ruta = salida or RESULTS / "llm_respuestas.csv"
+    if solo is not None and ruta.exists():
+        nuevas = {f["instance"]: f for f in filas}
+        filas = [nuevas.get(f["instance"], f) for f in leer_csv(ruta)]
+    escribir_csv(ruta, filas, COLUMNAS)
     return filas
 
 
@@ -170,7 +201,7 @@ def reproducibilidad(id_inst="grid-8-00", n=5):
                                  ("t0.7_semillas_1a5", 0.7, list(range(1, n + 1)))):
         grupo = []
         for k, semilla in enumerate(semillas, 1):
-            r = llm.complete(prompt, temperature=temp, seed=semilla, use_cache=False)
+            r = llamar(llm, prompt, temperature=temp, seed=semilla, use_cache=False)
             nombre = (f"{id_inst}_llamada_{k}.json" if modo.startswith("identicas")
                       else f"{id_inst}_t07_semilla_{semilla}.json")
             (carpeta / nombre).write_text(json.dumps(
@@ -303,6 +334,7 @@ def main(argv=None):
     ap.add_argument("--por-nivel", type=int)
     ap.add_argument("--repro", nargs="?", const="grid-8-00", metavar="ID")
     ap.add_argument("--figuras", action="store_true")
+    ap.add_argument("--solo", help="ids separados por coma (reintento de fallas de infraestructura)")
     a = ap.parse_args(argv)
     if a.figuras:
         tabla_fallas()
@@ -310,7 +342,8 @@ def main(argv=None):
     elif a.repro:
         reproducibilidad(a.repro)
     else:
-        correr_brazo_llm(a.dominio or dominios.DOMINIOS, a.por_nivel)
+        correr_brazo_llm(a.dominio or dominios.DOMINIOS, a.por_nivel,
+                         solo=set(a.solo.split(",")) if a.solo else None)
 
 
 if __name__ == "__main__":

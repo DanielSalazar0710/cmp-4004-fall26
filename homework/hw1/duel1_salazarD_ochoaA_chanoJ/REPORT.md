@@ -87,6 +87,13 @@ Manhattan tiene el b* más cercano a 1 en todos los niveles, de forma consistent
 
 ## 5. Where we may have been unfair *(todos; cada uno aporta al menos un punto propio)*
 
+- **Heurísticas ajustadas contra prompt sin ajustar.** Usamos heurísticas conocidas y probadas (Manhattan), mientras que el modelo recibió un solo prompt por dominio, escrito una vez y nunca ajustado. Un prompt con ejemplos resueltos o con "piensa paso a paso" podría rendir distinto. No lo medimos.
+- **Un modelo pequeño.** `qwen2.5:3b` es el modelo que recomienda el curso, pero un modelo grande podría comportarse muy distinto. Nuestra evidencia no dice nada sobre él.
+- **Distribución de instancias.** Los bancos del curso son pequeños (grillas de hasta 16×16, profundidad 16 como máximo) y no tienen paredes. Favorecen a los algoritmos clásicos, que resuelven todo en milisegundos. Además, el validador revisa paredes que este banco nunca pone a prueba.
+- **Tiempo de desarrollo.** No contamos las horas que nos tomó escribir el motor, las heurísticas y el validador, ni las del prompt. Si se contaran, el costo del sistema clásico sería mucho mayor que sus milisegundos de ejecución.
+- **Máquinas distintas.** La Parte 1 se midió en una laptop Intel y los brazos LLM en una laptop con GPU. Las latencias de un sistema y otro no son comparables entre sí en términos absolutos.
+- **Las respuestas que no terminan cuentan como falla.** Sin un tope de tokens, un bucle del modelo cuesta 300 s y se clasifica como `no_termina`. Con un tope, esas instancias seguirían fallando, pero mucho más rápido: la latencia del LLM que reportamos depende de esa decisión.
+
 **Andretty:** La comparación de Manhattan con Manhattan ×3 no representa dos algoritmos con las mismas garantías. Multiplicar la heurística por 3 rompe intencionalmente la admisibilidad y favorece una búsqueda más agresiva, por lo que sería injusto comparar solo expansiones o tiempo ignorando el costo de las soluciones. Por eso reportamos ambas dimensiones: eficiencia y pérdida de calidad.
 
 ## 6. Lo que nuestra evidencia no permite afirmar *(todos)*

@@ -41,7 +41,7 @@ import validador  # noqa: E402
 from aicourse import LLM  # noqa: E402
 from estadistica import escribir_csv  # noqa: E402
 from gridworld import TERRAIN  # noqa: E402
-from duelo_llm import latencia, veredicto_error  # noqa: E402
+from duelo_llm import latencia, llamar, veredicto_error  # noqa: E402
 
 MODELO = "qwen2.5:3b"
 MAX_RONDAS = 2           # llamadas a la herramienta permitidas por instancia
@@ -155,7 +155,7 @@ def resolver_instancia(llm, id_inst, dominio, nivel, instancia, log):
     rondas = 0
     texto = ""
     while True:
-        r = llm.complete(prompt)
+        r = llamar(llm, prompt)
         _log(log, {"system": "tool", "instance": id_inst, "round": rondas,
                    "model": r.model, "temperature": r.temperature, "seed": r.seed,
                    "cached": r.cached, "elapsed": r.elapsed, "error": r.error,
