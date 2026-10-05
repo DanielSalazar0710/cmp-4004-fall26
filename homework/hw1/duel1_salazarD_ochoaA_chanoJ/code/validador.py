@@ -1,5 +1,5 @@
-"""Validador propio de respuestas (Parte 2). Base: el borrador de Jalil Chano;
-lo integramos al formato del grupo.
+"""Validador propio de respuestas (Parte 2). Diseño: Jalil Chano;
+integrado al motor y a los bancos del grupo.
 
 Regla del enunciado: NUNCA se le pregunta al modelo si su respuesta es correcta.
 Este archivo decide, con código nuestro, si un camino es legal, si su costo
@@ -132,7 +132,7 @@ _OPTIMOS = {}
 
 def _ucs_con_paredes(grid):
     """Respaldo para grillas con '#', que el GridProblem del curso no conoce:
-    UCS con las mismas reglas del recorrido (idea del borrador de Jalil)."""
+    UCS con las mismas reglas del recorrido (diseño de Jalil)."""
     ini = next((i, f.index("S")) for i, f in enumerate(grid) if "S" in f)
     meta = next((i, f.index("G")) for i, f in enumerate(grid) if "G" in f)
     tie, heap, mejor = count(), [(0, 0, ini)], {ini: 0}

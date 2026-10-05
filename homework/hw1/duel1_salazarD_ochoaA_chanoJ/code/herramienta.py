@@ -1,4 +1,4 @@
-"""Parte 2 — brazo con herramienta. RESPONSABLE: Daniel Salazar.
+"""Parte 2 — brazo con herramienta. Autoría: Daniel Salazar.
 
 El modelo recibe la misma instancia y el mismo texto que el brazo LLM puro, más
 la descripción de una herramienta ``astar``. Si emite una llamada JSON, corremos

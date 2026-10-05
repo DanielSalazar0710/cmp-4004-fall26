@@ -1,5 +1,5 @@
-"""Parte 2 — brazo LLM puro. Base: el borrador de Jalil Chano; lo integramos
-al formato del grupo.
+"""Parte 2 — brazo LLM puro. Diseño: Jalil Chano;
+integrado al motor y a los bancos del grupo.
 
 Le damos al modelo LAS MISMAS 80 instancias de la Parte 1 como texto y validamos
 cada respuesta con ``validador.py`` (nunca con el modelo). Modelo: qwen2.5:3b vía
@@ -60,8 +60,7 @@ def prompt_puzzle(estado) -> str:
 
     Sigue la estructura y el formato de salida del prompt del curso para la
     grilla (inglés, letras sin separadores), para que los dos dominios reciban
-    instrucciones equivalentes. El borrador anterior (en español y con comas)
-    nunca se corrió; está descrito en DECISION_NOTES.md."""
+    instrucciones equivalentes."""
     def tablero(t):
         return "\n".join(" ".join(str(x) if x else "_" for x in t[i:i + 3])
                          for i in range(0, 9, 3))

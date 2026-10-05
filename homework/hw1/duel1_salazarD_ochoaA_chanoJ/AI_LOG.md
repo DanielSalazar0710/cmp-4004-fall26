@@ -14,7 +14,7 @@ Formato de `referencias/resources/ai-policy.md`. Cada integrante agrega sus prop
 - `code/motor.py`: el bucle de `search()` del curso con frontera máxima, tiempo, timeout y A*, más el IDS de nuestra hw3.
 - `code/dominios.py`, `code/benchmark.py`, `code/estadistica.py` y `code/rutas.py`.
 - `code/tests/test_group.py` (7 pruebas), los esqueletos con `TODO` y las pruebas de aceptación de cada parte (`test_heuristicas.py` y `test_validador.py`). Con Claude Code comprobé, usando una implementación de referencia que no guardé en el repo, que esas pruebas se pueden pasar.
-- `ASIGNACIONES.md`, `RUBRICA.md`, el borrador de `REPORT.md` y este registro.
+- Las asignaciones del equipo (publicadas como issues en GitHub), una checklist de la rúbrica, el borrador de `REPORT.md` y este registro.
 
 **Qué hice con eso:** usé Claude Code como herramienta de apoyo; las decisiones fueron mías. Revisé la estructura propuesta y las asignaciones, y las ajusté en los issues de GitHub para que los tres tuviéramos partes equivalentes y plazos justos. Pedí que todo quedara escrito con la voz del equipo, subí la base a la rama `hw1-salazarD` y preparé la guía en PDF para Andretty y Jalil.
 
@@ -69,7 +69,7 @@ Formato de `referencias/resources/ai-policy.md`. Cada integrante agrega sus prop
 **Quién:** Jalil Chano.
 **Herramienta:** Claude (Anthropic), 4 de octubre de 2026.
 
-**Qué le pedí:** siguiendo mi issue (#2) y las indicaciones de Daniel en `ASIGNACIONES.md`, le pedí ayuda para escribir el validador (recorrido del camino, categorías de falla, lectura estricta y tolerante), sus pruebas, el script del brazo LLM con la medición de reproducibilidad y las figuras, y un borrador de mis secciones del reporte.
+**Qué le pedí:** siguiendo mi issue (#2) y las indicaciones de Daniel en las asignaciones del equipo, le pedí ayuda para escribir el validador (recorrido del camino, categorías de falla, lectura estricta y tolerante), sus pruebas, el script del brazo LLM con la medición de reproducibilidad y las figuras, y un borrador de mis secciones del reporte.
 
 **Qué recibí:** borradores de `validador.py`, `test_validador.py` y `duelo_llm.py`, y un esquema de las secciones 4.1 y 4.2.
 

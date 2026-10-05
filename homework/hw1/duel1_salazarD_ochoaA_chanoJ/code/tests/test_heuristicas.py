@@ -1,4 +1,4 @@
-"""Pruebas de aceptación de heuristicas.py (Andretty). Fallan hasta que esté hecho.
+"""Pruebas de aceptación de heuristicas.py.
 
     python code/tests/test_heuristicas.py
 Puedes AGREGAR pruebas; no borres ni debilites estas.

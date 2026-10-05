@@ -1,4 +1,4 @@
-"""Parte 1, análisis 1 y 4. RESPONSABLE: Daniel Salazar.
+"""Parte 1, análisis 1 y 4. Autoría: Daniel Salazar.
 
 Análisis 1: comprobamos en las 80 instancias que UCS y A* con heurística
 admisible devuelven el MISMO costo, y que BFS no lo hace cuando los costos no

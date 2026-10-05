@@ -3,8 +3,6 @@
 Comparación de BFS, DFS, UCS, IDS y A* entre sí, contra un LLM (`qwen2.5:3b` en Ollama) y contra ese mismo LLM con nuestro A* como herramienta. Usamos las mismas 80 instancias en todos los casos: 8-puzzle y grilla con terrenos, 4 niveles × 10 instancias.
 
 - Consigna: [`referencias/hw1/hw-1-search.md`](referencias/hw1/hw-1-search.md)
-- Quién hace qué: [`ASIGNACIONES.md`](ASIGNACIONES.md)
-- Checklist de calificación: [`RUBRICA.md`](RUBRICA.md)
 - **Presentación:** [`duel1_salazarD_ochoaA_chanoJ.ipynb`](duel1_salazarD_ochoaA_chanoJ.ipynb) (ejecutado; versión de lectura en `.html`)
 - Reporte: [`REPORT.md`](REPORT.md) · Decisiones: [`DECISION_NOTES.md`](DECISION_NOTES.md) · IA: [`AI_LOG.md`](AI_LOG.md)
 
@@ -51,7 +49,7 @@ python code\construir_notebook.py        # notebook de presentación (lee result
 ## Estructura
 
 ```
-REPORT.md  AI_LOG.md  ASIGNACIONES.md  RUBRICA.md  DECISION_NOTES.md  SOURCE_MANIFEST.json
+REPORT.md  AI_LOG.md  DECISION_NOTES.md  SOURCE_MANIFEST.json  duel1_salazarD_ochoaA_chanoJ.ipynb (.html)
 code/
   motor.py              BFS/DFS/UCS/IDS/A* con expansiones, frontera máxima, tiempo y timeout
   dominios.py           bancos del curso e ids de instancia
@@ -60,9 +58,12 @@ code/
   heuristicas.py        (Andretty)  analisis_heuristicas.py (Andretty)
   validador.py          (Jalil)     duelo_llm.py          (Jalil)
   analisis_optimalidad.py (Daniel)  herramienta.py        (Daniel)
+  auditoria_ollama.py, diagnostico_500.py, restaurar_primer_intento.py   auditoría de llamadas sin texto
+  scorecard.py, construir_notebook.py   números del scorecard y notebook
   tests/                pruebas de la base y de aceptación de cada parte
   curso/week03, week04  archivos del profe, intactos
   aicourse/             harness del curso, copiado sin cambios de nuestra Week 05
 results/  fig/  .llm_cache/
+evidencia_descartada/   corridas que no usamos, cada una con su README
 referencias/            consigna, resources, studios 3 y 4, notebooks y slides del curso
 ```

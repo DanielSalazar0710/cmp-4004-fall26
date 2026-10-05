@@ -1,4 +1,4 @@
-"""Pruebas de aceptación de validador.py (Jalil). Fallan hasta que esté hecho.
+"""Pruebas de aceptación de validador.py.
 
     python code/tests/test_validador.py
 Usan respuestas construidas a mano: prueban el validador, NO la calidad del LLM.
@@ -72,7 +72,7 @@ def test_puzzle():
     assert V.validar("8puzzle", s, "D", 1).category == "illegal"     # sale del tablero
 
 
-# ---- adaptadas del borrador de Jalil ----------------------------------------------
+# ---- lectura tolerante y fallas combinadas ----------------------------------------------
 
 def test_lectura_estricta_y_tolerante():
     assert V.extraer_detallado("PATH: DDRR\nCOST: 4") == ("DDRR", 4, False)

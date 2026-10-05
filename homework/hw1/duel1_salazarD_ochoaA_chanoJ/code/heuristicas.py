@@ -1,4 +1,4 @@
-"""Heurísticas del Duel 1. RESPONSABLE: Andretty Ochoa (ver ASIGNACIONES.md §2).
+"""Heurísticas del Duel 1. Autoría: Andretty Ochoa.
 
 Firma obligatoria de toda heurística:  h(problema, estado) -> número >= 0
 (la misma que usa ``gridworld.astar`` del curso y nuestro ``motor.resolver``).

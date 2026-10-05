@@ -1,4 +1,4 @@
-"""Parte 1, análisis 2 y 3 + figuras de la Parte 1. RESPONSABLE: Andretty Ochoa.
+"""Parte 1, análisis 2 y 3 + figuras de la Parte 1. Autoría: Andretty Ochoa.
 
 Lee SOLO ``results/parte1_mediciones.csv`` (no vuelve a correr búsquedas, salvo
 que se indique). Con ``estadistica.py``: medianas e IQR, nunca solo promedios.
