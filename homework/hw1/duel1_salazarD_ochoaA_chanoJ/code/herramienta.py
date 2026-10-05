@@ -39,7 +39,7 @@ import heuristicas  # noqa: E402
 import motor  # noqa: E402
 import validador  # noqa: E402
 from aicourse import LLM  # noqa: E402
-from estadistica import escribir_csv  # noqa: E402
+from estadistica import escribir_csv, leer_csv  # noqa: E402
 from gridworld import TERRAIN  # noqa: E402
 from duelo_llm import latencia, llamar, veredicto_error  # noqa: E402
 
@@ -215,7 +215,8 @@ def resolver_instancia(llm, id_inst, dominio, nivel, instancia, log):
             "tool_rounds": rondas, "tool_h": _heuristica(dominio)[1]}
 
 
-def correr_brazo_herramienta(doms=("8puzzle", "grid"), por_nivel=None, salida=None):
+def correr_brazo_herramienta(doms=("8puzzle", "grid"), por_nivel=None, salida=None, solo=None):
+    """``solo``: ids a volver a correr por falla de infraestructura (ver auditoría)."""
     llm = LLM(backend="ollama", model=MODELO, cache_dir=str(CACHE), timeout=TIMEOUT_LLM_S)
     log = RESULTS / "llm_calls.jsonl"
     RESULTS.mkdir(exist_ok=True)
@@ -228,13 +229,19 @@ def correr_brazo_herramienta(doms=("8puzzle", "grid"), por_nivel=None, salida=No
                   f"(duelo_llm.prompt_puzzle); se omite", file=sys.stderr)
             continue
         for id_inst, nivel, inst in dominios.instancias(dominio, por_nivel=por_nivel):
+            if solo is not None and id_inst not in solo:
+                continue
             fila = resolver_instancia(llm, id_inst, dominio, nivel, inst, log)
             filas.append(fila)
             tiempo = "cache" if fila["cached"] else f"{fila['seconds']:.1f}s"
             print(f"  {id_inst:<14} {fila['category']:<11} tool={fila['tool_called']!s:<5} "
                   f"json={fila['tool_json_ok']!s:<5} args={fila['tool_args_match']!s:<5} "
                   f"{tiempo}", file=sys.stderr)
-    escribir_csv(salida or RESULTS / "herramienta_respuestas.csv", filas, COLUMNAS)
+    ruta = salida or RESULTS / "herramienta_respuestas.csv"
+    if solo is not None and ruta.exists():
+        nuevas = {f["instance"]: f for f in filas}
+        filas = [nuevas.get(f["instance"], f) for f in leer_csv(ruta)]
+    escribir_csv(ruta, filas, COLUMNAS)
     return filas
 
 
@@ -243,8 +250,10 @@ def main(argv=None):
     ap.add_argument("--dominio", choices=dominios.DOMINIOS, action="append")
     ap.add_argument("--por-nivel", type=int, default=None)
     ap.add_argument("--salida", default=None)
+    ap.add_argument("--solo", help="ids separados por coma (reintento de fallas de infraestructura)")
     a = ap.parse_args(argv)
-    correr_brazo_herramienta(a.dominio or dominios.DOMINIOS, a.por_nivel, a.salida)
+    correr_brazo_herramienta(a.dominio or dominios.DOMINIOS, a.por_nivel, a.salida,
+                             solo=set(a.solo.split(",")) if a.solo else None)
 
 
 if __name__ == "__main__":

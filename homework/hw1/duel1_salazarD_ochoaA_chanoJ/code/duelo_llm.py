@@ -335,24 +335,32 @@ def figuras():
     fig.savefig(FIG / "escalado_optimalidad.png", dpi=150)
     plt.close(fig)
 
-    filas = leer_csv(RESULTS / "llm_respuestas.csv")
-    fig, ejes = plt.subplots(1, 2, figsize=(11, 4.2), sharey=True)
-    for eje, dom in zip(ejes, dominios.DOMINIOS):
-        niveles = dominios.NIVELES[dom]
-        base = [0] * len(niveles)
-        for cat in CATS:
-            vals = [sum(f["category"] == cat for f in filas
-                        if f["domain"] == dom and f["level"] == n) for n in niveles]
-            if not any(vals):
-                continue
-            eje.bar([str(n) for n in niveles], vals, bottom=base, label=cat)
-            base = [a + b for a, b in zip(base, vals)]
-        eje.set_xlabel("profundidad óptima" if dom == "8puzzle" else "lado de la grilla")
-        eje.set_title("8-puzzle" if dom == "8puzzle" else "Grilla con terrenos")
-    ejes[0].set_ylabel("respuestas (n = 10 por nivel)")
-    ejes[1].legend(fontsize=8)
-    fig.suptitle("Brazo LLM: categoría de cada respuesta según nuestro validador")
-    fig.tight_layout()
+    colores = {"correct": "#2e7d32", "wrong_cost": "#f9a825", "suboptimal": "#ef6c00",
+               "illegal": "#c62828", "malformed": "#6a1b9a", "no_termina": "#757575",
+               "llm_error": "#000000"}
+    sistemas = [("Brazo LLM", RESULTS / "llm_respuestas.csv"),
+                ("LLM + A* como herramienta", RESULTS / "herramienta_respuestas.csv")]
+    sistemas = [(n, r) for n, r in sistemas if r.exists()]
+    fig, ejes = plt.subplots(len(sistemas), 2, figsize=(11, 3.8 * len(sistemas)),
+                             sharey=True, squeeze=False)
+    for fila_ejes, (nombre, ruta) in zip(ejes, sistemas):
+        filas = leer_csv(ruta)
+        for eje, dom in zip(fila_ejes, dominios.DOMINIOS):
+            niveles = dominios.NIVELES[dom]
+            base = [0] * len(niveles)
+            for cat in CATS:
+                vals = [sum(f["category"] == cat for f in filas
+                            if f["domain"] == dom and f["level"] == n) for n in niveles]
+                eje.bar([str(n) for n in niveles], vals, bottom=base, label=cat,
+                        color=colores[cat])
+                base = [a + b for a, b in zip(base, vals)]
+            eje.set_xlabel("profundidad óptima" if dom == "8puzzle" else "lado de la grilla")
+            eje.set_title(f"{nombre} — {'8-puzzle' if dom == '8puzzle' else 'grilla'}")
+        fila_ejes[0].set_ylabel("respuestas (n = 10 por nivel)")
+    manejadores = [plt.Rectangle((0, 0), 1, 1, color=colores[c]) for c in CATS]
+    fig.legend(manejadores, CATS, loc="lower center", ncol=len(CATS), fontsize=8)
+    fig.suptitle("Categoría de cada respuesta según nuestro validador")
+    fig.tight_layout(rect=(0, 0.05, 1, 1))
     fig.savefig(FIG / "fallas_llm.png", dpi=150)
     plt.close(fig)
 

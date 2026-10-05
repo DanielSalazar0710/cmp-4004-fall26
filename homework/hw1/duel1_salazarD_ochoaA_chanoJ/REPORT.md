@@ -2,7 +2,7 @@
 
 **Equipo:** Daniel Salazar, Andretty Ochoa y Jalil Chano · CMP-4004 · USFQ
 
-> Borrador. Cada sección indica quién la escribe. Límite: 2 000 palabras sin contar tablas ni leyendas. Las cifras salen de `results/`; ninguna se escribe a mano.
+> Cada sección indica quién la escribió. Todas las cifras salen de `results/` (generadas por `code/`); ninguna se escribió a mano.
 
 ## 1. Qué medimos y cómo *(Daniel)*
 
@@ -13,20 +13,20 @@ Comparamos tres sistemas sobre las mismas 80 instancias: los algoritmos clásico
 - **Motor:** el `search()` del curso con frontera máxima, tiempo de reloj y un **timeout duro de 30 s por corrida**. Un timeout se reporta como timeout, nunca como "sin solución". `test_group.py` comprueba que expandimos exactamente igual que el original.
 - **Validación del LLM:** un validador propio. El modelo nunca juzga sus propias respuestas.
 
-Reportamos medianas y rango intercuartil (IQR). La Parte 1 se midió en la laptop de Andretty (Intel, Python 3.13) y los brazos LLM en la de Daniel (AMD con GPU RTX 5070 Ti, Python 3.12). Los tiempos de un sistema y otro no se comparan entre máquinas.
+Reportamos medianas y rango intercuartil (IQR). La Parte 1 se midió en la laptop de Andretty (Intel) y los brazos LLM en la de Daniel (GPU RTX 5070 Ti).
 
 ## 2. The Duel Scorecard *(Daniel, con datos de todos)*
 
-| Eje | Clásico (A*) | LLM | Herramienta | Evidencia |
+| Eje | Clásico (A*-Manhattan) | LLM (`qwen2.5:3b`) | LLM + A* como herramienta | Evidencia |
 |---|---|---|---|---|
-| 1 Corrección | | | | `results/…` |
-| 2 Garantía | | | | — |
-| 3 Costo | | | | |
-| 4 Latencia (mediana / p95) | | | | |
-| 5 Reproducibilidad | | | | `results/llm_reproducibilidad.csv` |
-| 6 Escalado | | | | `fig/escalado_optimalidad.png` |
-| 7 Interpretabilidad | | | | — |
-| 8 Modo de falla | | | | |
+| 1 Corrección | **80/80** óptimas | **0/80** | **17/80** | `results/scorecard.csv` |
+| 2 Garantía | Costo mínimo **si** *h* es admisible; nada sobre el tiempo. Con *h*×3 la garantía se pierde (20/80 subóptimas) | Ninguna: 0/80 aquí no dice nada sobre la instancia 81 | Óptimo **solo si** el modelo copia bien la instancia y la respuesta. Lo comprueba nuestro validador, no el sistema | §3.1, §4.3 |
+| 3 Costo (mediana) | 23,5 expansiones | 204 tokens | 681 tokens + unas decenas de expansiones | `results/scorecard.csv` |
+| 4 Latencia (mediana / p95) | 0,0004 s / 0,002 s | 8,4 s / 302 s | 9,0 s / 302 s | `results/*_respuestas.csv` |
+| 5 Reproducibilidad (5 llamadas idénticas) | 1 resultado distinto | `grid-8-00`: 1 (5 bucles); `grid-5-00`: **3 distintos** con temperatura 0 | no medida | `results/*reproducibilidad*.csv` |
+| 6 Escalado | 100 % en los 4 tamaños | 0 % en todos; en la grilla, los bucles pasan de 2/10 a 10/10 | 8-puzzle: 10–50 %; grilla: 10–20 % y **0 %** en 16×16 | `fig/escalado_optimalidad.png` |
+| 7 Interpretabilidad | Camino + costo, verificables | Texto sin justificación verificable; solo el camino se puede revisar | Camino de A*, verificable si se copió bien | — |
+| 8 Modo de falla | Solo IDS hace timeout (6/40, todas en grilla 16×16); A* nunca | Ilegal y seguro de sí (45), no termina (32), mal formado (3) | No llama a la herramienta (21), copia mal la instancia (22) o la envía en un formato que no se puede leer (18) | `fig/fallas_llm.png` |
 
 ## 3. Parte 1: comparación clásica
 
@@ -79,23 +79,59 @@ Manhattan tiene el b* más cercano a 1 en todos los niveles, de forma consistent
 
 ## 4. Parte 2: el duelo
 
-### 4.1 Brazo LLM: fallas por categoría y escalado *(Jalil)*
+### 4.1 Brazo LLM: fallas por categoría y escalado *(Daniel, sobre el validador de Jalil)*
 
-### 4.2 Reproducibilidad *(Jalil)*
+El validador es nuestro (`code/validador.py`, 9 pruebas). Camina el camino paso a paso, recalcula el costo y lo compara con el óptimo de nuestro A*. Nunca le preguntamos al modelo si su respuesta es correcta. Corrimos las 80 instancias con temperatura 0, semilla 0, sin reintentar ni corregir respuestas.
+
+| | 8-puzzle 4 / 8 / 12 / 16 | Grilla 5 / 8 / 12 / 16 |
+|---|---|---|
+| ilegal | 9 / 9 / 5 / 9 | 8 / 4 / 1 / 0 |
+| subóptima / costo mal reportado | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
+| mal formada | 0 / 0 / 0 / 0 | 0 / 1 / 2 / 0 |
+| no termina | 1 / 1 / 5 / 1 | 2 / 5 / 7 / 10 |
+| **correcta** | **0 / 0 / 0 / 0** | **0 / 0 / 0 / 0** |
+
+El modelo nunca llegó a ser subóptimo ni a reportar mal el costo, porque ni siquiera produjo caminos legales. En el 8-puzzle, 31 de sus 32 caminos ilegales sacan el blanco del tablero. En la grilla aparece el "cliff" del scorecard en otra forma: las respuestas que no terminan pasan de 2/10 en 5×5 a 10/10 en 16×16. Dos respuestas solo se pudieron leer con la lectura tolerante.
+
+"No termina" no es un error de nuestra infraestructura. Repetimos en streaming las 15 llamadas cortadas con HTTP 500 (`results/diagnostico_500.csv`). En 7, Ollama devolvió *"token repeat limit reached"*: el modelo repetía `. . . .` sin parar. En 5 seguía generando a los 120 s, y solo 3 terminaron esta vez (el modelo no es determinista, ver 4.2). Cruzamos cada llamada sin texto con el log de Ollama (`results/auditoria_*.csv`). Solo 4 se cortaron sin haber generado ningún token; esas fueron fallas de infraestructura y se repitieron.
+
+**Conclusión de la figura** (`fig/escalado_optimalidad.png`): A* se mantiene en 100 % en todos los tamaños y el LLM solo se queda en 0 %. Con 10 instancias por punto, la curva del LLM no puede ser peor.
+
+### 4.2 Reproducibilidad *(Daniel, sobre el diseño de Jalil)*
+
+Hicimos 5 llamadas idénticas, sin caché (con la caché encendida, las llamadas 2 a 5 serían copias de la primera). En `grid-8-00`, la instancia fijada de antemano, el modelo entró en bucle las 5 veces. Como eso no deja caminos que comparar, repetimos la medición en `grid-5-00`, la primera grilla con respuesta. Ahí, **con temperatura 0 y la misma semilla, salieron 3 resultados distintos en 5 llamadas**, y ninguno coincide con la corrida principal. Con temperatura 0,7 y semillas 1 a 5 salieron 5 distintos de 5. A* dio el mismo camino las 5 veces.
 
 ### 4.3 Brazo con herramienta *(Daniel)*
+
+El modelo puede pedir nuestro A* con una línea de JSON. La herramienta resuelve la instancia **tal como el modelo la escribió** y devuelve el camino y el costo. Llegó a **17/80** correctas, frente a 0/80 del LLM solo:
+
+| ¿Qué pasó con la llamada? | n | correctas |
+|---|---|---|
+| copió la instancia exacta | 19 | **16** |
+| copió la instancia con errores | 22 | 1 |
+| la envió en un formato que no se puede leer | 18 | 0 |
+| no llamó a la herramienta (no terminó) | 21 | 0 |
+
+Con el problema bien copiado, el resultado es casi siempre óptimo (16/19). El cuello de botella pasó a ser **transcribir la instancia**, y empeora con el tamaño: en 16×16 nunca lo logró. Es el patrón del curso: el LLM como *front-end* y el solver como dueño de la garantía.
+
+**Conclusión de la figura** (`fig/fallas_llm.png`): con la herramienta aparecen respuestas correctas en los tamaños pequeños. Las fallas ya no vienen de buscar, sino de copiar la instancia o de no terminar.
 
 ## 5. Where we may have been unfair *(todos; cada uno aporta al menos un punto propio)*
 
 - **Heurísticas ajustadas contra prompt sin ajustar.** Usamos heurísticas conocidas y probadas (Manhattan), mientras que el modelo recibió un solo prompt por dominio, escrito una vez y nunca ajustado. Un prompt con ejemplos resueltos o con "piensa paso a paso" podría rendir distinto. No lo medimos.
 - **Un modelo pequeño.** `qwen2.5:3b` es el modelo que recomienda el curso, pero un modelo grande podría comportarse muy distinto. Nuestra evidencia no dice nada sobre él.
 - **Distribución de instancias.** Los bancos del curso son pequeños (grillas de hasta 16×16, profundidad 16 como máximo) y no tienen paredes. Favorecen a los algoritmos clásicos, que resuelven todo en milisegundos. Además, el validador revisa paredes que este banco nunca pone a prueba.
-- **Tiempo de desarrollo.** No contamos las horas que nos tomó escribir el motor, las heurísticas y el validador, ni las del prompt. Si se contaran, el costo del sistema clásico sería mucho mayor que sus milisegundos de ejecución.
+- **Tiempo de desarrollo.** No contamos las horas que nos tomó escribir el motor, las heurísticas y el validador. Con ellas, el costo clásico sería mucho mayor que sus milisegundos.
 - **Máquinas distintas.** La Parte 1 se midió en una laptop Intel y los brazos LLM en una laptop con GPU. Las latencias de un sistema y otro no son comparables entre sí en términos absolutos.
 - **Las respuestas que no terminan cuentan como falla.** Sin un tope de tokens, un bucle del modelo cuesta 300 s y se clasifica como `no_termina`. Con un tope, esas instancias seguirían fallando, pero mucho más rápido: la latencia del LLM que reportamos depende de esa decisión.
 
 **Andretty:** La comparación de Manhattan con Manhattan ×3 no representa dos algoritmos con las mismas garantías. Multiplicar la heurística por 3 rompe intencionalmente la admisibilidad y favorece una búsqueda más agresiva, por lo que sería injusto comparar solo expansiones o tiempo ignorando el costo de las soluciones. Por eso reportamos ambas dimensiones: eficiencia y pérdida de calidad.
 
 ## 6. Lo que nuestra evidencia no permite afirmar *(todos)*
+
+- **El modelo no "no sabe buscar".** Medimos un modelo de 3B, con un prompt por dominio y temperatura 0. 0/80 no dice nada de modelos más grandes, de otros prompts ni de grillas de 20×20.
+- **No hay una tasa precisa.** Con 10 instancias por punto, 17/80 de la herramienta tiene un margen amplio. Una o dos respuestas más o menos por nivel son ruido.
+- **La reproducibilidad no es general.** 3 resultados distintos en `grid-5-00` muestran que la temperatura 0 no garantiza la misma respuesta en nuestra máquina. No sabemos si en otra GPU pasaría igual.
+- **La latencia no es comparable entre sistemas.** El p95 de 302 s del LLM es nuestro límite de espera, no un tiempo propio del modelo. Además, en algunos tramos de la noche la GPU de la laptop bajó de velocidad.
 
 **Andretty:** Nuestros resultados no permiten afirmar que Manhattan vaya a dominar a misplaced en cualquier implementación o conjunto de problemas, sino que observamos esa dominancia en las 40 instancias del 8-puzzle evaluadas. Tampoco podemos afirmar que inflar una heurística por 3 siempre mejore el rendimiento. En nuestros experimentos el efecto dependió del dominio y del nivel: x3 redujo considerablemente las expansiones en varias grillas, pero en el 8-puzzle de nivel 16 llegó a expandir más nodos y a producir soluciones subóptimas. Por tanto, estos resultados muestran el comportamiento en nuestros bancos y condiciones experimentales, no una garantía general sobre cualquier problema de búsqueda.

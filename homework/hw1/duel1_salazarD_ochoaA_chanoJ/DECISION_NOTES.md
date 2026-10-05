@@ -85,3 +85,15 @@ En algunos tramos de la noche la GPU de la laptop bajó de velocidad, probableme
 
 En las asignaciones fijamos `grid-8-00` antes de correr nada, y la mantenemos como medición oficial. Con temperatura 0, el modelo entra en bucle las 5 veces, así que obtenemos "1 resultado distinto de 5", pero sin ningún camino que comparar. Como medición adicional, la repetimos en `grid-5-00`: la primera grilla del banco en la que el modelo sí devolvió una respuesta en la corrida principal. La regla es fija y la instancia no se eligió por su resultado. Reportamos las dos por separado.
 
+## Corrección de la regla de auditoría (5 de octubre)
+
+La primera regla, "bucle si hay 2 000 tokens o más", resultó incompleta. Repetimos en streaming las 15 llamadas cortadas con HTTP 500 que tenían tokens generados (`code/diagnostico_500.py`, `results/diagnostico_500.csv`). En 7 casos, Ollama respondió *"prediction aborted, token repeat limit reached"*: detiene al modelo cuando repite el mismo token, aunque lleve solo 100 tokens. En 5 casos el modelo seguía generando cuando cortamos a los 120 s. En 3 terminó normalmente esta vez, porque el modelo no es determinista.
+
+La regla corregida es: **bucle del modelo** si la llamada se pasa de los 300 s o si Ollama corta con tokens ya generados; **infraestructura** solo si el corte llega con 0 tokens, es decir, cuando Ollama seguía cancelando la respuesta anterior. Con esta regla, la corrida principal tiene 30 bucles y 4 fallas de infraestructura. Las llamadas con hora registrada (reintentos, reproducibilidad y herramienta) son todas bucles.
+
+Con la regla anterior habíamos repetido 3 llamadas del brazo LLM y 6 del brazo con herramienta que en realidad eran bucles. Repetir una falla del modelo le da una segunda oportunidad que los otros sistemas no tienen. Por eso `code/restaurar_primer_intento.py` deja como oficial el **primer intento**, reconstruido desde `results/llm_calls.jsonl`. Solo cambió una categoría: `grid-16-05` en la herramienta, que en el reintento dio una respuesta ilegal y queda como `no_termina`.
+
+## Error de la herramienta en el 8-puzzle
+
+En el 8-puzzle del curso, cada acción es la casilla a la que se mueve el blanco, no una letra. Nuestra herramienta respondía con un error en vez del camino. Lo detectamos al leer las primeras transcripciones, detuvimos la corrida, corregimos (`camino_en_letras`) y agregamos una prueba que exige que cada respuesta de la herramienta sea `correct` para el validador. Las llamadas afectadas están archivadas en `evidencia_descartada/2026-10-05_herramienta_8puzzle_con_error/`.
+

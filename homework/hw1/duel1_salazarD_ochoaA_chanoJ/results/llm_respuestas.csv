@@ -1,5 +1,5 @@
 instance,domain,level,system,model,temperature,seed,cached,seconds,tokens_in,tokens_out,category,reason,path,reported_cost,checker_cost,optimal_cost,suboptimal,wrong_cost,tolerant
-8puzzle-4-00,8puzzle,4,llm,qwen2.5:3b,0.0,0,False,3.667,,,no_termina,HTTPError: HTTP Error 500: Internal Server Error,,,,,False,False,False
+8puzzle-4-00,8puzzle,4,llm,qwen2.5:3b,0.0,0,False,10.871,178,130,illegal,paso 2: el blanco se sale del tablero con R,RRLURULLDD,12,,,False,False,False
 8puzzle-4-01,8puzzle,4,llm,qwen2.5:3b,0.0,0,False,2.282,179,25,illegal,paso 3: el blanco se sale del tablero con U,RRUUULLDDLLDUUURRRUULLDDRRR,16,,,False,False,False
 8puzzle-4-02,8puzzle,4,llm,qwen2.5:3b,0.0,0,False,2.306,177,25,illegal,paso 1: el blanco se sale del tablero con R,RRUUULLDDLLDUUURRRUULLDDRRR,16,,,False,False,False
 8puzzle-4-03,8puzzle,4,llm,qwen2.5:3b,0.0,0,False,18.561,,,no_termina,HTTPError: HTTP Error 500: Internal Server Error,,,,,False,False,False
@@ -24,7 +24,7 @@ instance,domain,level,system,model,temperature,seed,cached,seconds,tokens_in,tok
 8puzzle-12-02,8puzzle,12,llm,qwen2.5:3b,0.0,0,False,302.041,,,no_termina,TimeoutError: timed out,,,,,False,False,False
 8puzzle-12-03,8puzzle,12,llm,qwen2.5:3b,0.0,0,False,302.057,,,no_termina,TimeoutError: timed out,,,,,False,False,False
 8puzzle-12-04,8puzzle,12,llm,qwen2.5:3b,0.0,0,False,2.309,177,25,illegal,paso 1: el blanco se sale del tablero con R,RRUUULLDDLLDUUURRRUULLDDRRR,16,,,False,False,False
-8puzzle-12-05,8puzzle,12,llm,qwen2.5:3b,0.0,0,False,3.463,,,no_termina,HTTPError: HTTP Error 500: Internal Server Error,,,,,False,False,False
+8puzzle-12-05,8puzzle,12,llm,qwen2.5:3b,0.0,0,False,302.039,,,no_termina,TimeoutError: timed out,,,,,False,False,False
 8puzzle-12-06,8puzzle,12,llm,qwen2.5:3b,0.0,0,False,2.274,177,25,illegal,paso 1: el blanco se sale del tablero con R,RRUUULLDDLLDUUURRRUULLDDRRR,16,,,False,False,False
 8puzzle-12-07,8puzzle,12,llm,qwen2.5:3b,0.0,0,False,2.298,179,25,illegal,paso 3: el blanco se sale del tablero con U,RRUUULLDDLLDUUURRRUULLDDRRR,15,,,False,False,False
 8puzzle-12-08,8puzzle,12,llm,qwen2.5:3b,0.0,0,False,302.058,,,no_termina,TimeoutError: timed out,,,,,False,False,False
@@ -33,7 +33,7 @@ instance,domain,level,system,model,temperature,seed,cached,seconds,tokens_in,tok
 8puzzle-16-01,8puzzle,16,llm,qwen2.5:3b,0.0,0,False,2.266,177,25,illegal,paso 1: el blanco se sale del tablero con R,RRUUULLDDLLDUUURRRUULLDDRRR,16,,,False,False,False
 8puzzle-16-02,8puzzle,16,llm,qwen2.5:3b,0.0,0,False,302.053,,,no_termina,TimeoutError: timed out,,,,,False,False,False
 8puzzle-16-03,8puzzle,16,llm,qwen2.5:3b,0.0,0,False,2.924,178,130,illegal,paso 2: el blanco se sale del tablero con R,RRLURULLDD,12,,,False,False,False
-8puzzle-16-04,8puzzle,16,llm,qwen2.5:3b,0.0,0,False,2.924,,,no_termina,HTTPError: HTTP Error 500: Internal Server Error,,,,,False,False,False
+8puzzle-16-04,8puzzle,16,llm,qwen2.5:3b,0.0,0,False,4.095,177,23,illegal,paso 1: el blanco se sale del tablero con R,RRUUULLDDLLDUUULLLLDDRRRR,16,,,False,False,False
 8puzzle-16-05,8puzzle,16,llm,qwen2.5:3b,0.0,0,False,2.306,179,25,illegal,paso 3: el blanco se sale del tablero con U,RRUUULLDDLLDUUURRRUULLDDRRR,16,,,False,False,False
 8puzzle-16-06,8puzzle,16,llm,qwen2.5:3b,0.0,0,False,2.294,179,25,illegal,paso 3: el blanco se sale del tablero con U,RRUUULLDDLLDUUURRRUULLDDRRR,16,,,False,False,False
 8puzzle-16-07,8puzzle,16,llm,qwen2.5:3b,0.0,0,False,2.947,179,130,illegal,el camino termina fuera de la meta,RRLURULLDD,12,,,False,False,False
@@ -59,7 +59,7 @@ grid-8-06,grid,8,llm,qwen2.5:3b,0.0,0,False,3.963,173,270,illegal,el camino term
 grid-8-07,grid,8,llm,qwen2.5:3b,0.0,0,False,5.679,174,546,illegal,el camino termina fuera de la meta,RRRRRR,6,,,False,False,False
 grid-8-08,grid,8,llm,qwen2.5:3b,0.0,0,False,267.361,174,35064,malformed,no se pudo leer PATH y COST,,,,,False,False,False
 grid-8-09,grid,8,llm,qwen2.5:3b,0.0,0,False,3.208,174,144,illegal,paso 4: se sale del tablero con U,RRRUURRRU,32,,,False,False,False
-grid-12-00,grid,12,llm,qwen2.5:3b,0.0,0,False,4.619,,,no_termina,HTTPError: HTTP Error 500: Internal Server Error,,,,,False,False,False
+grid-12-00,grid,12,llm,qwen2.5:3b,0.0,0,False,33.193,,,no_termina,HTTPError: HTTP Error 500: Internal Server Error,,,,,False,False,False
 grid-12-01,grid,12,llm,qwen2.5:3b,0.0,0,False,8.771,256,965,illegal,el camino termina fuera de la meta,DLRRRRRRR,12,,,False,False,False
 grid-12-02,grid,12,llm,qwen2.5:3b,0.0,0,False,302.062,,,no_termina,TimeoutError: timed out,,,,,False,False,False
 grid-12-03,grid,12,llm,qwen2.5:3b,0.0,0,False,302.037,,,no_termina,TimeoutError: timed out,,,,,False,False,False

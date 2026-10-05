@@ -7,9 +7,19 @@ Comparación de BFS, DFS, UCS, IDS y A* entre sí, contra un LLM (`qwen2.5:3b` e
 - Checklist de calificación: [`RUBRICA.md`](RUBRICA.md)
 - Reporte: [`REPORT.md`](REPORT.md) · Decisiones: [`DECISION_NOTES.md`](DECISION_NOTES.md) · IA: [`AI_LOG.md`](AI_LOG.md)
 
-## Estado
+## Estado y resultados principales
 
-Base lista y probada: el motor instrumentado, los bancos, el benchmark y 7 pruebas. Falta el trabajo de cada integrante según `ASIGNACIONES.md`. Al final armaremos el notebook de presentación.
+Las tres partes están completas y todas las pruebas pasan: 9 de la base, 6 de heurísticas y 9 del validador.
+
+| Sistema | Correctas (de 80) | Evidencia |
+|---|---|---|
+| A*-Manhattan (clásico) | 80 | `results/parte1_mediciones.csv` |
+| LLM `qwen2.5:3b` | 0 | `results/llm_respuestas.csv` |
+| LLM + nuestro A* como herramienta | 17 | `results/herramienta_respuestas.csv` |
+
+Quién hizo qué: Andretty Ochoa las heurísticas y los análisis 2 y 3 (PR #4); Jalil Chano el borrador del validador y del brazo LLM, que integramos; Daniel Salazar la base, los análisis 1 y 4, el brazo con herramienta, la integración y el reporte. El uso de IA está en `AI_LOG.md`.
+
+Las corridas que descartamos están en `evidencia_descartada/`, cada una con un README que explica por qué: dos procesos a la vez contra Ollama, y un error de nuestra herramienta en el 8-puzzle que ya corregimos.
 
 ## Ejecución
 
@@ -30,6 +40,10 @@ python code\analisis_optimalidad.py      # análisis 1 y 4
 ollama pull qwen2.5:3b
 python code\duelo_llm.py                 # brazo LLM, reproducibilidad, escalado
 python code\herramienta.py               # brazo con herramienta
+python code\duelo_llm.py --repro grid-8-00   # reproducibilidad (también grid-5-00)
+python code\duelo_llm.py --figuras       # figuras y conteo de fallas
+python code\auditoria_ollama.py --por-hora   # auditoría de llamadas sin texto
+python code\scorecard.py                 # números del scorecard
 ```
 
 ## Estructura

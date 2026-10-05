@@ -7,13 +7,19 @@ Una llamada sin texto puede ser dos cosas muy distintas:
     anterior, o la GPU bajó de velocidad y la llamada se cortó con pocos tokens.
 
 No adivinamos: cruzamos cada error con el log del servidor de Ollama, que
-registra cuántos tokens llevaba generados (n_gen) cuando se cortó. Regla:
+registra cuántos tokens llevaba generados (n_gen) cuando se cortó.
 
-    bucle confirmado  si n_gen >= UMBRAL_TOKENS y el corte no es instantáneo
-    infraestructura   en otro caso  -> se vuelve a correr esa instancia
+Primera regla (4 de octubre): bucle si n_gen >= 2000 (más de 10 veces la
+respuesta normal más larga, 188 tokens); infraestructura en otro caso.
 
-UMBRAL_TOKENS = 2000 es más de 10 veces la respuesta normal más larga que
-observamos (188 tokens). Las llamadas de una corrida son secuenciales (un solo
+Regla corregida (5 de octubre): repitiendo esas peticiones en streaming
+(``diagnostico_500.py``) vimos que un HTTP 500 con tokens generados es Ollama
+deteniendo al modelo porque repetía el mismo token ("token repeat limit
+reached"), aunque lleve pocos tokens. Entonces:
+
+    bucle del modelo  timeout de 300 s, o HTTP 500 con n_gen > 0
+    infraestructura   HTTP 500 con n_gen == 0: la llamada no llegó a generar
+                      (Ollama seguía cancelando la anterior) -> se repite Las llamadas de una corrida son secuenciales (un solo
 proceso), así que el k-ésimo error del registro corresponde al k-ésimo corte
 del log dentro de la ventana de tiempo de esa corrida.
 
@@ -43,6 +49,11 @@ _GIN = re.compile(r"^\[GIN\] (\d{4}/\d\d/\d\d - \d\d:\d\d:\d\d) \| 500 \|\s+(\S+
 _NGEN = re.compile(r"n_gen =\s+(\d+), tg =\s+([\d.]+) t/s")
 
 
+def es_bucle(error, ngen):
+    """Regla corregida (ver docstring del módulo)."""
+    return "timed out" in error.lower() or ngen > 0
+
+
 def _segundos(texto):
     """'5m0s', '28.3s', '864.3ms' -> segundos."""
     total = 0.0
@@ -70,14 +81,17 @@ def cortes(log, desde, hasta):
 def auditar(system, desde, hasta, log=LOG):
     errores = [json.loads(l) for l in (RESULTS / "llm_calls.jsonl").read_text(
         encoding="utf-8").splitlines() if l.strip()]
-    errores = [e for e in errores if e.get("system") == system and e.get("error")]
+    # Solo la corrida principal, que no registraba la hora; las llamadas con hora
+    # (reintentos, herramienta) se auditan con --por-hora.
+    errores = [e for e in errores if e.get("system") == system and e.get("error")
+               and not (e.get("meta") or {}).get("t_fin")]
     cs = cortes(log, desde, hasta)
     if len(cs) != len(errores):
         raise SystemExit(f"{len(errores)} errores en el registro pero {len(cs)} cortes en el "
                          "log: la correspondencia por orden no es segura; revisar a mano.")
     filas = []
     for e, (hora, dur, ngen, tps, _) in zip(errores, cs):
-        bucle = ngen >= UMBRAL_TOKENS and dur > CORTE_INSTANTANEO_S
+        bucle = es_bucle(e["error"], ngen)
         filas.append({"instance": e["instance"], "round": e.get("round", 0),
                       "error": e["error"], "hora_log": hora, "duracion_s": round(dur, 1),
                       "tokens_generados": ngen, "tokens_por_s": tps,
@@ -136,7 +150,7 @@ def auditar_por_hora(log=LOG, tolerancia_s=5):
                           "tokens_por_s": None, "veredicto": "sin_corte_en_log"})
             continue
         hora, dur, ngen, tps, _ = min(cerca, key=lambda c: abs(_a_segundos(c[0]) - t))
-        bucle = ngen >= UMBRAL_TOKENS and dur > CORTE_INSTANTANEO_S
+        bucle = es_bucle(e["error"], ngen)
         filas.append({**e, "duracion_s": round(dur, 1), "tokens_generados": ngen,
                       "tokens_por_s": tps,
                       "veredicto": "bucle_del_modelo" if bucle else "infraestructura"})
