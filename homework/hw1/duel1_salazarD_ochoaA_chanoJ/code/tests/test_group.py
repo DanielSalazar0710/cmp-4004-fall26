@@ -75,6 +75,19 @@ def test_b_estrella():
     assert b_estrella(10, 0) is None
 
 
+def test_herramienta_devuelve_caminos_que_el_validador_acepta():
+    # La herramienta del brazo LLM+A* debe responder en U/D/L/R en ambos dominios.
+    import herramienta
+    import validador
+    for dom in dominios.DOMINIOS:
+        for id_, _, inst in dominios.instancias(dom, por_nivel=2):
+            clave = "state" if dom == "8puzzle" else "grid"
+            out, _ = herramienta.ejecutar_herramienta(
+                {"tool": "astar", "domain": dom, clave: list(inst)}, dom)
+            v = validador.validar(dom, inst, out["path"], out["cost"])
+            assert v.category == "correct", (id_, out)
+
+
 if __name__ == "__main__":
     pruebas = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for t in pruebas:

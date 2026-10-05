@@ -9,7 +9,7 @@ correcciones a mano. Todas las respuestas quedan en ``.llm_cache/`` (se versiona
 Salidas:
     results/llm_respuestas.csv        una fila por instancia (COLUMNAS)
     results/llm_fallas_por_nivel.csv  las tres fallas contadas por separado
-    results/llm_reproducibilidad.csv  5 llamadas idénticas a UNA instancia
+    results/llm_reproducibilidad_<id>.csv  5 llamadas idénticas a una instancia
     results/llm_calls.jsonl           cada llamada, con la marca cached
     fig/escalado_optimalidad.png      % correct vs nivel: clásico, LLM y herramienta
     fig/fallas_llm.png                categorías por nivel (barras apiladas)
@@ -224,7 +224,7 @@ def reproducibilidad(id_inst="grid-8-00", n=5):
         filas += grupo
         print(f"{modo}: {textos} textos distintos, {respuestas} respuestas (PATH, COST) "
               f"distintas de {n}", file=sys.stderr)
-    escribir_csv(RESULTS / "llm_reproducibilidad.csv", filas)
+    escribir_csv(RESULTS / f"llm_reproducibilidad_{id_inst}.csv", filas)
     return filas
 
 

@@ -70,3 +70,18 @@ Las medianas de expansiones, frontera y tiempo se calculan solo sobre corridas r
 
 A veces el modelo entra en un bucle y genera texto sin parar. En el log de Ollama vimos una respuesta que pasó de 2 500 tokens antes de cortarse. En ese caso Ollama corta la generación y devuelve un error HTTP 500, o la llamada pasa de los 300 s. Decidimos no ponerle un tope de tokens al modelo, porque eso cambiaría la configuración del harness del curso. Lo tratamos como lo que es: una **falla del modelo**, que el scorecard nombra en el eje 8 ("times out"). Se clasifica como `no_termina`, se cuenta por nivel y no se reintenta. Con temperatura 0, al repetir la llamada se repite el bucle, así que el resultado es reproducible. Solo un error de infraestructura (Ollama apagado o conexión rechazada) se registra como `llm_error` y se vuelve a correr. Estas respuestas no se guardan en la caché, porque el harness no guarda errores; quedan registradas en `results/llm_calls.jsonl`.
 
+## Auditoría de las llamadas sin texto
+
+En la corrida oficial, 34 de las 80 llamadas del brazo LLM terminaron sin texto. No las clasificamos a ciegas. `code/auditoria_ollama.py` cruza cada una con el log del servidor de Ollama, que registra cuántos tokens llevaba generados el modelo cuando se cortó la llamada. La regla se fijó antes de mirar los conteos:
+
+- **Bucle del modelo** (`no_termina`): 2 000 tokens o más (más de 10 veces la respuesta normal más larga, de 188 tokens) y un corte que no fue instantáneo.
+- **Infraestructura:** todo lo demás. Por ejemplo, un error que llegó en 1–2 s con 0 tokens, porque Ollama todavía estaba cancelando la respuesta en bucle de la llamada anterior. O una llamada que se cortó con pocos tokens mientras la GPU bajó de 135 a 14 tokens/s.
+
+Resultado: 27 bucles confirmados (entre 2 300 y 40 000 tokens) y 7 fallas de infraestructura. Solo esas 7 instancias se volvieron a correr, con `--solo`. La evidencia queda en `results/auditoria_llm.csv` y `results/ollama_cortes_llm.txt`. Para evitar los cortes heredados, desde el brazo con herramienta esperamos 10 s después de cada error y registramos la hora de inicio y fin de cada llamada.
+
+En algunos tramos de la noche la GPU de la laptop bajó de velocidad, probablemente por el ahorro de energía con la pantalla apagada. Eso infla las latencias de esas llamadas. Lo declaramos en la sección de honestidad.
+
+## Reproducibilidad: dos instancias
+
+En las asignaciones fijamos `grid-8-00` antes de correr nada, y la mantenemos como medición oficial. Con temperatura 0, el modelo entra en bucle las 5 veces, así que obtenemos "1 resultado distinto de 5", pero sin ningún camino que comparar. Como medición adicional, la repetimos en `grid-5-00`: la primera grilla del banco en la que el modelo sí devolvió una respuesta en la corrida principal. La regla es fija y la instancia no se eligió por su resultado. Reportamos las dos por separado.
+

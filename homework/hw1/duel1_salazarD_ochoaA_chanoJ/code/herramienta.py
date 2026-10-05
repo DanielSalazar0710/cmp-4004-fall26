@@ -110,6 +110,19 @@ def _heuristica(dominio):
         return heuristicas.h_cero, "cero"
 
 
+def camino_en_letras(dominio, instancia, acciones):
+    """El motor devuelve acciones del problema: letras en la grilla, pero en el
+    8-puzzle del curso cada acción es la CASILLA a la que se mueve el blanco.
+    La herramienta responde siempre en U/D/L/R, el formato que pide el prompt."""
+    if dominio == "grid":
+        return "".join(acciones)
+    letras, blanco = [], tuple(instancia).index(0)
+    for destino in acciones:
+        letras.append({-3: "U", 3: "D", -1: "L", 1: "R"}[destino - blanco])
+        blanco = destino
+    return "".join(letras)
+
+
 def ejecutar_herramienta(llamada, dominio):
     """Corre nuestro A* con los argumentos del modelo. Devuelve (respuesta, instancia_del_modelo)."""
     try:
@@ -135,7 +148,7 @@ def ejecutar_herramienta(llamada, dominio):
         r = motor.resolver(dominios.problema(dominio, instancia), "astar", h=h)
         if r.status != "solved":
             return {"error": f"no solution ({r.status})"}, instancia
-        return {"path": "".join(r.path), "cost": r.cost}, instancia
+        return {"path": camino_en_letras(dominio, instancia, r.path), "cost": r.cost}, instancia
     except (KeyError, TypeError, ValueError) as e:
         return {"error": str(e)}, None
 
