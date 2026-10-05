@@ -32,3 +32,21 @@ Formato de `referencias/resources/ai-policy.md`. Cada integrante agrega sus prop
 **Qué hice con eso:** pendiente. Hay que correr ambos con los datos oficiales cuando estén las heurísticas y el validador.
 
 **¿Lo entendí?** Pendiente. Debo poder explicar por qué BFS falla con costos no uniformes, cómo se calcula b* y por qué nuestro b* de UCS es menor que el de la tabla de las slides.
+
+
+## Heurísticas, análisis 2 y 3 y figuras
+
+**Quién:** Andretty Ochoa.  
+**Herramienta:** ChatGPT (OpenAI), 4 de octubre de 2026.
+
+**Qué le pedí:** acompañarme paso a paso en mi parte del Duel 1, incluyendo la implementación y revisión de las heurísticas para 8-puzzle y grid, la comparación entre misplaced y Manhattan, el experimento con Manhattan ×3, el procesamiento de las mediciones y la generación de las figuras requeridas. También lo usé para interpretar los resultados y preparar mis aportes al reporte y a las notas de decisiones.
+
+**Qué recibí:**
+- Apoyo para implementar y revisar `h_misplaced`, `h_manhattan_puzzle`, `h_manhattan_grid` e `inflar` en `code/heuristicas.py`.
+- Apoyo para completar `code/analisis_heuristicas.py`, generando `resumen_parte1.csv`, `dominancia.csv`, `inflado_x3.csv` y las tres figuras de la Parte 1.
+- Explicaciones sobre admisibilidad, dominancia, heurísticas infladas, speedup y pérdida de optimalidad.
+- Ayuda para interpretar las mediciones oficiales y redactar mis secciones de `REPORT.md` y `DECISION_NOTES.md`.
+
+**Qué hice con eso:** revisé el código antes de incorporarlo, ejecuté personalmente las pruebas de heurísticas y del grupo, corrí primero el benchmark rápido y después el benchmark completo de 520 mediciones. Verifiqué los resultados de dominancia y del experimento ×3 y regeneré los CSV y las figuras con los datos oficiales antes de usarlos en el reporte.
+
+**¿Lo entendí?** Sí. Puedo explicar por qué misplaced y Manhattan excluyen el espacio vacío, por qué Manhattan es admisible, por qué Manhattan domina informativamente a misplaced, por qué multiplicar la heurística por 3 rompe la garantía de admisibilidad y cómo interpretar los speedups y la pérdida de calidad observada.

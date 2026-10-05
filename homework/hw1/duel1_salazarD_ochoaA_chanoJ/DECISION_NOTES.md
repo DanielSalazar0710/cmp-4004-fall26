@@ -41,3 +41,13 @@ Subimos el timeout del cliente de 120 s a 300 s y registramos los errores del mo
 ## Librerías
 
 No usamos pandas. En la laptop de Daniel, el Control inteligente de aplicaciones de Windows bloquea sus DLL. Todo se hace con `csv` y `numpy`.
+
+## Heurísticas y análisis 2 y 3 (Andretty)
+
+Para el 8-puzzle implementamos dos heurísticas admisibles. `h_misplaced` cuenta las fichas que no están en su posición objetivo, excluyendo el espacio vacío. `h_manhattan_puzzle` suma para cada ficha su distancia Manhattan hasta la posición objetivo, también excluyendo el vacío. No contamos el espacio vacío porque moverlo no representa una ficha adicional que necesariamente deba colocarse; incluirlo podría hacer que la estimación deje de ser una cota inferior del costo restante.
+
+Para las grillas usamos distancia Manhattan multiplicada por `MIN_COST`. La distancia Manhattan estima el número mínimo de movimientos necesarios y `MIN_COST` representa el menor costo posible por movimiento. Así obtenemos una cota inferior del costo real y conservamos la admisibilidad.
+
+En el análisis de dominancia comparamos A*-misplaced y A*-manhattan instancia por instancia en las 40 instancias del 8-puzzle. Manhattan tuvo un número de expansiones menor o igual que misplaced en las 40, sin excepciones. Esto es consistente con que Manhattan contiene más información: una ficha fuera de lugar aporta solamente 1 a misplaced, mientras Manhattan considera cuántos movimientos mínimos faltan para colocarla.
+
+También evaluamos `A*-manhattan_x3`, que multiplica Manhattan por 3. Esta modificación se hizo deliberadamente para romper la admisibilidad y observar el intercambio entre eficiencia y calidad de solución. En las 80 instancias de ambos dominios, 20 produjeron una solución subóptima. El peor caso fue `8puzzle-16-07`: A*-manhattan obtuvo costo 16 con 99 expansiones, mientras x3 obtuvo costo 24 con 261 expansiones. Por tanto, inflar la heurística no garantiza una mejora: puede reducir expansiones en muchos casos, pero también puede producir soluciones de mayor costo e incluso expandir más nodos en ciertas instancias.

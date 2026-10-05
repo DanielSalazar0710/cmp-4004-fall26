@@ -27,7 +27,13 @@ def h_misplaced(problema, estado):
     Si cuentas el blanco deja de ser admisible: un estado a 1 movimiento de la
     meta daría 2. Ejemplo: (1,2,3,4,5,6,7,0,8) -> 1.
     """
-    raise NotImplementedError  # TODO Andretty
+    goal = getattr(problema, "goal", GOAL)
+
+    return sum(
+        1
+        for actual, esperado in zip(estado, goal)
+        if actual != 0 and actual != esperado
+    )
 
 
 def h_manhattan_puzzle(problema, estado):
@@ -37,7 +43,25 @@ def h_manhattan_puzzle(problema, estado):
     no asumas que la ficha k va en la posición k-1. Ejemplo:
     (1,2,3,4,5,6,7,0,8) -> 1.
     """
-    raise NotImplementedError  # TODO Andretty
+    goal = getattr(problema, "goal", GOAL)
+
+    pos_goal = {
+        ficha: divmod(i, 3)
+        for i, ficha in enumerate(goal)
+    }
+
+    distancia = 0
+
+    for i, ficha in enumerate(estado):
+        if ficha == 0:
+            continue
+
+        fila, columna = divmod(i, 3)
+        fila_goal, columna_goal = pos_goal[ficha]
+
+        distancia += abs(fila - fila_goal) + abs(columna - columna_goal)
+
+    return distancia
 
 
 # ---- grilla con terrenos ---------------------------------------------------------
@@ -49,7 +73,12 @@ def h_manhattan_grid(problema, estado):
     DECISION_NOTES.md por qué la Manhattan sin escalar dejaría de serlo si
     MIN_COST fuera menor que 1 (por ejemplo 0.5).
     """
-    raise NotImplementedError  # TODO Andretty
+    fila, columna = estado
+    fila_goal, columna_goal = problema.goal
+
+    distancia = abs(fila - fila_goal) + abs(columna - columna_goal)
+
+    return distancia * MIN_COST
 
 
 # ---- admisibilidad rota a propósito (análisis 3) ------------------------------------
@@ -60,7 +89,12 @@ def inflar(h, factor=3):
     Debe conservar un nombre legible (``h_x.__name__ = f"{h.__name__}_x{factor}"``)
     para que aparezca bien en los CSV.
     """
-    raise NotImplementedError  # TODO Andretty
+    def h_inflada(problema, estado):
+        return factor * h(problema, estado)
+
+    h_inflada.__name__ = f"{h.__name__}_x{factor}"
+
+    return h_inflada
 
 
 def registro():
