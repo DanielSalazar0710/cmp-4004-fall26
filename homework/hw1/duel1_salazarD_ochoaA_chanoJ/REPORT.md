@@ -22,7 +22,7 @@ Reportamos medianas y rango intercuartil (IQR). La Parte 1 se midió en la lapto
 | Eje | Clásico (A*-Manhattan) | LLM (`qwen2.5:3b`) | LLM + A* como herramienta | Evidencia |
 |---|---|---|---|---|
 | 1 Corrección | **80/80** óptimas | **0/80** | **17/80** | `results/scorecard.csv` |
-| 2 Garantía | Costo mínimo **si** *h* es admisible; nada sobre el tiempo. Con *h*×3 la garantía se pierde (20/80 subóptimas) | Ninguna: 0/80 aquí no dice nada sobre la instancia 81 | Óptimo **solo si** el modelo copia bien la instancia y la respuesta. Lo comprueba nuestro validador, no el sistema | §3.1, §4.3 |
+| 2 Garantía | Costo mínimo **si** *h* es admisible (Manhattan: 0 sobreestimaciones en los 181 440 estados del 8-puzzle); nada sobre el tiempo. Con *h*×3 la garantía se pierde (20/80 subóptimas) | Ninguna: 0/80 aquí no dice nada sobre la instancia 81 | Óptimo **solo si** el modelo copia bien la instancia y la respuesta. Lo comprueba nuestro validador, no el sistema | §3.1, §4.3 |
 | 3 Costo (mediana) | 23,5 expansiones | 204 tokens | 682 tokens + una búsqueda A* (23,5 expansiones de mediana) | `results/scorecard.csv` |
 | 4 Latencia (mediana / p95) | 0,0004 s / 0,002 s | 8,4 s / 302 s | 9,0 s / 302 s | `results/*_respuestas.csv` |
 | 5 Reproducibilidad (5 llamadas idénticas) | 1 resultado distinto | `grid-8-00`: 1 (5 bucles); `grid-5-00`: **3 distintos** con temperatura 0 | `grid-5-00`: 1 (la misma respuesta ilegal 5 veces) | `results/*reproducibilidad*.csv` |
@@ -73,7 +73,7 @@ Elegimos el ejemplo de forma automática: la grilla con mayor sobrecosto relativ
 
 Comparamos A*-misplaced y A*-manhattan en las 40 instancias del 8-puzzle. Manhattan expandió igual o menos nodos en **las 40**. Es lo esperado: las dos son admisibles, pero Manhattan mide cuántos movimientos le faltan a cada ficha, no solo si está fuera de lugar.
 
-En la figura, cada punto es una instancia (misplaced en x, Manhattan en y): todos quedan sobre o bajo la diagonal y = x. En `8puzzle-16-00`, misplaced expandió 685 nodos y Manhattan 169.
+En la figura, cada punto es una instancia (misplaced en x, Manhattan en y): todos quedan sobre o bajo la diagonal y = x. En `8puzzle-16-00`, misplaced expandió 685 nodos y Manhattan 169. La garantía no depende del banco: en los **181 440 estados** del 8-puzzle, ninguna de las dos heurísticas sobreestima ni es inconsistente, y Manhattan domina a misplaced estado por estado (`results/admisibilidad_exhaustiva.csv`).
 
 ![Dominancia](fig/dominancia.png)
 
