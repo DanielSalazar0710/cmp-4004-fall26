@@ -196,6 +196,25 @@ def figura_branching(resumen, ruta):
     plt.close(fig)
 
 
+# ---- eje 5 del scorecard para el sistema clásico ------------------------------------
+
+def reproducibilidad_clasica(id_inst="grid-8-00", n=5):
+    """Misma instancia que la reproducibilidad del LLM: 5 corridas de A*-manhattan.
+    Se mide, no se asume: contamos caminos y costos distintos."""
+    import heuristicas
+    dom, _, inst = dominios.buscar(id_inst)
+    h = heuristicas.registro()[dom]["manhattan"]
+    filas = []
+    for k in range(1, n + 1):
+        r = motor.resolver(dominios.problema(dom, inst), "astar", h=h)
+        filas.append({"instance": id_inst, "corrida": k, "path": "".join(r.path),
+                      "cost": r.cost, "expansions": r.expansions})
+    distintas = len({(f["path"], f["cost"]) for f in filas})
+    for f in filas:
+        f["respuestas_distintas"] = distintas
+    return filas
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Análisis 1 (optimalidad) y 4 (b*)")
     ap.add_argument("--entrada", default=str(RESULTS / "parte1_mediciones.csv"))
@@ -216,6 +235,7 @@ def main(argv=None):
     resumen = resumen_branching(bstar)
     escribir_csv(res / "branching_resumen.csv", resumen)
     figura_branching(resumen, fig / "branching.png")
+    escribir_csv(res / "reproducibilidad_clasica.csv", reproducibilidad_clasica())
 
     con_astar = [f for f in opt if f["admisibles_medidos"]]
     iguales = sum(f["astar_admisible_igual_ucs"] is True for f in con_astar)
