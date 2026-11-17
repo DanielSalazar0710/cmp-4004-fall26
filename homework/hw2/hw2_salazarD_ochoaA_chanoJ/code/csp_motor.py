@@ -30,7 +30,8 @@ Qué devuelve `resolver(modelo)`: un `ResultadoSolver` con `estado` en
     "multiple"     al menos dos soluciones -> modelo sub-restringido
     "sin_solucion" el solver probó que no hay solución -> sobre-restringido
     "timeout"      se acabó el límite de llamadas o de segundos
-y los errores de construcción salen como `ErrorModelo` con `categoria`
+y los errores de construcción salen como `ErrorModelo` con `categoria` (el mensaje
+va en inglés porque es lo que el brazo B' le devuelve al modelo)
     "sintaxis"        estructura rota (falta 'variables', tipo desconocido, ...)
     "aridad_alcance"  la restricción apunta a una variable que no existe, le
                       faltan argumentos o compara con < sobre valores no numéricos
@@ -84,7 +85,7 @@ def _predicado(tipo: str, k=None):
         return lambda x, y: abs(x - y) == 1
     if tipo == "offset":
         return lambda x, y: x - y == k
-    raise ErrorModelo("sintaxis", f"tipo desconocido {tipo!r}")
+    raise ErrorModelo("sintaxis", f"unknown constraint type {tipo!r}")
 
 
 class ModeloCSP:
@@ -93,18 +94,18 @@ class ModeloCSP:
 
     def __init__(self, modelo: dict):
         if not isinstance(modelo, dict):
-            raise ErrorModelo("sintaxis", "el modelo no es un objeto JSON")
+            raise ErrorModelo("sintaxis", "the model is not a JSON object")
         if "variables" not in modelo:
-            raise ErrorModelo("sintaxis", "falta la clave 'variables'")
+            raise ErrorModelo("sintaxis", "missing key 'variables'")
         variables = modelo["variables"]
         if not isinstance(variables, dict) or not variables:
-            raise ErrorModelo("sintaxis", "'variables' debe ser un objeto no vacío")
+            raise ErrorModelo("sintaxis", "'variables' must be a non-empty object")
         self.dominios: dict[str, list] = {}
         for nombre, dom in variables.items():
             if not isinstance(dom, list) or not dom:
-                raise ErrorModelo("sintaxis", f"la variable {nombre!r} no tiene una lista de valores")
+                raise ErrorModelo("sintaxis", f"variable {nombre!r} has no list of values")
             if any(isinstance(v, (list, dict)) for v in dom):
-                raise ErrorModelo("sintaxis", f"el dominio de {nombre!r} tiene valores anidados")
+                raise ErrorModelo("sintaxis", f"the domain of {nombre!r} has nested values")
             vistos = []
             for v in dom:
                 if v not in vistos:
@@ -113,7 +114,7 @@ class ModeloCSP:
         self.variables = list(self.dominios)
         restricciones = modelo.get("constraints", [])
         if not isinstance(restricciones, list):
-            raise ErrorModelo("sintaxis", "'constraints' debe ser una lista")
+            raise ErrorModelo("sintaxis", "'constraints' must be a list")
         self.binarias: list[tuple] = []
         self.vecinos: dict[str, set] = {v: set() for v in self.variables}
         for i, r in enumerate(restricciones):
@@ -123,61 +124,61 @@ class ModeloCSP:
     def _var(self, x, i, tipo):
         if not isinstance(x, str) or x not in self.dominios:
             raise ErrorModelo("aridad_alcance",
-                              f"restricción #{i} ({tipo}) usa la variable desconocida {x!r}")
+                              f"constraint #{i} ({tipo}) uses the unknown variable {x!r}")
         return x
 
     def _numerica(self, v, i, tipo):
         if not all(_es_numero(x) for x in self.dominios[v]):
             raise ErrorModelo("aridad_alcance",
-                              f"restricción #{i} ({tipo}) compara números pero {v!r} tiene valores no numéricos")
+                              f"constraint #{i} ({tipo}) compares numbers but {v!r} has non-numeric values")
 
     def _agregar(self, i, r):
         if not isinstance(r, dict) or "type" not in r:
-            raise ErrorModelo("sintaxis", f"restricción #{i} no es un objeto con 'type'")
+            raise ErrorModelo("sintaxis", f"constraint #{i} is not an object with 'type'")
         tipo = r["type"]
         if tipo not in TIPOS:
-            raise ErrorModelo("sintaxis", f"restricción #{i}: tipo desconocido {tipo!r}")
+            raise ErrorModelo("sintaxis", f"constraint #{i}: unknown type {tipo!r}")
         if tipo == "alldiff":
             vs = r.get("vars")
             if not isinstance(vs, list) or len(vs) < 2:
                 raise ErrorModelo("aridad_alcance",
-                                  f"restricción #{i} (alldiff) necesita una lista 'vars' con 2 o más variables")
+                                  f"constraint #{i} (alldiff) needs a list 'vars' with 2 or more variables")
             vs = [self._var(v, i, tipo) for v in vs]
             for j, a in enumerate(vs):
                 for b in vs[j + 1:]:
                     if a == b:
                         raise ErrorModelo("aridad_alcance",
-                                          f"restricción #{i} (alldiff) repite la variable {a!r}")
+                                          f"constraint #{i} (alldiff) repeats the variable {a!r}")
                     self._binaria(a, b, _predicado("neq"), f"{a} != {b}")
             return
         if "a" not in r or "b" not in r:
-            raise ErrorModelo("aridad_alcance", f"restricción #{i} ({tipo}) necesita 'a' y 'b'")
+            raise ErrorModelo("aridad_alcance", f"constraint #{i} ({tipo}) needs 'a' and 'b'")
         a = self._var(r["a"], i, tipo)
         b = r["b"]
         k = None
         if tipo == "offset":
             k = r.get("k")
             if not _es_numero(k):
-                raise ErrorModelo("aridad_alcance", f"restricción #{i} (offset) necesita un número 'k'")
+                raise ErrorModelo("aridad_alcance", f"constraint #{i} (offset) needs a number 'k'")
         b_es_variable = isinstance(b, str) and b in self.dominios
         if isinstance(b, str) and not b_es_variable and b not in self.dominios[a]:
             # un texto que no es variable ni valor posible de `a`: casi siempre un
             # nombre de variable mal escrito o inventado (error de alcance)
             raise ErrorModelo("aridad_alcance",
-                              f"restricción #{i} ({tipo}) usa {b!r}, que no es variable ni valor de {a!r}")
+                              f"constraint #{i} ({tipo}) uses {b!r}, which is neither a variable nor a possible value of {a!r} (possible values: {self.dominios[a]})")
         if isinstance(b, (list, dict)):
-            raise ErrorModelo("aridad_alcance", f"restricción #{i} ({tipo}) tiene 'b' con varios valores")
+            raise ErrorModelo("aridad_alcance", f"constraint #{i} ({tipo}) has several values in 'b'")
         if tipo in BINARIOS_NUMERICOS:
             self._numerica(a, i, tipo)
             if b_es_variable:
                 self._numerica(b, i, tipo)
             elif not _es_numero(b):
                 raise ErrorModelo("aridad_alcance",
-                                  f"restricción #{i} ({tipo}) compara {a!r} con {b!r}, que no es variable ni número")
+                                  f"constraint #{i} ({tipo}) compares {a!r} with {b!r}, which is neither a variable nor a number")
         f = _predicado(tipo, k)
         if b_es_variable:
             if a == b:
-                raise ErrorModelo("aridad_alcance", f"restricción #{i} ({tipo}) relaciona {a!r} consigo misma")
+                raise ErrorModelo("aridad_alcance", f"constraint #{i} ({tipo}) relates {a!r} to itself")
             texto = f"{a} {tipo} {b}" + (f" k={k}" if tipo == "offset" else "")
             self._binaria(a, b, f, texto)
         else:
