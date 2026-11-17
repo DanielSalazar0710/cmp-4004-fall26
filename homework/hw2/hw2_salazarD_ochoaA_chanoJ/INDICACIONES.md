@@ -3,7 +3,7 @@
 **Equipo:** Daniel Salazar, Andretty Ochoa y Jalil Chano
 **Consigna del profe:** [`referencias/hw2.md`](referencias/hw2.md) (manda sobre todo lo de aquí) · **Scorecard:** [`referencias/duel-scorecard.md`](referencias/duel-scorecard.md)
 **Rama:** `hw1-salazarD` en https://github.com/DanielSalazar0710/cmp-4004-fall26/tree/hw1-salazarD/homework/hw2/hw2_salazarD_ochoaA_chanoJ
-**Fechas internas:** al final (sección 5).
+**Entrega del deber: mié 18 nov.** Sus partes me las mandan **mañana miércoles 18 hasta las 13:00** (sección 5).
 
 Léanlo completo antes de empezar. Ya dejé hecha y probada la base: el motor CSP, el formato de los problemas con 3 ejemplos verificados, el cliente del LLM con caché, el formato de los CSV, el brazo A y el verificador del dataset. Cada uno completa **solo sus archivos**. Así nadie espera a nadie y nadie pisa el trabajo de otro.
 
@@ -22,7 +22,7 @@ Probamos la arquitectura de Logic-LM, LINC y LLM-Modulo: **el LLM traduce el pro
 | **C, directo** | el LLM responde directo desde el enunciado | Jalil |
 
 - **Modelo:** `qwen2.5:3b` en Ollama, el del curso. Temperatura 0.7 y **3 semillas (0, 1, 2)** por problema para medir varianza. Todo está en [`code/config.py`](code/config.py); no lo cambien sin avisar.
-- **Dataset:** 24 problemas propios, 8 fáciles, 8 medios y 8 difíciles. La dificultad se mide por el **número de variables** del modelo CSP: fácil ≤ 8, medio de 9 a 15, difícil ≥ 16.
+- **Dataset:** 21 problemas propios, 7 fáciles, 7 medios y 7 difíciles (el profe pide al menos 20). La dificultad se mide por el **número de variables** del modelo CSP: fácil ≤ 8, medio de 9 a 15, difícil ≥ 16.
 - **Lo más importante del deber:** la taxonomía de errores del brazo B y la columna "¿se detecta sin la respuesta correcta?". Un sistema cuyos errores se anuncian solos se puede usar en la vida real. Uno cuyos errores son silenciosos, no.
 
 ### Cómo es un modelo CSP en nuestro formato
@@ -117,22 +117,22 @@ ollama list                                # debe aparecer qwen2.5:3b
 | [`code/brazo_a.py`](code/brazo_a.py) | brazo A → `results/brazo_a.csv` |
 | [`code/verificar_dataset.py`](code/verificar_dataset.py) | revisa cada problema: solución única, igual al gold, nivel correcto y sin fugas |
 | [`code/datos_falsos.py`](code/datos_falsos.py) | CSV **falsos** con el formato real, para probar figuras y costos sin esperar las corridas |
-| [`problems/ejemplos/`](problems/ejemplos/) | 3 problemas de ejemplo (uno por nivel), ya verificados. **No cuentan** en los 24 |
+| [`problems/ejemplos/`](problems/ejemplos/) | 3 problemas de ejemplo (uno por nivel), ya verificados. **No cuentan** en los 21 |
 
 ---
 
-## 2. Andretty · Dataset de 24 problemas y brazo A
+## 2. Andretty · Dataset de 21 problemas y brazo A
 
 **Por qué es clave:** es el 15 % de "construcción del dataset" y además es la verdad base de todo. Si un gold está mal, todos los números del deber quedan mal.
 
 ### Qué entregar
-1. **24 archivos** en `problems/`: `facil-01.json` … `facil-08.json`, `medio-01.json` … `medio-08.json` y `dificil-01.json` … `dificil-08.json`, con todas las claves del formato.
-2. **`problems/README.md`** (media página): qué familias usaste, la métrica de dificultad (número de variables, con la tabla de los 24 que genera el verificador) y cómo verificaste cada gold a mano.
+1. **21 archivos** en `problems/`: `facil-01.json` … `facil-07.json`, `medio-01.json` … `medio-07.json` y `dificil-01.json` … `dificil-07.json`, con todas las claves del formato.
+2. **`problems/README.md`** (media página): qué familias usaste, la métrica de dificultad (número de variables, con la tabla de los 21 que genera el verificador) y cómo verificaste cada gold a mano.
 3. Tu sección en `AI_LOG.md`.
 
 ### Cómo hacerlo
 1. Copia un ejemplo de `problems/ejemplos/` y cámbiale el id, el enunciado, el modelo y el gold.
-2. **Mezcla al menos 3 familias**, porque así el dataset no es "24 veces el mismo acertijo":
+2. **Mezcla al menos 3 familias**, porque así el dataset no es "21 veces el mismo acertijo":
    - **einstein:** personas, colores y mascotas en casas en fila (como los ejemplos). Usa `eq`, `adj`, `offset` y `gt`.
    - **horario:** tareas o personas en franjas 1..N, con "antes de", "justo después de", "no en la franja 2". Usa `lt`, `offset` y `neq`.
    - **coloreo:** regiones de un mapa con colores. Las variables son las regiones, los valores son colores (`"red"`, `"green"`…) y vecinos distintos se modelan con `neq`. Para que haya una sola solución, fija uno o dos colores en el enunciado.
@@ -148,11 +148,11 @@ ollama list                                # debe aparecer qwen2.5:3b
 8. **Prueba de que está bien** (debe pasar antes de cada push):
    ```powershell
    python code\verificar_dataset.py      # debe terminar en: TODO EL DATASET ESTÁ BIEN
-   python code\brazo_a.py                 # debe decir: Brazo A: 72/72 correctos
+   python code\brazo_a.py                 # debe decir: Brazo A: 63/63 correctos
    ```
 
 ### Criterios de aceptación
-- [ ] 24 problemas, 8 por nivel, y `verificar_dataset.py` sin errores.
+- [ ] 21 problemas, 7 por nivel, y `verificar_dataset.py` sin errores.
 - [ ] Al menos 3 familias, y cada nivel con al menos 2 familias.
 - [ ] Cada `verificacion_manual` explica el razonamiento, no dice solo "lo revisé".
 - [ ] Los enunciados no son copia de internet. Si adaptas uno clásico, ponlo en `fuente`.
@@ -179,14 +179,14 @@ Cada archivo trae arriba, en su descripción, el detalle de qué hacer.
 ### Cómo hacerlo (en este orden, y sin esperar a nadie)
 1. **Respuesta C.**
    - El prompt lleva el enunciado + `texto_formato(problema)` + la instrucción de responder **solo un objeto JSON** `{"Ana": 3, ...}`.
-   - Prueba 2 o 3 redacciones con los 3 ejemplos y quédate con la que mejor responda en formato. Anota en `AI_LOG.md` cuáles probaste. No vale ajustar el prompt mirando los 24 problemas finales: para eso están los ejemplos.
+   - Prueba 2 o 3 redacciones con los 3 ejemplos y quédate con la que mejor responda en formato. Anota en `AI_LOG.md` cuáles probaste. No vale ajustar el prompt mirando los 21 problemas finales: para eso están los ejemplos.
    - El lector usa `extraer_json` (ya hecho) y devuelve `"sin_formato"` o `"incompleta"` según el caso.
 2. **Brazo C.** Sigue los pasos de la descripción de `brazo_c.py`. Pruébalo con `--falso` y después con Ollama sobre los ejemplos:
    ```powershell
    python code\brazo_c.py --falso --solo ejemplos
    python code\brazo_c.py --solo ejemplos           # con Ollama: unos minutos
    ```
-   La corrida grande (24 × 3) la lanzas cuando Andretty suba el dataset. Puede tardar 1 o 2 horas, déjala corriendo. Gracias a la caché, si se corta, al volver a lanzarla sigue donde quedó.
+   La corrida grande (21 × 3) la hacemos Daniel y yo al integrar, con tu script, apenas esté el dataset. Tú no esperas al dataset.
 3. **Figuras y costos con datos falsos**, mientras esperas el dataset:
    ```powershell
    python code\datos_falsos.py
@@ -205,7 +205,6 @@ Cada archivo trae arriba, en su descripción, el detalle de qué hacer.
 ### Criterios de aceptación
 - [ ] `test_jalil.py` pasa 5/5 sin Ollama.
 - [ ] `results/brazo_c_ejemplos.csv` con la corrida real de los ejemplos.
-- [ ] `results/brazo_c.csv` con 72 filas (24 × 3), cuando ya esté el dataset.
 - [ ] Las 5 figuras con datos falsos; las reales las genero yo con tu script al final.
 - [ ] `PRECIOS` con fuente y fecha, y el costo **por respuesta correcta** (no por intento).
 - [ ] Commiteas la caché `.llm_cache/` de tus corridas: es la evidencia que pide el profe.
@@ -228,16 +227,15 @@ Cada archivo trae arriba, en su descripción, el detalle de qué hacer.
 
 ---
 
-## 5. Fechas internas y puntos de control
+## 5. Fechas y puntos de control (el deber se entrega mañana)
 
-| Punto de control | Quién | Qué | Fecha |
+| Punto de control | Quién | Qué | Hasta |
 |---|---|---|---|
-| **PC1** | Andretty | PR con 6 problemas (2 por nivel) que pasan el verificador | **mié 18 nov, 22:00** |
-| **PC1** | Jalil | PR con `respuesta_c.py` + `brazo_c.py`; pasan `test_prompt_sin_fugas`, `test_lector` y `test_fila_brazo_c`, y está la corrida de ejemplos | **mié 18 nov, 22:00** |
-| **PC2** | Andretty | los 24 problemas + `problems/README.md` | **jue 19 nov, 22:00** |
-| **PC2** | Jalil | figuras y costos con datos falsos; `test_jalil` pasa 5/5 | **jue 19 nov, 22:00** |
-| **PC3** | Jalil | corrida completa de C sobre los 24 (72 filas) | **vie 20 nov, 22:00** |
-| **PC4** | Daniel | corridas de B y B′, figuras reales, taxonomía y REPORT | sáb 21 a dom 22 nov |
-| **Entrega** | todos | cada uno abre su PR al repo del profe con su carpeta `homework/hw2/<apellido>` | **lun 23 nov** |
+| **PC1** | Andretty | PR con 6 problemas (2 por nivel) que pasan el verificador, para revisar el formato pronto | **hoy mar 17, 22:00** |
+| **PC1** | Jalil | PR con `respuesta_c.py` + `brazo_c.py`; pasan `test_prompt_sin_fugas`, `test_lector` y `test_fila_brazo_c` | **hoy mar 17, 22:00** |
+| **PC2 · entrega de su parte** | Andretty | los 21 problemas + `problems/README.md` + su AI_LOG | **mié 18, 13:00** |
+| **PC2 · entrega de su parte** | Jalil | figuras y costos funcionando (`test_jalil` 5/5), corrida de ejemplos + su AI_LOG | **mié 18, 13:00** |
+| **Integración** | Daniel | B y B′, corridas de todos los brazos, figuras reales, taxonomía y REPORT | mié 18, tarde |
+| **Entrega** | todos | cada uno abre su PR al repo del profe con su carpeta `homework/hw2/<apellido>` | mié 18 |
 
-En cada punto de control reviso lo que suban y les dejo comentarios en el PR el mismo día. Si alguien no llega, me avisa antes, y entre todos vemos cómo completarlo. Las dudas van al grupo, o como comentario en su issue de GitHub.
+Suban **apenas tengan algo que pase las pruebas**, aunque no esté todo: no esperen a la hora límite, porque las corridas con el LLM tardan horas y necesito empezar con lo que haya. Reviso cada PR al llegar y les comento ahí mismo. Si a las 13:00 falta algo, me avisan y lo completamos entre todos.
