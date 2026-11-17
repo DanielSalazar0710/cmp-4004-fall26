@@ -1,0 +1,3 @@
+# Sin pandas: csv de la librería estándar + numpy/matplotlib para las figuras.
+numpy>=1.24
+matplotlib>=3.7
