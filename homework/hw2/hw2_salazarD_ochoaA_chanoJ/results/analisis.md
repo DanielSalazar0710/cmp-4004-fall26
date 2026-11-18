@@ -13,7 +13,7 @@
 | nunca convergió | 57 |
 
 - Primer error de los que el refinamiento arregló: {'': 1, 'sintaxis': 3}
-- Primer error de los que sobrevivieron 3 rondas con un error visible: {'sintaxis': 33, 'aridad_alcance': 10, 'sobre_restringido': 10, 'sub_restringido': 3}
+- Primer error de los que sobrevivieron 3 rondas con un error visible: {'sintaxis': 29, 'aridad_alcance': 9, 'sobre_restringido': 10, 'sub_restringido': 3}
 
 ## Detectabilidad: B vs C
 

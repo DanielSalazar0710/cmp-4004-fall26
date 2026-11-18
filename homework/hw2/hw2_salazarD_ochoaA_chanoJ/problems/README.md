@@ -11,7 +11,7 @@ En `verificacion_manual` de cada JSON dejamos la deducción del `gold` a partir 
 | ID | Nivel | Familia | Variables | Restricciones | Llamadas |
 |---|---|---|---:|---:|---:|
 | facil-01 | facil | einstein | 6 | 6 | 7 |
-| facil-02 | facil | horario | 6 | 8 | 8 |
+| facil-02 | facil | horario | 6 | 6 | 8 |
 | facil-03 | facil | coloreo | 6 | 11 | 7 |
 | facil-04 | facil | einstein | 8 | 10 | 9 |
 | facil-05 | facil | horario | 8 | 9 | 9 |
@@ -21,13 +21,13 @@ En `verificacion_manual` de cada JSON dejamos la deducción del `gold` a partir 
 | medio-02 | medio | horario | 12 | 13 | 20 |
 | medio-03 | medio | coloreo | 12 | 27 | 13 |
 | medio-04 | medio | einstein | 15 | 16 | 17 |
-| medio-05 | medio | horario | 15 | 25 | 71 |
+| medio-05 | medio | horario | 15 | 15 | 71 |
 | medio-06 | medio | coloreo | 15 | 34 | 16 |
 | medio-07 | medio | einstein | 12 | 14 | 13 |
 | dificil-01 | dificil | einstein | 20 | 23 | 21 |
 | dificil-02 | dificil | horario | 20 | 21 | 40 |
 | dificil-03 | dificil | coloreo | 20 | 45 | 21 |
 | dificil-04 | dificil | einstein | 25 | 27 | 27 |
-| dificil-05 | dificil | horario | 25 | 46 | 6427 |
+| dificil-05 | dificil | horario | 25 | 25 | 6427 |
 | dificil-06 | dificil | coloreo | 25 | 56 | 26 |
 | dificil-07 | dificil | einstein | 25 | 28 | 26 |

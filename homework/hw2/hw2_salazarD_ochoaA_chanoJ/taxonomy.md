@@ -4,13 +4,13 @@ Modelo: `qwen2.5:3b`. Intentos de B: 63; fallos: 60. Cada fallo de B (primer int
 
 | Categoría | Fallos | % de fallos | ¿Detectable sin ground truth? | ¿Lo detectamos en nuestros datos? |
 |---|---|---|---|---|
-| Sintaxis rota (no parsea) | 36 | 60 % | Sí | sí, en los 36 |
+| Sintaxis rota (no parsea) | 34 | 57 % | Sí | sí, en los 34 |
 | Sintaxis válida, sobre-restringido (sin solución) | 11 | 18 % | Sí | sí, en los 11 |
 | Sintaxis válida, sub-restringido (varias soluciones, devolvió una equivocada) | 3 | 5 % | A veces (sí, si el solver cuenta soluciones) | sí, en los 3 |
 | Modelo válido del problema equivocado (premisas perdidas o inventadas) | 0 | 0 % | No | - |
-| Errores de alcance / aridad (variable inexistente, argumentos o tipos mal) | 10 | 17 % | A veces (sí, cuando rompe el modelo) | sí, en los 10 |
+| Errores de alcance / aridad (variable inexistente, argumentos o tipos mal) | 9 | 15 % | A veces (sí, cuando rompe el modelo) | sí, en los 9 |
 | Timeout del solver | 0 | 0 % | Sí | - |
-| El LLM no terminó en 300 s (no hubo modelo) | 0 | 0 % | Sí | - |
+| El LLM no terminó en 300 s (no hubo modelo) | 3 | 5 % | Sí | sí, en los 3 |
 Con un parser más tolerante (análisis de honestidad; no cambia la clasificación), de estos 60 fallos serían correctos: 0 cerrando la llave final que falta, 0 convirtiendo números escritos como texto y 0 con ambos arreglos.
 
 **Fallos de B detectables sin ground truth: 60/60 (100 %).**
@@ -66,49 +66,6 @@ Con un parser más tolerante (análisis de honestidad; no cambia la clasificaci�
     {"clue": 20, "type": "lt", "a": "Seal", "b": "Review"}
   ]
 }
-```
-
-### dificil-05 · semilla 1 · `aridad_alcance`
-
-- Lo que dijo el solver: The solver rejected the model: constraint #5 (offset) uses the unknown variable 'Frog'.
-- Diferencias con el gold: no hubo respuesta
-- Qué salió mal: una restricción apunta a una variable que no existe, le faltan argumentos o compara posiciones sobre valores que no son números.
-
-```json
-{
-  "variables": {
-    "Badges": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Briefing": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Checkin": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Compost": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Count": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Farewell": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Frogs": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Insects": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Label": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Leaves": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Nests": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Plant": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Pond": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Press": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Roots": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Seeds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Shade": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Sketch": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Snack": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Soil": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Stake": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Swap": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Sweep": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Trail": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    "Water": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
-  },
-  "constraints": [
-    {"clue": 1, "type": "offset", "a": "Badges", "b": "Checkin", "k": 1},
-    {"clue": 2, "type": "offset", "a": "Briefing", "b": "Badges", "k": 1},
-    {"clue": 3, "type": "offset", "a": "Seeds", "b": "Trail", "k": 1},
-    {"clue": 4, "type": "offset", "a": "Frogs", "b": "Leaves", "k": 1},
-    
 ```
 
 ### dificil-06 · semilla 1 · `aridad_alcance`
@@ -307,6 +264,36 @@ Con un parser más tolerante (análisis de honestidad; no cambia la clasificaci�
 }
 ```
 
+### dificil-05 · semilla 0 · `no_termina`
+
+- Lo que dijo el solver: LLM: no_termina
+- Diferencias con el gold: no hubo respuesta
+- Qué salió mal: el LLM no terminó de responder en 300 s.
+
+```json
+
+```
+
+### dificil-05 · semilla 1 · `no_termina`
+
+- Lo que dijo el solver: LLM: no_termina
+- Diferencias con el gold: no hubo respuesta
+- Qué salió mal: el LLM no terminó de responder en 300 s.
+
+```json
+
+```
+
+### dificil-05 · semilla 2 · `no_termina`
+
+- Lo que dijo el solver: LLM: no_termina
+- Diferencias con el gold: no hubo respuesta
+- Qué salió mal: el LLM no terminó de responder en 300 s.
+
+```json
+
+```
+
 ### dificil-01 · semilla 0 · `sintaxis`
 
 - Lo que dijo el solver: Your output is not valid JSON: Expecting ',' delimiter at line 1, column 1834.
@@ -387,26 +374,6 @@ Con un parser más tolerante (análisis de honestidad; no cambia la clasificaci�
 {"variables": {"Animation": [1, 2, 3, 4, 5], "Arrow": [1, 2, 3, 4, 5], "Bia": [1, 2, 3, 4, 5], "Birch": [1, 2, 3, 4, 5], "Cedar": [1, 2, 3, 4, 5], "Circle": [1, 2, 3, 4, 5], "Comedy": [1, 2, 3, 4, 5], "Dani": [1, 2, 3, 4, 5], "Diamond": [1, 2, 3, 4, 5], "Documentary": [1, 2, 3, 4, 5], "Elio": [1, 2, 3, 4, 5], "Gelato": [1, 2, 3, 4, 5], "Luz": [1, 2, 3, 4, 5], "Maple": [1, 2, 3, 4, 5], "Mystery": [1, 2, 3, 4, 5], "Nachos": [1, 2, 3, 4, 5], "Paz": [1, 2, 3, 4, 5], "Pine": [1, 2, 3, 4, 5], "Popcorn": [1, 2, 3, 4, 5], "Pretzel": [1, 2, 3, 4, 5], "Square": [1, 2, 3, 4, 5], "Star": [1, 2, 3, 4, 5], "Toffee": [1, 2, 3, 4, 5], "Walnut": [1, 2, 3, 4, 5], "Western": [1, 2, 3, 4, 5]}, "constraints": [{"clue": 1, "type": "eq", "a": "Luz", "b": 1}, {"clue": 2, "type": "adj", "a": "Luz", "b": "Elio"}, {"clue": 3, "type": "offset", "a": "Paz", "b": "Dani", "k": 1}, {"clue": 4, "type": "gt", "a": "Paz", "b": "Bia"}, {"clue": 5, "type": "eq", "a": "Elio", "b": "Western"}, {"clue": 6, "type": "adj", "a": "Comedy", "b": "Western"}, {"clue": 7, "type": "lt", "a": "Comedy", "b": "Western"}, {"clue": 8, "type": "adj", "a": "Animation", "b": "Mystery"}, {"clue": 9, "type": "gt", "a": "Animation", "b": "Mystery"}, {"clue": 10, "type": "eq", "a": "Nachos", "b": "Animation"}, {"clue": 11, "type": "neq", "a": "Nachos", "b": 2}, {"clue": 12, "type": "lt", "a": "Popcorn", "b": "Pretzel"}, {"clue": 13, "type": "lt", "a": "Pretzel", "b": "Toffee"}, {"clue": 14, "type": "eq", "a": "Star", "b": "Pretzel"}, {"clue": 15, "type": "adj", "a": "Circle", "b": "Star"}, {"clue": 16, "type": "lt", "a": "Circle", "b": "Star"}, {"clue": 17, "type": "offset", "a": "Arrow", "b": "Square", "k": 1}, {"clue": 18, "type": "gt", "a": "Arrow", "b": "Diamond"}, {"clue": 19, "type": "eq", "a": "Walnut", "b": "Arrow"}, {"clue": 20, "type": "offset", "a": "Walnut", "b": "Birch", "k": 1}, {"clue": 21, "type": "lt", "a": "Cedar", "b": "Pine"}, {"clue": 22, "type": "lt", "a": "Pine", "b": "Birch"}}}
 ```
 
-### dificil-05 · semilla 0 · `sintaxis`
-
-- Lo que dijo el solver: Your output could not be parsed: the JSON is incomplete: a closing brace '}' is missing at the end.
-- Diferencias con el gold: no hubo respuesta
-- Qué salió mal: la salida no es un JSON válido (casi siempre una llave o corchete mal cerrado al final), así que no hay modelo que resolver.
-
-```json
-{"variables": {"Badges": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25], "Briefing": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25], "Checkin": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25], "Compost": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25], "Count": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-```
-
-### dificil-05 · semilla 2 · `sintaxis`
-
-- Lo que dijo el solver: Your output could not be parsed: the JSON is incomplete: a closing brace '}' is missing at the end.
-- Diferencias con el gold: no hubo respuesta
-- Qué salió mal: la salida no es un JSON válido (casi siempre una llave o corchete mal cerrado al final), así que no hay modelo que resolver.
-
-```json
-{"variables": {"Badges": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25], "Briefing": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25], "Checkin": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25], "Compost": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25], "Count": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-```
-
 ### dificil-06 · semilla 0 · `sintaxis`
 
 - Lo que dijo el solver: Your output could not be parsed: the JSON is incomplete: a closing brace '}' is missing at the end.
@@ -454,7 +421,7 @@ Con un parser más tolerante (análisis de honestidad; no cambia la clasificaci�
 - Qué salió mal: la salida no es un JSON válido (casi siempre una llave o corchete mal cerrado al final), así que no hay modelo que resolver.
 
 ```json
-{"variables": {"Interview": [1, 2, 3, 4, 5, 6], "Jingle": [1, 2, 3, 4, 5, 6], "News": [1, 2, 3, 4, 5, 6], "Quiz": [1, 2, 3, 4, 5, 6], "Traffic": [1, 2, 3, 4, 5, 6], "Weather": [1, 2, 3, 4, 5, 6]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Interview", "Jingle", "News", "Quiz", "Traffic", "Weather"]}, {"clue": 1, "type": "offset", "a": "Interview", "b": "Weather", "k": 1}, {"clue": 2, "type": "offset", "a": "Jingle", "b": "Traffic", "k": 1}, {"clue": 3, "type": "offset", "a": "News", "b": "Traffic", "k": 1}, {"clue": 4, "type": "neq", "a": "Jingle", "b": 1}, {"clue": 5, "type": "neq", "a": "Jingle", "b": 2}, {"clue": 6, "type": "neq", "a": "Jingle", "b": 3}, {"clue": 7, "type": "lt", "a": "Interview", "b": "Quiz"}]
+{"variables": {"Interview": [1, 2, 3, 4, 5, 6], "Jingle": [1, 2, 3, 4, 5, 6], "News": [1, 2, 3, 4, 5, 6], "Quiz": [1, 2, 3, 4, 5, 6], "Traffic": [1, 2, 3, 4, 5, 6], "Weather": [1, 2, 3, 4, 5, 6]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Interview", "Jingle", "News", "Quiz", "Traffic", "Weather"]}, {"clue": 1, "type": "offset", "a": "Interview", "b": "Weather", "k": 1}, {"clue": 2, "type": "offset", "a": "Traffic", "b": "Jingle", "k": 1}, {"clue": 3, "type": "offset", "a": "News", "b": "Traffic", "k": 1}, {"clue": 4, "type": "neq", "a": "Jingle", "b": 3}, {"clue": 5, "type": "lt", "a": "Interview", "b": "Quiz"}]
 ```
 
 ### facil-02 · semilla 1 · `sintaxis`
@@ -464,7 +431,7 @@ Con un parser más tolerante (análisis de honestidad; no cambia la clasificaci�
 - Qué salió mal: la salida no es un JSON válido (casi siempre una llave o corchete mal cerrado al final), así que no hay modelo que resolver.
 
 ```json
-{"variables": {"Interview": [1, 2, 3, 4, 5, 6], "Jingle": [1, 2, 3, 4, 5, 6], "News": [1, 2, 3, 4, 5, 6], "Quiz": [1, 2, 3, 4, 5, 6], "Traffic": [1, 2, 3, 4, 5, 6], "Weather": [1, 2, 3, 4, 5, 6]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Interview", "Jingle", "News", "Quiz", "Traffic", "Weather"]}, {"clue": 1, "type": "offset", "a": "Interview", "b": "Weather", "k": 1}, {"clue": 2, "type": "offset", "a": "Jingle", "b": "Traffic", "k": 1}, {"clue": 3, "type": "offset", "a": "Traffic", "b": "News", "k": 1}, {"clue": 4, "type": "neq", "a": "Jingle", "b": 1}, {"clue": 5, "type": "neq", "a": "Jingle", "b": 2}, {"clue": 6, "type": "neq", "a": "Jingle", "b": 3}, {"clue": 7, "type": "lt", "a": "Interview", "b": "Quiz"}]
+{"variables": {"Interview": [1, 2, 3, 4, 5, 6], "Jingle": [1, 2, 3, 4, 5, 6], "News": [1, 2, 3, 4, 5, 6], "Quiz": [1, 2, 3, 4, 5, 6], "Traffic": [1, 2, 3, 4, 5, 6], "Weather": [1, 2, 3, 4, 5, 6]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Interview", "Jingle", "News", "Quiz", "Traffic", "Weather"]}, {"clue": 1, "type": "offset", "a": "Interview", "b": "Weather", "k": 1}, {"clue": 2, "type": "offset", "a": "Traffic", "b": "Jingle", "k": 1}, {"clue": 3, "type": "offset", "a": "News", "b": "Traffic", "k": 1}, {"clue": 4, "type": "lt", "a": "Jingle", "b": 4}, {"clue": 5, "type": "lt", "a": "Interview", "b": "Quiz"}]
 ```
 
 ### facil-02 · semilla 2 · `sintaxis`
@@ -474,7 +441,7 @@ Con un parser más tolerante (análisis de honestidad; no cambia la clasificaci�
 - Qué salió mal: la salida no es un JSON válido (casi siempre una llave o corchete mal cerrado al final), así que no hay modelo que resolver.
 
 ```json
-{"variables": {"Interview": [1, 2, 3, 4, 5, 6], "Jingle": [1, 2, 3, 4, 5, 6], "News": [1, 2, 3, 4, 5, 6], "Quiz": [1, 2, 3, 4, 5, 6], "Traffic": [1, 2, 3, 4, 5, 6], "Weather": [1, 2, 3, 4, 5, 6]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Interview", "Jingle", "News", "Quiz", "Traffic", "Weather"]}, {"clue": 1, "type": "offset", "a": "Interview", "b": "Weather", "k": 1}, {"clue": 2, "type": "offset", "a": "Jingle", "b": "Traffic", "k": 1}, {"clue": 3, "type": "offset", "a": "News", "b": "Traffic", "k": 1}, {"clue": 4, "type": "neq", "a": "Jingle", "b": 1}, {"clue": 5, "type": "neq", "a": "Jingle", "b": 2}, {"clue": 6, "type": "neq", "a": "Jingle", "b": 3}, {"clue": 7, "type": "lt", "a": "Interview", "b": "Quiz"}]
+{"variables": {"Interview": [1, 2, 3, 4, 5, 6], "Jingle": [1, 2, 3, 4, 5, 6], "News": [1, 2, 3, 4, 5, 6], "Quiz": [1, 2, 3, 4, 5, 6], "Traffic": [1, 2, 3, 4, 5, 6], "Weather": [1, 2, 3, 4, 5, 6]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Interview", "Jingle", "News", "Quiz", "Traffic", "Weather"]}, {"clue": 1, "type": "offset", "a": "Interview", "b": "Weather", "k": 1}, {"clue": 2, "type": "offset", "a": "Traffic", "b": "Jingle", "k": 1}, {"clue": 3, "type": "offset", "a": "News", "b": "Traffic", "k": 1}, {"clue": 4, "type": "lt", "a": "Jingle", "b": 4}, {"clue": 5, "type": "lt", "a": "Interview", "b": "Quiz"}]
 ```
 
 ### facil-03 · semilla 0 · `sintaxis`
@@ -637,14 +604,48 @@ Con un parser más tolerante (análisis de honestidad; no cambia la clasificaci�
 {"variables": {"Cork": [1, 2, 3, 4, 5], "Dawn": [1, 2, 3, 4, 5], "Desert": [1, 2, 3, 4, 5], "Eva": [1, 2, 3, 4, 5], "Forest": [1, 2, 3, 4, 5], "Glass": [1, 2, 3, 4, 5], "Hugo": [1, 2, 3, 4, 5], "Ivo": [1, 2, 3, 4, 5], "Lagoon": [1, 2, 3, 4, 5], "Linen": [1, 2, 3, 4, 5], "Nina": [1, 2, 3, 4, 5], "Oak": [1, 2, 3, 4, 5], "Steel": [1, 2, 3, 4, 5], "Storm": [1, 2, 3, 4, 5], "Vera": [1, 2, 3, 4, 5]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Cork", "Dawn", "Desert", "Eva", "Forest", "Glass", "Hugo", "Ivo", "Lagoon", "Linen", "Nina", "Oak", "Steel", "Storm", "Vera"]}, {"clue": 1, "type": "eq", "a": "Vera", "b": 1}, {"clue": 2, "type": "adj", "a": "Vera", "b": "Hugo"}, {"clue": 3, "type": "offset", "a": "Ivo", "b": "Nina", "k": 1}, {"clue": 4, "type": "gt", "a": "Eva", "b": "Ivo"}, {"clue": 5, "type": "eq", "a": "Lagoon", "b": 1}, {"clue": 6, "type": "lt", "a": "Dawn", "b": "Lagoon"}, {"clue": 7, "type": "lt", "a": "Lagoon", "b": "Dawn"}, {"clue": 8, "type": "offset", "a": "Storm", "b": "Forest", "k": 1}, {"clue": 9, "type": "gt", "a": "Desert", "b": "Storm"}, {"clue": 10, "type": "eq", "a": "Steel", "b": 5}, {"clue": 11, "type": "offset", "a": "Steel", "b": "Oak", "k": 1}, {"clue": 12, "type": "lt", "a": "Linen", "b": "Glass"}, {"clue": 13, "type": "lt", "a": "Glass", "b": "Oak"}}
 ```
 
-### medio-05 · semilla 2 · `sintaxis`
+### medio-05 · semilla 1 · `sintaxis`
 
-- Lo que dijo el solver: Your output could not be parsed: the JSON is incomplete: a closing brace '}' is missing at the end.
+- Lo que dijo el solver: Your output is not valid JSON: Expecting ',' delimiter at line 20, column 61.
 - Diferencias con el gold: no hubo respuesta
 - Qué salió mal: la salida no es un JSON válido (casi siempre una llave o corchete mal cerrado al final), así que no hay modelo que resolver.
 
 ```json
-{"variables": {"Blend": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Boil": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chill": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chop": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Inventory": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Label": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Lock": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Log": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Peel": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Report": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Season": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Stack": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Strain": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wash": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wipe": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}, "constraints": [{"clue": 1, "type": "lt", "a": "Wash", "b": "Peel"}, {"clue": 2, "type": "lt", "a": "Chop", "b": "Peel"}, {"clue": 3, "type": "lt", "a": "Blend", "b": "Chop"}, {"clue": 4, "type": "lt", "a": "Strain", "b": "Blend"}, {"clue": 5, "type": "lt", "a": "Season", "b": "Label"}, {"clue": 6, "type": "lt", "a": "Chill", "b": "Label"}, {"clue": 7, "type": "lt", "a": "Stack", "b": "Chill"}, {"clue": 8, "type": "lt", "a": "Wipe", "b": "Log"}, {"clue": 9, "type": "lt", "a": "Lock", "b": "Wipe"}, {"clue": 10, "type": "lt", "a": "Report", "b": "Lock"}, {"clue": 11, "type": "neq", "a": "Log", "b": 1}, {"clue": 12, "type": "neq", "a": "Log", "b": 2}, {"clue": 13, "type": "neq", "a": "Log", "b": 3}, {"clue": 14, "type": "neq", "a": "Log", "b": 4}, {"clue": 15, "type": "neq", "a": "Log", "b": 5}, {"clue": 16, "type": "lt", "a": "Wash", "b": "Peel"}, {"clue": 17, "type": "lt", "a": "Strain", "b": "Boil"}, {"clue": 18, "type": "lt", "a": "Season", "b": "Label"}, {"clue": 0, "type": "alldiff", "vars": ["Blend", "Boil", "Chill", "Chop", "Inventory", "Label", "Lock", "Log", "Peel", "Report", "Season", "Stack", "Strain", "Wash", "Wipe"]}]
+{
+  "variables": {
+    "Blend": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Boil": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Chill": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Chop": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Inventory": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Label": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Lock": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Log": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Peel": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Report": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Season": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Stack": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Strain": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Wash": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Wipe": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+  },
+  "constraints": [
+    {"clue": 1, "type": "eq", "a": "Wash", "b": "Inventory" + 1},
+    {"clue": 2, "type": "eq", "a": "Chop", "b": "Peel" + 1},
+    {"clue": 3, "type": "offset", "a": "Blend", "b": "Chop", "k": 1},
+    {"clue": 4, "type": "offset", "a": "Strain", "b": "Blend", "k": 1},
+    {"clue": 5, "type": "eq", "a": "Season", "b": "Boil" + 1},
+    {"clue": 6, "type": "eq", "a": "Chill", "b": "Label" + 1},
+    {"clue": 7, "type": "offset", "a": "Stack", "b": "Chill", "k": 1},
+    {"clue": 8, "type": "eq", "a": "Log", "b": "Wipe" + 1},
+    {"clue": 9, "type": "eq", "a": "Lock", "b": "Log" + 1},
+    {"clue": 10, "type": "eq", "a": "Report", "b": "Lock" + 1},
+    {"clue": 11, "type": "neq", "a": "Log", "b": 11},
+    {"clue": 12, "type": "neq", "a": "Peel", "b": "Inventory" + 1},
+    {"clue": 13, "type": "neq", "a": "Boil", "b": "Strain" + 1},
+    {"clue": 14, "type": "neq", "a": "Label", "b": "Season" + 1}
+  ]
+}
 ```
 
 ### medio-06 · semilla 2 · `sintaxis`
@@ -1065,20 +1066,20 @@ Con un parser más tolerante (análisis de honestidad; no cambia la clasificaci�
 
 ### medio-05 · semilla 0 · `sub_restringido`
 
-- Lo que dijo el solver: The model has MORE THAN ONE solution, so some clue is missing or too weak. Two solutions differ in: Boil, Lock, Log, Report, Season, Wipe.
-- Diferencias con el gold: Boil: dio 11, era 7; Chill: dio 14, era 10; Label: dio 13, era 9; Lock: dio 9, era 14; Log: dio 7, era 12; Report: dio 10, era 15
+- Lo que dijo el solver: The model has MORE THAN ONE solution, so some clue is missing or too weak. Two solutions differ in: Inventory, Lock, Log, Report, Wash, Wipe.
+- Diferencias con el gold: Blend: dio 9, era 5; Boil: dio 11, era 7; Chill: dio 14, era 10; Chop: dio 8, era 4; Inventory: dio 5, era 1; Label: dio 13, era 9
 - Qué salió mal: al modelo le falta (o tiene demasiado débil) alguna pista: el solver encuentra al menos dos soluciones.
 
 ```json
-{"variables": {"Blend": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Boil": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chill": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chop": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Inventory": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Label": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Lock": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Log": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Peel": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Report": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Season": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Stack": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Strain": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wash": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wipe": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Blend", "Boil", "Chill", "Chop", "Inventory", "Label", "Lock", "Log", "Peel", "Report", "Season", "Stack", "Strain", "Wash", "Wipe"]}, {"clue": 1, "type": "offset", "a": "Wash", "b": "Inventory", "k": 1}, {"clue": 2, "type": "offset", "a": "Chop", "b": "Peel", "k": 1}, {"clue": 3, "type": "offset", "a": "Blend", "b": "Chop", "k": 1}, {"clue": 4, "type": "offset", "a": "Strain", "b": "Blend", "k": 1}, {"clue": 5, "type": "offset", "a": "Season", "b": "Boil", "k": 1}, {"clue": 6, "type": "offset", "a": "Chill", "b": "Label", "k": 1}, {"clue": 7, "type": "offset", "a": "Stack", "b": "Chill", "k": 1}, {"clue": 8, "type": "offset", "a": "Wipe", "b": "Log", "k": 1}, {"clue": 9, "type": "offset", "a": "Lock", "b": "Wipe", "k": 1}, {"clue": 10, "type": "offset", "a": "Report", "b": "Lock", "k": 1}, {"clue": 11, "type": "neq", "a": "Log", "b": 1}, {"clue": 12, "type": "neq", "a": "Log", "b": 2}, {"clue": 13, "type": "neq", "a": "Log", "b": 3}, {"clue": 14, "type": "neq", "a": "Log", "b": 4}, {"clue": 15, "type": "neq", "a": "Log", "b": 5}, {"clue": 16, "type": "lt", "a": "Wash", "b": "Peel"}, {"clue": 17, "type": "lt", "a": "Strain", "b": "Boil"}, {"clue": 18, "type": "lt", "a": "Season", "b": "Label"}, {"clue": 20, "type": "neq", "a": "Log", "b": 12}]}
+{"variables": {"Blend": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Boil": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chill": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chop": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Inventory": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Label": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Lock": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Log": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Peel": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Report": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Season": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Stack": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Strain": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wash": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wipe": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Blend", "Boil", "Chill", "Chop", "Inventory", "Label", "Lock", "Log", "Peel", "Report", "Season", "Stack", "Strain", "Wash", "Wipe"]}, {"clue": 1, "type": "offset", "a": "Wash", "b": "Inventory", "k": 1}, {"clue": 2, "type": "offset", "a": "Chop", "b": "Peel", "k": 1}, {"clue": 3, "type": "offset", "a": "Blend", "b": "Chop", "k": 1}, {"clue": 4, "type": "offset", "a": "Strain", "b": "Blend", "k": 1}, {"clue": 5, "type": "offset", "a": "Season", "b": "Boil", "k": 1}, {"clue": 6, "type": "offset", "a": "Chill", "b": "Label", "k": 1}, {"clue": 7, "type": "offset", "a": "Stack", "b": "Chill", "k": 1}, {"clue": 8, "type": "offset", "a": "Wipe", "b": "Log", "k": 1}, {"clue": 9, "type": "offset", "a": "Lock", "b": "Wipe", "k": 1}, {"clue": 10, "type": "offset", "a": "Report", "b": "Lock", "k": 1}, {"clue": 11, "type": "lt", "a": "Log", "b": 11}, {"clue": 12, "type": "lt", "a": "Wash", "b": "Peel"}, {"clue": 13, "type": "lt", "a": "Strain", "b": "Boil"}, {"clue": 14, "type": "lt", "a": "Season", "b": "Label"}, {"clue": 15, "type": "alldiff", "vars": ["Wash", "Peel"]}]}
 ```
 
-### medio-05 · semilla 1 · `sub_restringido`
+### medio-05 · semilla 2 · `sub_restringido`
 
-- Lo que dijo el solver: The model has MORE THAN ONE solution, so some clue is missing or too weak. Two solutions differ in: Boil, Lock, Log, Report, Season, Wipe.
-- Diferencias con el gold: Boil: dio 11, era 7; Chill: dio 14, era 10; Label: dio 13, era 9; Lock: dio 9, era 14; Log: dio 7, era 12; Report: dio 10, era 15
+- Lo que dijo el solver: The model has MORE THAN ONE solution, so some clue is missing or too weak. Two solutions differ in: Chill, Label, Stack.
+- Diferencias con el gold: Chill: dio 9, era 10; Label: dio 10, era 9
 - Qué salió mal: al modelo le falta (o tiene demasiado débil) alguna pista: el solver encuentra al menos dos soluciones.
 
 ```json
-{"variables": {"Blend": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Boil": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chill": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chop": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Inventory": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Label": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Lock": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Log": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Peel": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Report": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Season": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Stack": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Strain": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wash": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wipe": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Blend", "Boil", "Chill", "Chop", "Inventory", "Label", "Lock", "Log", "Peel", "Report", "Season", "Stack", "Strain", "Wash", "Wipe"]}, {"clue": 1, "type": "offset", "a": "Wash", "b": "Inventory", "k": 1}, {"clue": 2, "type": "offset", "a": "Chop", "b": "Peel", "k": 1}, {"clue": 3, "type": "offset", "a": "Blend", "b": "Chop", "k": 1}, {"clue": 4, "type": "offset", "a": "Strain", "b": "Blend", "k": 1}, {"clue": 5, "type": "offset", "a": "Season", "b": "Boil", "k": 1}, {"clue": 6, "type": "offset", "a": "Chill", "b": "Label", "k": 1}, {"clue": 7, "type": "offset", "a": "Stack", "b": "Chill", "k": 1}, {"clue": 8, "type": "offset", "a": "Wipe", "b": "Log", "k": 1}, {"clue": 9, "type": "offset", "a": "Lock", "b": "Wipe", "k": 1}, {"clue": 10, "type": "offset", "a": "Report", "b": "Lock", "k": 1}, {"clue": 11, "type": "neq", "a": "Log", "b": 1}, {"clue": 12, "type": "neq", "a": "Log", "b": 2}, {"clue": 13, "type": "neq", "a": "Log", "b": 3}, {"clue": 14, "type": "neq", "a": "Log", "b": 4}, {"clue": 15, "type": "neq", "a": "Log", "b": 5}, {"clue": 16, "type": "lt", "a": "Wash", "b": "Peel"}, {"clue": 17, "type": "lt", "a": "Strain", "b": "Boil"}, {"clue": 18, "type": "lt", "a": "Season", "b": "Label"}, {"clue": 19, "type": "neq", "a": "Log", "b": 12}, {"clue": 20, "type": "neq", "a": "Log", "b": 13}, {"clue": 21, "type": "neq", "a": "Log", "b": 14}, {"clue": 22, "type": "neq", "a": "Log", "b": 15}]}
+{"variables": {"Blend": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Boil": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chill": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Chop": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Inventory": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Label": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Lock": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Log": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Peel": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Report": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Season": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Stack": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Strain": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wash": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "Wipe": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}, "constraints": [{"clue": 0, "type": "alldiff", "vars": ["Blend", "Boil", "Chill", "Chop", "Inventory", "Label", "Lock", "Log", "Peel", "Report", "Season", "Stack", "Strain", "Wash", "Wipe"]}, {"clue": 1, "type": "lt", "a": "Wash", "b": "Peel"}, {"clue": 2, "type": "lt", "a": "Strain", "b": "Boil"}, {"clue": 3, "type": "lt", "a": "Season", "b": "Label"}, {"clue": 4, "type": "offset", "a": "Wash", "b": "Inventory", "k": 1}, {"clue": 5, "type": "offset", "a": "Chop", "b": "Peel", "k": 1}, {"clue": 6, "type": "offset", "a": "Blend", "b": "Chop", "k": 1}, {"clue": 7, "type": "offset", "a": "Strain", "b": "Blend", "k": 1}, {"clue": 8, "type": "offset", "a": "Label", "b": "Chill", "k": 1}, {"clue": 9, "type": "offset", "a": "Lock", "b": "Wipe", "k": 1}, {"clue": 10, "type": "offset", "a": "Report", "b": "Lock", "k": 1}, {"clue": 11, "type": "gt", "a": "Log", "b": 11}, {"clue": 12, "type": "neq", "a": "Wash", "b": "Peel"}, {"clue": 13, "type": "neq", "a": "Strain", "b": "Boil"}, {"clue": 14, "type": "neq", "a": "Season", "b": "Label"}, {"clue": 15, "type": "eq", "a": "Inventory", "b": 1}]}
 ```
