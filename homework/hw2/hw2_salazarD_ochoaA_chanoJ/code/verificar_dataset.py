@@ -1,5 +1,5 @@
-"""Verificador del dataset (punto de control de Andretty, y lo corre Daniel antes
-de integrar). Comprueba, problema por problema:
+"""Verificador del dataset. Lo corrimos sobre cada problema antes de usarlo en
+los experimentos. Comprueba, problema por problema:
 
   1. el archivo tiene todas las claves y el id coincide con el nombre del archivo
   2. el modelo_mano se construye sin errores
@@ -109,7 +109,7 @@ def main() -> int:
     print(f"\nTotal: {len(problemas)} problemas  {conteo}")
     if not args.ejemplos:
         if len(problemas) < MIN_TOTAL:
-            print(f"  - faltan problemas: el profe pide al menos {MIN_TOTAL}")
+            print(f"  - faltan problemas: la consigna pide al menos {MIN_TOTAL}")
             total_errores += 1
         for n, c in conteo.items():
             if c < MIN_POR_NIVEL:
@@ -124,7 +124,7 @@ def main() -> int:
             w.writerows(filas)
         print(f"Métricas guardadas en {salida.relative_to(CARPETA_PROBLEMAS.parent)}")
     if total_errores:
-        print(f"\nHAY {total_errores} ERRORES. Corríjanlos antes de subir.")
+        print(f"\nHAY {total_errores} ERRORES en el dataset.")
         return 1
     print("\nTODO EL DATASET ESTÁ BIEN.")
     return 0

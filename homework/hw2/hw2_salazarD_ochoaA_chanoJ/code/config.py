@@ -1,6 +1,6 @@
 """Protocolo experimental común (lo usan los brazos B, B' y C por igual).
 
-Si cambian algo aquí, cambia para todos: avisen en el grupo antes de tocarlo.
+Un solo lugar para el protocolo: todos los brazos con LLM leen estos valores.
 """
 MODELO = "qwen2.5:3b"          # el del curso (resources/setup.md); 3 mil millones de parámetros
 TEMPERATURA = 0.7              # > 0 para que las repeticiones midan varianza de verdad

@@ -41,7 +41,7 @@ COLUMNAS = ["problema_id", "nivel", "n_vars", "n_restricciones", "brazo", "repet
 BRAZOS = ("A", "B", "Bp", "C")
 RESULTADOS = ("correcto", "incorrecto", "sin_respuesta")
 
-# Taxonomía del profe para los fallos del brazo B (y B'), con nuestra regla de
+# Taxonomía de la consigna para los fallos del brazo B (y B'), con nuestra regla de
 # "detectable sin ground truth".
 TAXONOMIA = {
     "sintaxis":          "si",   # no parsea / estructura rota: el solver lo rechaza

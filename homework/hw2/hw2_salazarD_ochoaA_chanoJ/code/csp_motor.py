@@ -37,7 +37,7 @@ va en inglés porque es lo que el brazo B' le devuelve al modelo)
                       faltan argumentos o compara con < sobre valores no numéricos
 
 Contar hasta 2 soluciones es lo que vuelve medible la fila "sub-restringido" de la
-taxonomía del profe: el solver avisa sin conocer la respuesta correcta.
+taxonomía de la consigna: el solver avisa sin conocer la respuesta correcta.
 """
 from __future__ import annotations
 
