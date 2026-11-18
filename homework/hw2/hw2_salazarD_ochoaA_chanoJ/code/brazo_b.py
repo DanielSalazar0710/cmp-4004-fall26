@@ -110,8 +110,15 @@ def evaluar_salida(texto: str, problema: dict) -> dict:
               "tiempo_solver_s": 0.0}
     try:
         modelo = extraer_json(texto)
-    except (ValueError, json.JSONDecodeError) as e:
-        salida.update(categoria="sintaxis", mensaje=f"Your output could not be parsed as JSON ({e}).")
+    except json.JSONDecodeError as e:
+        salida.update(categoria="sintaxis",
+                      mensaje=f"Your output is not valid JSON: {e.msg} at line {e.lineno}, column {e.colno}.")
+        return salida
+    except ValueError as e:
+        motivo = {"llaves sin cerrar": "the JSON is incomplete: a closing brace '}' is missing at the end",
+                  "no hay '{' en la respuesta": "there is no JSON object in your output",
+                  "respuesta vacía": "your output is empty"}.get(str(e), str(e))
+        salida.update(categoria="sintaxis", mensaje=f"Your output could not be parsed: {motivo}.")
         return salida
     try:
         csp = ModeloCSP(modelo)

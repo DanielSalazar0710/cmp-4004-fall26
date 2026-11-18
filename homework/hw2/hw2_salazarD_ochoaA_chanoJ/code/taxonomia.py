@@ -45,23 +45,34 @@ def _numeros(x):
     return x
 
 
-def rescatables_por_tipos(fallos, por_clave, problemas) -> int:
-    """Cuántos fallos de B serían correctos si convirtiéramos números escritos como texto."""
+def rescatables(fallos, por_clave, problemas) -> dict:
+    """Cuántos fallos de B serían correctos con un parser más tolerante:
+    cerrar llaves que faltan al final y convertir números escritos como texto.
+    Es un análisis de honestidad: no cambia la clasificación."""
     from brazo_b import evaluar_salida
     from problemas import calificar
     from respuesta_c import extraer_json
-    n = 0
+    cuenta = {"cerrar_llaves": 0, "numeros_texto": 0, "ambos": 0}
     for f in fallos:
         it = por_clave[(f["problema_id"], int(f["semilla"]))][0]
         p = problemas.get(f["problema_id"])
-        try:
-            modelo = _numeros(extraer_json(it["salida"]))
-        except Exception:  # noqa: BLE001
-            continue
-        ev = evaluar_salida(json.dumps(modelo), p)
-        if not ev["categoria"] and calificar(p, ev["solucion"])[0] == "correcto":
-            n += 1
-    return n
+        texto = it["salida"].strip()
+        for nombre, arreglo in (("cerrar_llaves", lambda t: t + "}"), ("numeros_texto", None), ("ambos", None)):
+            candidatos = [texto, texto + "}", texto + "}}"] if nombre != "numeros_texto" else [texto]
+            ok = False
+            for c in candidatos:
+                try:
+                    modelo = extraer_json(c)
+                except Exception:  # noqa: BLE001
+                    continue
+                if nombre != "cerrar_llaves":
+                    modelo = _numeros(modelo)
+                ev = evaluar_salida(json.dumps(modelo), p)
+                if not ev["categoria"] and calificar(p, ev["solucion"])[0] == "correcto":
+                    ok = True
+                break
+            cuenta[nombre] += ok
+    return cuenta
 
 
 def _pct(a, b):
@@ -100,9 +111,11 @@ def main() -> None:
         visto = "-" if n == 0 else ("sí, en los %d" % n if TAXONOMIA[cat] == "si" else "no: solo con el gold")
         out.append(f"| {nombre} | {n} | {_pct(n, len(fallos))} | {teoria} | {visto} |")
     det = sum(1 for f in fallos if f["detectable"] == "si")
-    rescate = rescatables_por_tipos(fallos, por_clave, problemas)
-    out += [f"Si el solver aceptara números escritos como texto (`\"3\"` en vez de `3`), {rescate} de estos "
-            f"{len(fallos)} fallos serían correctos (análisis de honestidad, no cambia la clasificación).", "","", f"**Fallos de B detectables sin ground truth: {det}/{len(fallos)} ({_pct(det, len(fallos))}).**", ""]
+    rescate = rescatables(fallos, por_clave, problemas)
+    out += [f"Con un parser más tolerante (análisis de honestidad; no cambia la clasificación), de estos "
+            f"{len(fallos)} fallos serían correctos: {rescate['cerrar_llaves']} cerrando la llave final que "
+            f"falta, {rescate['numeros_texto']} convirtiendo números escritos como texto y {rescate['ambos']} "
+            "con ambos arreglos.", "", f"**Fallos de B detectables sin ground truth: {det}/{len(fallos)} ({_pct(det, len(fallos))}).**", ""]
 
     out.append("## Cada fallo, con la salida del modelo\n")
     for f in sorted(fallos, key=lambda x: (x["categoria_error"], x["problema_id"], x["semilla"])):

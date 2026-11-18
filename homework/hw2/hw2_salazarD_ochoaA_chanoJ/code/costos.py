@@ -6,9 +6,10 @@ entre sus respuestas correctas. Si un brazo no tiene correctas, su costo por
 correcta es infinito.
 
 Nuestro modelo es qwen2.5:3b local (costo de API 0), así que calculamos un
-EQUIVALENTE con precios públicos de proveedores hospedados. Ninguno ofrece un
-modelo de 3B: Together aloja la misma familia (Qwen2.5-7B, el más cercano en
-tamaño) y Groq un modelo de tamaño parecido (Llama 3.1 8B). Es una aproximación.
+EQUIVALENTE con el precio público de un proveedor hospedado. En la página de
+precios de Together AI (consultada el 18-nov-2026) ya no aparece ningún modelo
+Qwen2.5; el más cercano en familia y tamaño es Qwen3.5 9B, que es más grande que
+el nuestro. Es una aproximación y probablemente sobreestima el costo real.
 También reportamos el costo en segundos de cómputo por respuesta correcta.
 
     python code/costos.py                       # results/ -> results/costos.csv
@@ -27,14 +28,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from resultados import BRAZOS, CARPETA, leer  # noqa: E402
 
-# USD por millón de tokens, consultados el 17-nov-2026.
+# USD por millón de tokens, de la página oficial de precios (serverless inference).
 PROVEEDORES = {
-    "together": {"modelo": "Qwen/Qwen2.5-7B-Instruct-Turbo", "entrada": 0.30, "salida": 0.30,
-                 "fuente": "https://www.together.ai/pricing", "fecha": "2026-11-17"},
-    "groq": {"modelo": "llama-3.1-8b-instant", "entrada": 0.05, "salida": 0.08,
-             "fuente": "https://groq.com/pricing", "fecha": "2026-11-17"},
+    "together": {"modelo": "Qwen3.5 9B", "entrada": 0.17, "salida": 0.25,
+                 "fuente": "https://www.together.ai/pricing", "fecha": "2026-11-18"},
 }
-PRINCIPAL = "together"          # misma familia que nuestro modelo
+PRINCIPAL = "together"          # familia Qwen, el tamaño más cercano disponible
 PRECIOS = {
     "proveedor": PRINCIPAL,
     "modelo_equivalente": PROVEEDORES[PRINCIPAL]["modelo"],
