@@ -92,7 +92,9 @@ def leer(*nombres: str, carpeta: Path | str | None = None) -> list[dict]:
 
     `carpeta` sirve para leer los datos falsos de prueba (results/falso/)."""
     base = Path(carpeta) if carpeta else CARPETA
-    rutas = [base / n for n in nombres] if nombres else sorted(base.glob("brazo_*.csv"))
+    # Por defecto solo las corridas oficiales (no las de ejemplos ni las de prueba).
+    oficiales = ("brazo_a.csv", "brazo_b.csv", "brazo_c.csv")
+    rutas = [base / n for n in nombres] if nombres else [base / n for n in oficiales if (base / n).exists()]
     filas = []
     for r in rutas:
         with open(r, encoding="utf-8") as fh:

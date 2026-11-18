@@ -1,57 +1,113 @@
-"""Costo por respuesta CORRECTA, no por intento.  [JALIL]
+"""Costo por respuesta CORRECTA, no por intento.
 
-El profe: "un brazo barato y equivocado no es barato". Como usamos un modelo local,
-el costo en dólares es un EQUIVALENTE: lo que costarían esos mismos tokens en un
-proveedor hospedado (Groq o Together AI) para un modelo de tamaño parecido.
+Un brazo barato y equivocado no es barato: sumamos todo lo gastado por un brazo
+(todos los intentos, también los fallidos y las iteraciones de B') y lo dividimos
+entre sus respuestas correctas. Si un brazo no tiene correctas, su costo por
+correcta es infinito.
 
-    python code/costos.py --carpeta results/falso      # con datos falsos
-    python code/costos.py                              # reales -> results/costos.csv
+Nuestro modelo es qwen2.5:3b local (costo de API 0), así que calculamos un
+EQUIVALENTE con precios públicos de proveedores hospedados. Ninguno ofrece un
+modelo de 3B: Together aloja la misma familia (Qwen2.5-7B, el más cercano en
+tamaño) y Groq un modelo de tamaño parecido (Llama 3.1 8B). Es una aproximación.
+También reportamos el costo en segundos de cómputo por respuesta correcta.
 
-Lo que tiene que hacer:
-  * PRECIOS: dólares por millón de tokens (entrada y salida) del proveedor que
-    elijan, con el enlace a la página de precios y la FECHA en que la consultaron.
-    Si no hay qwen2.5:3b, usen el modelo más pequeño parecido y escríbanlo.
-  * costo_por_correcta(filas) -> dict por brazo con:
-        intentos, correctas, tokens_totales, usd_total, usd_por_correcta,
-        segundos_totales (llm + solver), segundos_por_correcta
-    Ojo: el total suma TODOS los intentos (también los fallidos y las iteraciones
-    de B'), y se divide entre las correctas. Si un brazo tiene 0 correctas,
-    el costo por correcta es infinito (escríbanlo como "inf", no como 0).
-  * main(): imprime una tabla Markdown lista para pegar en el REPORT y escribe
-    results/costos.csv.
+    python code/costos.py                       # results/ -> results/costos.csv
+    python code/costos.py --carpeta results/falso
 """
 from __future__ import annotations
 
 import argparse
+import csv
+import math
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from resultados import leer  # noqa: E402,F401
+from resultados import BRAZOS, CARPETA, leer  # noqa: E402
 
+# USD por millón de tokens, consultados el 17-nov-2026.
+PROVEEDORES = {
+    "together": {"modelo": "Qwen/Qwen2.5-7B-Instruct-Turbo", "entrada": 0.30, "salida": 0.30,
+                 "fuente": "https://www.together.ai/pricing", "fecha": "2026-11-17"},
+    "groq": {"modelo": "llama-3.1-8b-instant", "entrada": 0.05, "salida": 0.08,
+             "fuente": "https://groq.com/pricing", "fecha": "2026-11-17"},
+}
+PRINCIPAL = "together"          # misma familia que nuestro modelo
 PRECIOS = {
-    # TODO Jalil: completar con precios reales y su fuente
-    "proveedor": "",
-    "modelo_equivalente": "",
-    "usd_por_millon_entrada": None,
-    "usd_por_millon_salida": None,
-    "fuente": "",
-    "fecha_consulta": "",
+    "proveedor": PRINCIPAL,
+    "modelo_equivalente": PROVEEDORES[PRINCIPAL]["modelo"],
+    "usd_por_millon_entrada": PROVEEDORES[PRINCIPAL]["entrada"],
+    "usd_por_millon_salida": PROVEEDORES[PRINCIPAL]["salida"],
+    "fuente": PROVEEDORES[PRINCIPAL]["fuente"],
+    "fecha_consulta": PROVEEDORES[PRINCIPAL]["fecha"],
 }
 
 
-def costo_por_correcta(filas: list[dict]) -> dict:
-    # TODO Jalil
-    raise NotImplementedError
+def _f(x) -> float:
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def costo_por_correcta(filas: list[dict], proveedor: str = PRINCIPAL) -> dict:
+    precio = PROVEEDORES[proveedor]
+    acc = defaultdict(lambda: {"intentos": 0, "correctas": 0, "tin": 0.0, "tout": 0.0, "seg": 0.0})
+    for f in filas:
+        d = acc[f["brazo"]]
+        d["intentos"] += 1
+        d["correctas"] += f["resultado"] == "correcto"
+        d["tin"] += _f(f["tokens_entrada"])
+        d["tout"] += _f(f["tokens_salida"])
+        d["seg"] += _f(f["tiempo_llm_s"]) + _f(f["tiempo_solver_s"])
+    out = {}
+    for b, d in acc.items():
+        usd = (d["tin"] * precio["entrada"] + d["tout"] * precio["salida"]) / 1_000_000
+        ok = d["correctas"]
+        out[b] = {"intentos": d["intentos"], "correctas": ok,
+                  "tokens_totales": int(d["tin"] + d["tout"]), "usd_total": usd,
+                  "usd_por_correcta": usd / ok if ok else math.inf,
+                  "segundos_totales": d["seg"],
+                  "segundos_por_correcta": d["seg"] / ok if ok else math.inf}
+    return out
+
+
+def _fmt(x, nd=6):
+    return "inf" if math.isinf(x) else f"{x:.{nd}f}"
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--carpeta", default=None)
     args = ap.parse_args()
-    # TODO Jalil
-    raise NotImplementedError
+    filas = leer(carpeta=args.carpeta)
+    destino = Path(args.carpeta) if args.carpeta else CARPETA
+    lineas = []
+    with open(destino / "costos.csv", "w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(["proveedor", "modelo_equivalente", "brazo", "intentos", "correctas", "tokens_totales",
+                    "usd_total", "usd_por_correcta", "segundos_totales", "segundos_por_correcta",
+                    "fuente", "fecha_consulta"])
+        for prov, precio in PROVEEDORES.items():
+            c = costo_por_correcta(filas, prov)
+            lineas += ["", f"**{prov}** · `{precio['modelo']}` · ${precio['entrada']}/M entrada, "
+                           f"${precio['salida']}/M salida · {precio['fuente']} (consultado {precio['fecha']})", "",
+                       "| Brazo | Intentos | Correctas | Tokens | USD total | USD por correcta | s por correcta |",
+                       "|---|---|---|---|---|---|---|"]
+            for b in [x for x in BRAZOS if x in c]:
+                d = c[b]
+                lineas.append(f"| {b} | {d['intentos']} | {d['correctas']} | {d['tokens_totales']} | "
+                              f"{_fmt(d['usd_total'])} | {_fmt(d['usd_por_correcta'])} | "
+                              f"{_fmt(d['segundos_por_correcta'], 1)} |")
+                w.writerow([prov, precio["modelo"], b, d["intentos"], d["correctas"], d["tokens_totales"],
+                            _fmt(d["usd_total"], 8), _fmt(d["usd_por_correcta"], 8),
+                            round(d["segundos_totales"], 2), _fmt(d["segundos_por_correcta"], 2),
+                            precio["fuente"], precio["fecha"]])
+    texto = "\n".join(lineas)
+    (destino / "costos.md").write_text("# Costo por respuesta correcta\n" + texto + "\n", encoding="utf-8")
+    print(texto)
 
 
 if __name__ == "__main__":

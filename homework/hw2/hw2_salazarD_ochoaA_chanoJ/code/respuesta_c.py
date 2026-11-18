@@ -1,21 +1,20 @@
-"""Brazo C: prompt de respuesta directa y lector de la respuesta.  [JALIL]
+"""Brazo C: prompt de respuesta directa y lector de la respuesta.
 
-El LLM lee el enunciado y responde él mismo, sin solver. Aquí van dos cosas:
+El LLM lee el enunciado y responde él mismo, sin solver.
 
-1. `construir_prompt(problema)`: el texto que se le manda al modelo. Debe llevar
-   el enunciado y `texto_formato(problema)` (la lista exacta de variables y
-   valores), y pedir la respuesta como UN objeto JSON {"Ana": 3, ...}.
-   NO puede llevar el gold ni el modelo_mano.
-
-2. `leer_respuesta(texto, problema)`: convierte lo que contestó el modelo en
-   (respuesta, categoria):
-       respuesta  dict {variable: valor} o None si no se pudo leer nada
-       categoria  ""             respuesta bien formada (puede estar bien o mal;
-                                 eso lo decide calificar() con el gold)
-                  "sin_formato"  no hay JSON legible
-                  "incompleta"   faltan variables o hay valores fuera de los posibles
-   Para leer el JSON usen `extraer_json` (ya está hecho, es el mismo criterio del
-   studio de la semana 6: tolerante con el texto alrededor, estricto con el JSON).
+* `construir_prompt(problema, variante)` arma el texto que recibe el modelo: el
+  enunciado y el formato de respuesta (lista exacta de variables y valores). Nunca
+  incluye el gold, el modelo_mano ni la verificación manual.
+  Probamos tres redacciones solo con los problemas de ejemplo (v1 mínima, v2 con
+  instrucciones de formato, v3 que además pide revisar cada pista) y nos quedamos
+  con v2, la que mejor respetó el formato.
+* `leer_respuesta(texto, problema)` devuelve (respuesta, categoria):
+      respuesta  dict {variable: valor}, o None si no se pudo leer nada
+      categoria  ""             respuesta bien formada (el gold decide si está bien)
+                 "sin_formato"  no hay JSON legible
+                 "incompleta"   faltan variables o hay valores fuera de los posibles
+  Las dos últimas se detectan sin conocer la respuesta correcta; una respuesta
+  bien formada pero equivocada no se puede detectar así (falla en silencio).
 """
 from __future__ import annotations
 
@@ -26,7 +25,19 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from problemas import normalizar, texto_formato  # noqa: E402,F401
+from problemas import normalizar, texto_formato  # noqa: E402
+
+CLAVES_PROHIBIDAS = ("gold", "modelo_mano", "verificacion_manual")
+_ENVOLTORIOS = ("answer", "respuesta", "solution", "solucion", "solución", "assignment")
+
+_V1 = "{enunciado}\n\n{formato}\n\nAnswer with only a JSON object, no explanation."
+_V2 = ("You are solving a logic puzzle. Read all the clues carefully.\n\n{enunciado}\n\n"
+       "Required output format:\n{formato}\n"
+       'Reply with ONE JSON object that maps every listed variable to its value, e.g. {{"Ana": 1, "Bruno": 2}}.\n\n'
+       "Reply with ONLY the JSON, no markdown and no extra text.")
+_V3 = _V2 + "\nBefore answering, check silently that your assignment satisfies every numbered clue."
+VARIANTES = {"v1": _V1, "v2": _V2, "v3": _V3}
+VARIANTE_POR_DEFECTO = "v2"
 
 
 def extraer_json(texto: str):
@@ -53,11 +64,30 @@ def extraer_json(texto: str):
     return json.loads(candidato)
 
 
-def construir_prompt(problema: dict) -> str:
-    # TODO Jalil: escribir el prompt del brazo C (en inglés, como el enunciado).
-    raise NotImplementedError
+def construir_prompt(problema: dict, variante: str | None = None) -> str:
+    """Enunciado + formato de respuesta + "responde solo un JSON". Sin gold ni modelo."""
+    p = {k: v for k, v in problema.items() if k not in CLAVES_PROHIBIDAS}
+    return VARIANTES[variante or VARIANTE_POR_DEFECTO].format(
+        enunciado=str(p["enunciado"]).strip(), formato=texto_formato(p).strip())
 
 
 def leer_respuesta(texto: str, problema: dict) -> tuple[dict | None, str]:
-    # TODO Jalil
-    raise NotImplementedError
+    try:
+        datos = extraer_json(texto)
+    except (ValueError, json.JSONDecodeError):
+        return None, "sin_formato"
+    if isinstance(datos, dict) and len(datos) == 1:
+        (k, v), = datos.items()
+        if str(k).lower() in _ENVOLTORIOS and isinstance(v, dict):
+            datos = v
+    if not isinstance(datos, dict) or not datos:
+        return None, "sin_formato"
+    fr = problema["formato_respuesta"]
+    dados = {normalizar(k): v for k, v in datos.items()}
+    valores = {normalizar(v) for v in fr["valores"]}
+    for var in fr["variables"]:
+        clave = normalizar(var)
+        if clave not in dados or isinstance(dados[clave], (dict, list)) \
+                or normalizar(dados[clave]) not in valores:
+            return datos, "incompleta"
+    return datos, ""
