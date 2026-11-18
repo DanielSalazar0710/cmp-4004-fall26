@@ -1,68 +1,154 @@
 # HW2 · The Formalizer (CSP)
 
-**Equipo:** Daniel Salazar, Andretty Ochoa, Jalil Chano · **Formalismo:** CSP con solver propio (backtracking + forward checking + MRV, que además cuenta hasta 2 soluciones) · **Modelo:** **`qwen2.5:3b`, 3 mil millones de parámetros**, en Ollama local sobre una GPU de consumo, temperatura 0.7, semillas 0, 1 y 2.
+**Equipo:** Daniel Salazar, Andretty Ochoa, Jalil Chano · **Formalismo:** CSP con solver propio (backtracking + forward checking + MRV; cuenta hasta 2 soluciones) · **Modelo: `qwen2.5:3b` (3 mil millones de parámetros)**, Ollama local en una GPU de consumo, temperatura 0.7, semillas 0, 1 y 2.
 
-> El tamaño del modelo condiciona todos los resultados de este reporte. Con un modelo de 3B los tres brazos con LLM aciertan poco; lo interesante es **cómo** fallan.
+> El tamaño del modelo condiciona todo lo que sigue: con 3B, los tres brazos con LLM aciertan poco. Lo interesante es **cómo** fallan.
 
 ## 0. Diseño del experimento
 
-- **Dataset (21 problemas propios, `problems/`).** 7 por nivel, en tres familias por nivel: tipo Einstein (posiciones en fila), horarios (franjas con "inmediatamente después", "antes de") y coloreo de mapas (tres colores, vecinos distintos). La dificultad se mide por el **número de variables del CSP**: fácil ≤ 8, medio 9–15, difícil ≥ 16 (de 6 a 25 variables y de 6 a 56 restricciones). Cada problema trae su verdad base y la deducción a mano (`verificacion_manual`); además `verificar_dataset.py` comprueba que el modelo a mano tiene **solución única** e igual al gold.
-- **Brazos.** A: nuestro modelo a mano → solver. B: el LLM escribe el modelo CSP en JSON → solver. B′: como B, pero si el solver reporta un error se le devuelve al LLM **solo ese mensaje** y su modelo anterior, hasta 3 veces. C: el LLM responde directo desde el enunciado.
-- **Vocabulario CSP.** `alldiff`, `eq`, `neq`, `lt`, `gt`, `adj` (contiguos) y `offset` (a − b = k). Ampliamos el del studio de la semana 6, que solo tenía `alldiff`, `eq` y `neq`, para poder expresar "a la derecha de" y "junto a".
-- **Instrumentación (`results/*.csv`).** Por instancia: correcto / incorrecto / sin respuesta, reloj de pared, tokens de entrada y salida, tiempo del LLM y tiempo del solver por separado, iteraciones y estado del solver. Todas las respuestas del modelo quedan en `.llm_cache/` y cada intento de B en `results/intentos_b.jsonl`.
-- **Protocolo.** 21 problemas × 3 semillas = 63 instancias por brazo. Temperatura 0.7 para que las semillas midan varianza de verdad (con 0 las tres repeticiones serían idénticas). Una llamada al LLM que pasa de 300 s cuenta como fallo del modelo (`no_termina`) y no se reintenta, el mismo criterio que usamos en el deber 1.
-- **El refinamiento nunca ve el gold.** `evaluar_salida` (en `brazo_b.py`) solo recibe la salida del modelo y el formato de respuesta, que es parte de la pregunta. Los mensajes que vuelven al modelo son: "no parsea (motivo)", "variable inexistente / tipo incorrecto", "no hay solución, y estas restricciones, quitadas una a la vez, lo vuelven satisfacible", "hay más de una solución; difieren en X, Y" y "timeout del solver".
-- **Desarrollo de prompts, solo con los 3 problemas de ejemplo (que no cuentan).** Prompt de B v1 (formato + vocabulario + un ejemplo resuelto): 2/9 en los ejemplos. v2 (una restricción por pista con su número `"clue"`, números sin comillas, regla de dirección para "inmediatamente a la derecha/izquierda"): 3/9. Ahí lo congelamos. Para C probamos tres redacciones y elegimos la v2.
+- **Dataset (`problems/`).** 21 problemas propios, 7 por nivel, con tres familias en cada nivel: tipo Einstein (posiciones en fila), horarios ("inmediatamente después", "antes de") y coloreo de mapas. La dificultad se mide por el **número de variables del CSP**: fácil ≤ 8, medio 9–15, difícil ≥ 16 (de 6 a 25 variables y de 6 a 56 restricciones). Cada problema trae su gold con la deducción a mano, y `verificar_dataset.py` comprueba que el modelo a mano tiene **solución única** igual al gold.
+- **Brazos.** A: modelo a mano → solver. B: el LLM escribe el modelo en JSON → solver. B′: como B, pero si el solver reporta un error le devolvemos **solo ese mensaje** y su modelo anterior, hasta 3 veces. C: el LLM responde directo.
+- **Vocabulario.** `alldiff`, `eq`, `neq`, `lt`, `gt`, `adj` (contiguos) y `offset` (a − b = k). Ampliamos el del studio de la semana 6 para expresar "a la derecha de" y "junto a".
+- **Instrumentación (`results/*.csv`).** Por instancia: correcto / incorrecto / sin respuesta, reloj de pared, tokens de entrada y salida, tiempo del LLM y del solver por separado, iteraciones y estado del solver. Las respuestas del modelo están en `.llm_cache/` y cada intento de B en `results/intentos_b.jsonl`.
+- **Protocolo.** 21 problemas × 3 semillas = 63 instancias por brazo. Temperatura 0.7 para que las semillas midan varianza. Una llamada al LLM que pasa de 300 s cuenta como fallo del modelo (`no_termina`) y no se reintenta, el mismo criterio del deber 1.
+- **B′ nunca ve el gold.** `evaluar_salida` (`brazo_b.py`) solo recibe la salida del modelo y el formato de respuesta. Los mensajes posibles son: "no parsea (motivo)", "variable inexistente o tipo incorrecto", "no hay solución, y estas restricciones, quitadas una a la vez, lo vuelven satisfacible", "hay más de una solución; difieren en X, Y" y "timeout del solver".
+- **Prompts, ajustados solo con 3 problemas de ejemplo que no cuentan.** B v1 (formato + vocabulario + un ejemplo resuelto) sacó 2/9 en los ejemplos; v2 (una restricción por pista con su número `"clue"`, números sin comillas, regla para "inmediatamente a la derecha/izquierda") sacó 3/9, y ahí lo congelamos. Para C probamos tres redacciones y elegimos la v2.
 
 ## 1. Duel Scorecard
 
-<!-- tabla generada por code/scorecard.py -->
-TABLA_SCORECARD
+| Eje | A · a mano | B · híbrido | B′ · refinamiento | C · directo |
+|---|---|---|---|---|
+| 1 Correctness | 63/63 (100 %) | 3/63 (5 %) | 6/63 (10 %) | 3/63 (5 %) |
+| 2 Guarantee | Correcta y única si el modelo a mano es fiel (solver completo) | Correcta y única si la traducción es fiel; nada sobre la traducción | Igual que B; solo corrige lo que el solver ve | Ninguna; no hay certificado |
+| 3 Cost | 0 tokens | 42 132 tokens/correcta | 106 929 tokens/correcta | 10 813 tokens/correcta |
+| 4 Latency | < 0.01 s | mediana 10.0 s · p95 26.3 s | mediana 40.6 s · p95 106.8 s | mediana 7.5 s · p95 10.6 s |
+| 5 Reproducibility | 1.00 respuestas distintas por problema; 21/21 estables | 1.95; 2/21 estables | 1.81; 6/21 estables | 2.62; 3/21 estables |
+| 6 Scaling | 100 → 100 → 100 % | 14 → 0 → 0 % | 24 → 5 → 0 % | 14 → 0 → 0 % |
+| 7 Interpretability | Total: modelo JSON revisable | Alta: el modelo es un certificado; se ve qué pista falló | Alta, más la traza del solver | Baja: solo una asignación |
+| 8 Failure mode | sin fallos | sintaxis 36, sobre-restr. 11, alcance 10, sub-restr. 3 · **detectables sin gold: 60/60** | sintaxis 22, sobre-restr. 17, alcance 15, sub-restr. 2, silencioso 1 · **56/57** | incorrecta 46, incompleta 14 · **14/60** |
+
+Con este modelo, **B y C aciertan lo mismo (3/63)** y B′ duplica a B. La diferencia no está en la fila 1, está en la 8: **todos** los fallos de B se anuncian solos y la mayoría de los de C son silenciosos.
 
 ## 2. Precisión vs. dificultad
 
 ![precisión vs dificultad](fig/precision_vs_dificultad.png)
 
-TEXTO_PRECISION
+| Nivel | A | B | B′ | C |
+|---|---|---|---|---|
+| Fácil (6–8 variables) | 100 % | 14 % | 24 % | 14 % |
+| Medio (12–15) | 100 % | 0 % | 5 % | 0 % |
+| Difícil (20–25) | 100 % | 0 % | 0 % | 0 % |
+
+Media de las 3 semillas; la desviación estándar está en las barras de la figura y en `fig/precision_tabla.csv`. El precipicio aparece ya entre fácil y medio. A se mantiene plano: la dificultad le cuesta llamadas al solver (de 7 a 6 427), no aciertos. Los aciertos con LLM están en `facil-01`, `facil-05` y `medio-02` (este último solo en B′). La longitud de la salida explica parte del precipicio de B: el modelo emitió en promedio 421 tokens en los fáciles, 848 en los medios y 1 387 en los difíciles, y cada token más es una ocasión más de romper el JSON.
 
 ## 3. Taxonomía de errores
 
-TEXTO_TAXONOMIA
+Clasificamos **los 60 fallos** del primer intento de B. La salida cruda de cada uno está en [`taxonomy.md`](taxonomy.md).
+
+| Categoría | Fallos | ¿Detectable sin ground truth? (consigna) | En nuestros datos |
+|---|---|---|---|
+| Sintaxis rota (no parsea) | 36 (60 %) | Sí | 36/36 detectados |
+| Sintaxis válida, sobre-restringido | 11 (18 %) | Sí | 11/11 |
+| Sintaxis válida, sub-restringido | 3 (5 %) | A veces | 3/3: el solver cuenta soluciones |
+| Modelo válido del problema equivocado | 0 | No | 0 en B; 1 en B′ |
+| Alcance / aridad | 10 (17 %) | A veces | 10/10: todos rompían el modelo |
+| Timeout del solver | 0 | Sí | – |
+| LLM no termina en 300 s | 0 | Sí | – |
 
 ![taxonomía de B](fig/taxonomia_b.png)
 
-### Cinco salidas verbatim del modelo, anotadas
+- **Los 60 fallos de B se detectan sin ground truth.** El solver rechazó 46, probó que no había solución en 11 y encontró más de una en 3. En el primer intento no hubo ningún modelo de solución única equivocado.
+- **"Sub-restringido" pasa de "a veces" a "siempre" porque contamos soluciones.** Un solver que devuelve la primera solución sin buscar otra habría vuelto silenciosos esos 3 casos.
+- **"Alcance / aridad" se detectó siempre** porque el error rompía los tipos (variables inexistentes, `offset` sobre colores). Una pista aplicada a la persona equivocada, sin romper tipos, sería silenciosa.
+- Coloreo concentra los errores de tipo (8 de 10) y Einstein los sobre-restringidos (9 de 11).
 
-EJEMPLOS_VERBATIM
+**La comparación que importa:**
+
+| Brazo | Fallos | Detectables sin gold | Silenciosos |
+|---|---|---|---|
+| B | 60 | **60** | **0** |
+| C | 60 | 14 | **46** |
+
+De los errores de C, solo 14 se notan (faltan variables o hay valores imposibles); los otros 46 son asignaciones completas y equivocadas, indistinguibles de una correcta. **Consecuencia de ingeniería:** con la misma tasa de acierto, B se puede desplegar con una regla simple ("si el solver no da una solución única, no respondas") y en estos datos nunca entregaría una respuesta equivocada. C entregaría 46 respuestas equivocadas con la misma confianza que las 3 correctas. Detectar los errores de C exigiría comprobar su respuesta contra un modelo formal del problema, que es justo lo que construye B.
+
+### Cinco salidas verbatim, anotadas
+
+**1. Sintaxis: cierra con la llave equivocada** (`facil-07`, semilla 0). Las restricciones están bien; el final es:
+```
+... {"clue": 5, "type": "lt", "a": "Silver", "b": "Copper"}}
+```
+Falta el `]` de la lista (`}]}`): *"Expecting ',' delimiter at line 1, column 511"*. Es el error más frecuente (36 de 60) y casi siempre aparece al final de una salida larga.
+
+**2. Sobre-restringido: junta dos grupos en un `alldiff`** (`facil-07`, semilla 1):
+```
+{"clue": 0, "type": "alldiff", "vars": ["Copper", "Indigo", "Lea", "Omar", "Rui", "Silver"]}
+```
+Las 5 pistas están bien traducidas, pero puso a 3 viajeros y 3 colores de auto en un mismo `alldiff` con dominio {1, 2, 3}: seis valores distintos en tres posiciones. El solver prueba que es imposible.
+
+**3. Alcance/aridad: "enlazado" traducido como "a la derecha de"** (`facil-03`, coloreo, semilla 2). La pista *"Ford–Gorge, Ford–Marsh, Ford–Rim"* (vecinos con colores distintos) quedó como:
+```
+{"clue": 3, "type": "offset", "a": "Ford", "b": "Gorge", "k": 1}, ...
+```
+`offset` sobre colores se rechaza por tipos (*"compares numbers but 'Ford' has non-numeric values"*). Es la huella del ejemplo resuelto tipo Einstein.
+
+**4. Sub-restringido: pierde una variable y una pista** (`dificil-01`, semilla 1). El `alldiff` de colores quedó con 4 de 5 (`["Gold", "Jade", "Lilac", "White"]`, falta `Red`) y no tradujo la pista del silbato. El solver avisa que hay dos soluciones que difieren en `Whistle`.
+
+**5. El refinamiento vuelve silencioso un error** (`facil-01`, semilla 2). El primer intento tiene una pista inventada (`{"clue": 5, "type": "offset", "a": "Red", "b": "Yellow", "k": 1}`; el problema tiene 4 pistas) y no tiene solución. En la ronda 2 la cambia por `neq` y quedan dos soluciones. En la ronda 4, para "arreglar" eso, agrega:
+```
+{"clue": 7, "type": "offset", "a": "Yellow", "b": "Blue", "k": 1}
+```
+que dice que el amarillo está a la derecha del azul, al revés de la pista 4. El modelo tiene ahora solución única, el solver no objeta nada y la respuesta es incorrecta (`Yellow` 3 en vez de 2). Es el único fallo silencioso de los brazos con solver.
 
 ## 4. Análisis del refinamiento (B′)
 
 ![iteraciones de B′](fig/iteraciones_bp.png)
 
-TEXTO_REFINAMIENTO
+| Iteraciones hasta acertar | 1 (= B) | 2 | 3 | 4 | nunca |
+|---|---|---|---|---|---|
+| Instancias | 2 | 2 | 1 | 1 | **57 (90 %)** |
+
+- **Delta B → B′: de 3/63 a 6/63 (+3).** El mensaje del solver sí es una señal de aprendizaje, pero débil con 3B: arregla en 1 o 2 rondas algunos JSON mal cerrados (`facil-05`, `medio-02`) y poco más, a cambio de 5 veces los tokens de B.
+- **Lo que se arregla es superficial.** Los casos rescatados empezaron en sintaxis o en un modelo con varias soluciones; ninguno en sobre-restringido ni en alcance.
+- **Lo que sobrevive 3 rondas es distinto.** En los 57 que nunca convergieron, el primer error fue sintaxis (33), alcance (10), sobre-restringido (10) o sub-restringido (3), pero el error **cambia** de ronda en ronda: el modelo cierra la llave y aparece un `alldiff` imposible, o quita una restricción e inventa otra. Al final, B′ queda en sintaxis 22, sobre-restringido 17, alcance 15, sub-restringido 2 y un silencioso. Son errores de **comprensión** (agrupar mal, inventar pistas, confundir relaciones), no de formato. El solver dice *dónde* está el conflicto, no *qué* dice el enunciado.
+- **Riesgo nuevo:** el refinamiento optimiza "que el solver no se queje", no "que el modelo sea fiel". En `facil-01` eso produjo el único error silencioso del experimento.
 
 ## 5. Costo por respuesta correcta
 
 ![costo por correcta](fig/costo_por_correcta.png)
 
-TEXTO_COSTOS
+Equivalente con el precio público de Together AI para Qwen3.5 9B ($0.17 por millón de tokens de entrada y $0.25 de salida, consultado el 18-nov-2026), y tiempo de GPU por respuesta correcta:
+
+| Brazo | Intentos | Correctas | Tokens | USD total | **USD por correcta** | **s por correcta** |
+|---|---|---|---|---|---|---|
+| A | 63 | 63 | 0 | 0 | 0 (+ tiempo humano de modelar) | 0 |
+| B | 63 | 3 | 126 396 | 0.0259 | **0.0087** | 283.6 |
+| B′ | 63 | 6 | 641 572 | 0.1261 | **0.0210** | 591.4 |
+| C | 63 | 3 | 32 440 | 0.0060 | **0.0020** | 160.6 |
+
+- **B cuesta 4 veces más que C por respuesta correcta**: gasta 4 veces más tokens y acierta lo mismo. B′ cuesta 2.4 veces más que B por correcta.
+- **El costo por correcta no incluye el costo de un error silencioso.** C entrega 46 respuestas equivocadas sin aviso; B, ninguna. Si un error que llega al usuario cuesta más que unos milésimos de dólar, la cuenta se invierte: con C no sabemos cuáles de sus 63 respuestas son las 3 buenas.
 
 ## 6. Dónde pudimos haber sido injustos
 
-- **Tipos y sintaxis estrictos.** Nuestro parser rechaza un JSON al que le falta la llave final, y el solver rechaza `"b": "3"` (texto) cuando el dominio es numérico. Un parser tolerante habría cerrado la llave o convertido el número. Lo dejamos estricto porque así se comporta un sistema real, pero lo medimos: TEXTO_TOLERANTE
-- **El vocabulario lo diseñamos nosotros.** Los 7 tipos de restricción cubren exactamente los problemas que escribimos. Un acertijo con disyunciones ("vive en la casa 1 o en la 5") no cabe, así que el dataset favorece al brazo B: las pistas se traducen casi una a una. A la vez, algunas pistas fueron redactadas de forma repetitiva ("Log is not in slot 1", "… not in slot 2", …), lo que alarga las salidas de B y le da más ocasiones de romper el JSON.
-- **Ejemplo resuelto de una sola familia.** El prompt de B lleva un ejemplo tipo Einstein; horarios y coloreo no tienen uno propio, y en coloreo el modelo intentó usar `offset` sobre colores. C no lleva ejemplo resuelto: es una asimetría a favor de B.
-- **Retroalimentación generosa.** B′ solo recibe información del solver, pero ese mensaje lo redactamos nosotros y es informativo (qué restricciones causan el conflicto, en qué variables difieren dos soluciones). Un solver de caja negra daría menos señal.
-- **Modelo pequeño y temperatura 0.7.** Con 3B y temperatura 0.7 se equivocan todos los brazos con LLM. Elegimos 0.7 para medir varianza entre semillas; con temperatura 0 los números probablemente suban y la varianza sería cero por construcción.
-- **No forzamos el modo JSON de Ollama.** Un borrador del brazo C lo usaba; lo quitamos para que C y B compitieran en igualdad. Con modo JSON ambos brazos probablemente romperían menos el formato.
-- **El brazo A es 100 % por construcción:** el enunciado, el modelo a mano y el gold se escribieron juntos y el verificador exige que coincidan. Es un techo y un control de que el solver funciona, no evidencia de que modelar a mano sea fácil (el costo real de A es tiempo humano, que no medimos en tokens).
-- **Los precios son un equivalente aproximado.** Together AI ya no lista modelos Qwen2.5; usamos Qwen3.5 9B, más grande que el nuestro, así que el costo en dólares está sobreestimado para los tres brazos por igual.
+- **Sintaxis y tipos estrictos.** Rechazamos un JSON al que le falta la llave final y `"b": "3"` (texto) en un dominio numérico. Lo medimos: con un parser que cierra la llave o convierte números, **ninguno** de los 60 fallos de B se habría vuelto correcto (`taxonomy.md`), porque al arreglar el formato aparecen los errores de fondo.
+- **El vocabulario lo diseñamos nosotros.** Los 7 tipos cubren exactamente los problemas que escribimos; las disyunciones no caben. Eso favorece a B. A la vez, algunas pistas son repetitivas ("Log is not in slot 1", "… slot 2", …) y alargan la salida de B, lo que le da más ocasiones de romper el JSON.
+- **Un solo ejemplo resuelto, tipo Einstein.** Horarios y coloreo no tienen uno propio (ejemplo 3). C no lleva ejemplo resuelto: asimetría a favor de B.
+- **Retroalimentación generosa.** El mensaje a B′ es informativo (qué restricciones chocan, en qué difieren dos soluciones); un solver de caja negra daría menos señal.
+- **Modelo pequeño y temperatura 0.7.** Con temperatura 0 los números probablemente suban, y la varianza sería cero por construcción.
+- **Sin modo JSON forzado.** Un borrador de C usaba el modo JSON de Ollama; lo quitamos para que B y C compitieran igual. Con él, ambos romperían menos el formato.
+- **A es 100 % por construcción:** enunciado, modelo y gold se escribieron juntos. Es un techo y un control del solver, no evidencia de que modelar a mano sea barato.
+- **Precio aproximado.** Together ya no lista Qwen2.5; Qwen3.5 9B es más grande que nuestro modelo, así que el costo está sobreestimado para los tres brazos por igual.
 
 ## 7. Recomendación
 
-TEXTO_RECOMENDACION
+**Con un modelo de 3B no desplegaríamos ningún brazo con LLM que responda solo**: los tres aciertan entre 5 % y 10 %. Si hubiera que desplegar uno, **elegiríamos B, sin refinamiento y con abstención**: el sistema responde solo cuando el solver encuentra una solución única y, si no, dice "no pude" y deriva a una persona.
+
+- **B no habría entregado ninguna respuesta equivocada en estos datos** (0 silenciosos de 60): habría respondido 3 veces de 63, las 3 bien. C habría respondido las 63 veces, 60 mal, sin saber cuáles.
+- **B′ no va por defecto.** Duplica los aciertos, pero cuesta 5 veces los tokens y 2.4 veces más por correcta, y es el único brazo con un fallo silencioso. Lo activaríamos con un modelo más grande y solo para errores de sintaxis, que es lo único que arregló.
+- **A sigue siendo el techo**: para un tipo de problema que se repite mucho, escribir el modelo una vez gana a cualquier brazo con LLM.
+- **Lo siguiente que probaríamos** es un modelo más grande con el mismo pipeline. La arquitectura ya cumple su promesa, que los errores se anuncien; falta un traductor que acierte más.
 
 **Monitoreo que adjuntaríamos:**
-- Una alarma por cada instancia que el pipeline marque como sin parsear, con variable inexistente, sin solución, con varias soluciones, timeout del solver o LLM que no termina: son fallos que se anuncian solos y nunca deben llegar al usuario como respuesta.
-- Revisión humana de una muestra de los modelos con solución única, porque "modelo válido del problema equivocado" es el único fallo silencioso de B.
-- Seguimiento semanal de la tasa de cada categoría y de las iteraciones de B′, para detectar si cambió el modelo o el tipo de problemas que llegan.
+- Una alarma por cada instancia sin parsear, con variable inexistente, sin solución, con varias soluciones, con timeout del solver o con un LLM que no termina. Ninguna debe llegar al usuario como respuesta.
+- Revisión humana de una muestra de los modelos con solución única, porque "problema equivocado" es el único fallo silencioso de B.
+- Seguimiento semanal de la tasa de cada categoría y de las iteraciones de B′, para notar si cambió el modelo o el tipo de problemas que llegan.

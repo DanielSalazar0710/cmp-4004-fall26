@@ -35,6 +35,25 @@ NOMBRES = {
 }
 
 
+DESCRIPCION = {
+    "sintaxis": "la salida no es un JSON válido (casi siempre una llave o corchete mal cerrado al final), así que no hay modelo que resolver.",
+    "sobre_restringido": "el modelo parsea, pero alguna restricción contradice a otra: el solver prueba que no hay ninguna asignación posible.",
+    "sub_restringido": "al modelo le falta (o tiene demasiado débil) alguna pista: el solver encuentra al menos dos soluciones.",
+    "problema_errado": "el modelo tiene solución única, pero es la de otro problema: alguna pista se tradujo mal y el solver no puede notarlo.",
+    "aridad_alcance": "una restricción apunta a una variable que no existe, le faltan argumentos o compara posiciones sobre valores que no son números.",
+    "timeout": "el solver agotó su presupuesto de llamadas.",
+    "no_termina": "el LLM no terminó de responder en 300 s.",
+}
+# Anotaciones a mano de los casos que discutimos en el REPORT (§3).
+NOTAS = {
+    ("facil-07", 0): "las 5 pistas están bien traducidas, pero el JSON termina en `}}` en vez de `}]}`: falta cerrar la lista de restricciones.",
+    ("facil-07", 1): "junta a los 3 viajeros y los 3 colores de auto en un solo `alldiff` con dominio {1, 2, 3}: seis valores distintos en tres posiciones es imposible.",
+    ("facil-03", 2): "traduce los enlaces del mapa (\"Ford–Gorge\") como `offset` (\"a la derecha de\") sobre colores, y además pone todas las regiones en un `alldiff`.",
+    ("dificil-01", 1): "el `alldiff` de colores quedó con 4 de los 5 colores (falta `Red`) y no tradujo la pista del silbato; por eso `Whistle` queda libre.",
+    ("facil-01", 2): "inventa una quinta pista (`offset Red Yellow`) en un problema de 4 pistas; el refinamiento de B′ termina convirtiendo este error en uno silencioso (ver REPORT §3, ejemplo 5).",
+}
+
+
 def _numeros(x):
     """Convierte "3" -> 3 dentro de un modelo (para el análisis de tipos estrictos)."""
     if isinstance(x, dict):
@@ -135,7 +154,8 @@ def main() -> None:
                 out.append(f"- (no se pudo comparar con el modelo a mano: {e})")
         if it["detalle"]:
             out.append(f"- Diferencias con el gold: {'; '.join(it['detalle'][:6])}")
-        out.append("- Anotación: _(pendiente: qué pista se tradujo mal)_")
+        nota = NOTAS.get((f["problema_id"], int(f["semilla"])))
+        out.append(f"- Qué salió mal: {nota or DESCRIPCION[f['categoria_error']]}")
         out += ["", "```json", it["salida"].strip()[:3000], "```", ""]
 
     (RAIZ / f"taxonomy{sx}.md").write_text("\n".join(out), encoding="utf-8")

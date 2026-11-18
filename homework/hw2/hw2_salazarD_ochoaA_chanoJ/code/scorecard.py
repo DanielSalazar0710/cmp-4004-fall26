@@ -21,16 +21,16 @@ from resultados import BRAZOS, CARPETA, leer  # noqa: E402
 NIVELES = ("facil", "medio", "dificil")
 TEXTO = {
     "garantia": {
-        "A": "Correcta siempre que el modelo a mano sea fiel al enunciado; el solver es completo y además prueba unicidad.",
-        "B": "Si el modelo del LLM es fiel, la respuesta es correcta y única (el solver lo prueba); no hay garantía sobre la traducción.",
-        "Bp": "Igual que B; el refinamiento solo puede corregir errores que el solver ve, nunca un modelo fiel a otro problema.",
-        "C": "Ninguna: no hay certificado; acertar en n instancias no dice nada de la n+1.",
+        "A": "Correcta y única si el modelo a mano es fiel (el solver es completo).",
+        "B": "Correcta y única si la traducción es fiel; ninguna sobre la traducción.",
+        "Bp": "Igual que B; solo corrige lo que el solver ve.",
+        "C": "Ninguna; no hay certificado.",
     },
     "interpretabilidad": {
-        "A": "Total: el modelo JSON y la solución verificable restricción por restricción.",
-        "B": "Alta: el modelo JSON es un certificado revisable; se puede ver qué pista se tradujo mal.",
-        "Bp": "Alta, más la traza de mensajes del solver entre iteraciones.",
-        "C": "Baja: solo una asignación final; no hay forma de saber por qué.",
+        "A": "Total: modelo JSON revisable.",
+        "B": "Alta: el modelo JSON es un certificado; se ve qué pista falló.",
+        "Bp": "Alta, más la traza de mensajes del solver.",
+        "C": "Baja: solo una asignación final.",
     },
 }
 
@@ -82,10 +82,10 @@ def calcular(filas: list[dict]) -> dict:
             "correctas": f"{len(ok)}/{len(fs)} ({_pct(len(ok), len(fs))})",
             "costo": f"{tokens / len(ok):.0f} tokens/correcta" if ok and tokens else ("0 tokens" if not tokens else "inf"),
             "latencia": f"mediana {statistics.median(tiempos):.2f} s · p95 {_p95(tiempos):.2f} s",
-            "reproducibilidad": f"{distintas:.2f} respuestas distintas por problema (3 semillas); {estables}/{len(resp)} estables",
+            "reproducibilidad": f"{distintas:.2f} respuestas distintas por problema; {estables}/{len(resp)} estables",
             "escalado": " → ".join(f"{n} {por_nivel[n]}" for n in NIVELES),
             "falla": (", ".join(f"{k} {v}" for k, v in modos.most_common(4))
-                      + f" · detectables sin gold: {det}/{len(fallos)}") if fallos else "sin fallos",
+                      + f" · **detectables sin gold: {det}/{len(fallos)}**") if fallos else "sin fallos",
         }
     return res
 

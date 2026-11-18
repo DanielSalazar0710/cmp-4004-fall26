@@ -1,0 +1,19 @@
+problema_id,nivel,n_vars,n_restricciones,brazo,repeticion,semilla,resultado,categoria_error,detectable,iteraciones,tiempo_total_s,tiempo_llm_s,tiempo_solver_s,tokens_entrada,tokens_salida,llamadas_llm,cache,modelo,estado_solver,respuesta,detalle
+ej-facil-01,facil,6,6,B,0,0,correcto,,,1,0.001,7.915,6.7e-05,837,207,1,si,qwen2.5:3b,unica,"{""Ana"": 3, ""Blue"": 2, ""Bruno"": 2, ""Carla"": 1, ""Green"": 1, ""Red"": 3}",
+ej-facil-01,facil,6,6,Bp,0,0,correcto,,,1,0.001,7.915,6.7e-05,837,207,1,si,qwen2.5:3b,unica,"{""Ana"": 3, ""Blue"": 2, ""Bruno"": 2, ""Carla"": 1, ""Green"": 1, ""Red"": 3}",
+ej-facil-01,facil,6,6,B,1,1,sin_respuesta,sobre_restringido,si,1,5.097,5.094,6.2e-05,837,227,1,no,qwen2.5:3b,sin_solucion,,no hubo respuesta
+ej-facil-01,facil,6,6,Bp,1,1,sin_respuesta,aridad_alcance,si,4,19.854,19.844,6.2e-05,4266,1007,4,no,qwen2.5:3b,,,no hubo respuesta
+ej-facil-01,facil,6,6,B,2,2,correcto,,,1,4.644,4.642,8.7e-05,837,246,1,no,qwen2.5:3b,unica,"{""Ana"": 3, ""Blue"": 2, ""Bruno"": 2, ""Carla"": 1, ""Green"": 1, ""Red"": 3}",
+ej-facil-01,facil,6,6,Bp,2,2,correcto,,,1,4.644,4.642,8.7e-05,837,246,1,no,qwen2.5:3b,unica,"{""Ana"": 3, ""Blue"": 2, ""Bruno"": 2, ""Carla"": 1, ""Green"": 1, ""Red"": 3}",
+ej-medio-01,medio,12,10,B,0,0,incorrecto,sub_restringido,si,1,0.001,7.115,0.000112,895,412,1,si,qwen2.5:3b,multiple,"{""Ana"": 1, ""Bird"": 4, ""Bruno"": 3, ""Carla"": 2, ""Cat"": 1, ""Coffee"": 2, ""Diego"": 4, ""Dog"": 2, ""Fish"": 3, ""Juice"": 4, ""Milk"": 3, ""Tea"": 1}","Bruno: dio 3, era 2; Carla: dio 2, era 3; Coffee: dio 2, era 3"
+ej-medio-01,medio,12,10,Bp,0,0,sin_respuesta,sobre_restringido,si,4,0.006,27.799,0.000664,5015,1760,4,si,qwen2.5:3b,sin_solucion,,no hubo respuesta
+ej-medio-01,medio,12,10,B,1,1,incorrecto,sub_restringido,si,1,6.733,6.73,0.00013,895,443,1,no,qwen2.5:3b,multiple,"{""Ana"": 1, ""Bird"": 4, ""Bruno"": 3, ""Carla"": 2, ""Cat"": 1, ""Coffee"": 2, ""Diego"": 4, ""Dog"": 2, ""Fish"": 3, ""Juice"": 4, ""Milk"": 3, ""Tea"": 1}","Bruno: dio 3, era 2; Carla: dio 2, era 3; Coffee: dio 2, era 3"
+ej-medio-01,medio,12,10,Bp,1,1,incorrecto,problema_errado,no,4,28.914,28.904,0.000508,5119,1891,4,no,qwen2.5:3b,unica,"{""Ana"": 1, ""Bird"": 2, ""Bruno"": 3, ""Carla"": 2, ""Cat"": 1, ""Coffee"": 2, ""Diego"": 4, ""Dog"": 4, ""Fish"": 3, ""Juice"": 4, ""Milk"": 3, ""Tea"": 1}","Bruno: dio 3, era 2; Carla: dio 2, era 3; Dog: dio 4, era 2"
+ej-medio-01,medio,12,10,B,2,2,incorrecto,sub_restringido,si,1,6.449,6.447,9.8e-05,895,412,1,no,qwen2.5:3b,multiple,"{""Ana"": 1, ""Bird"": 4, ""Bruno"": 3, ""Carla"": 2, ""Cat"": 1, ""Coffee"": 2, ""Diego"": 4, ""Dog"": 2, ""Fish"": 3, ""Juice"": 4, ""Milk"": 3, ""Tea"": 1}","Bruno: dio 3, era 2; Carla: dio 2, era 3; Coffee: dio 2, era 3"
+ej-medio-01,medio,12,10,Bp,2,2,incorrecto,sub_restringido,si,4,27.523,27.511,0.000505,5025,1763,4,no,qwen2.5:3b,multiple,"{""Ana"": 1, ""Bird"": 2, ""Bruno"": 3, ""Carla"": 2, ""Cat"": 1, ""Coffee"": 2, ""Diego"": 4, ""Dog"": 4, ""Fish"": 3, ""Juice"": 4, ""Milk"": 3, ""Tea"": 1}","Bruno: dio 3, era 2; Carla: dio 2, era 3; Dog: dio 4, era 2"
+ej-dificil-01,dificil,20,17,B,0,0,sin_respuesta,aridad_alcance,si,1,0.001,10.057,0.0,1006,743,1,si,qwen2.5:3b,,,no hubo respuesta
+ej-dificil-01,dificil,20,17,Bp,0,0,sin_respuesta,aridad_alcance,si,4,10.522,41.612,0.0,6475,2972,4,no,qwen2.5:3b,,,no hubo respuesta
+ej-dificil-01,dificil,20,17,B,1,1,sin_respuesta,aridad_alcance,si,1,11.208,11.205,0.0,1006,851,1,no,qwen2.5:3b,,,no hubo respuesta
+ej-dificil-01,dificil,20,17,Bp,1,1,sin_respuesta,aridad_alcance,si,4,45.785,45.775,0.0,6773,3363,4,no,qwen2.5:3b,,,no hubo respuesta
+ej-dificil-01,dificil,20,17,B,2,2,sin_respuesta,aridad_alcance,si,1,9.903,9.901,0.0,1006,731,1,no,qwen2.5:3b,,,no hubo respuesta
+ej-dificil-01,dificil,20,17,Bp,2,2,sin_respuesta,aridad_alcance,si,4,20.552,41.836,0.0,6439,2924,4,no,qwen2.5:3b,,,no hubo respuesta

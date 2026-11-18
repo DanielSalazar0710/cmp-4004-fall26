@@ -79,7 +79,7 @@ def fig_precision(filas, salida):
     ax.set_xlabel("Nivel de dificultad (número de variables del CSP)")
     ax.set_title("Precisión por dificultad (media de 3 semillas; barra = desv. estándar)")
     ax.grid(alpha=0.3)
-    ax.legend(loc="lower left", fontsize=8)
+    ax.legend(loc="center right", fontsize=8)
     fig.tight_layout()
     fig.savefig(salida / "precision_vs_dificultad.png")
     plt.close(fig)
@@ -160,15 +160,31 @@ def fig_taxonomia(filas, salida):
     cats = list(TAXONOMIA)
     vals = [cuenta.get(c, 0) for c in cats]
     colores = ["#55A868" if TAXONOMIA[c] == "si" else "#C44E52" for c in cats]
-    fig, ax = plt.subplots(figsize=(8, 4.2), dpi=150)
-    barras = ax.barh(cats, vals, color=colores)
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(11, 4.2), dpi=150, gridspec_kw={"width_ratios": [3, 2]})
+    barras = a1.barh(cats, vals, color=colores)
     for r in barras:
-        ax.annotate(f"{int(r.get_width())}", (r.get_width(), r.get_y() + r.get_height() / 2),
+        a1.annotate(f"{int(r.get_width())}", (r.get_width(), r.get_y() + r.get_height() / 2),
                     va="center", fontsize=8)
-    ax.invert_yaxis()
-    ax.set_xlabel("fallos del brazo B (primer intento)")
-    ax.set_title("Taxonomía de errores de B · verde: se detecta sin gold · rojo: silencioso", fontsize=10)
-    ax.grid(axis="x", alpha=0.3)
+    a1.invert_yaxis()
+    a1.set_xlabel("fallos del brazo B (primer intento)")
+    a1.set_title("Fallos de B por categoría", fontsize=10)
+    a1.grid(axis="x", alpha=0.3)
+    # B contra C: ¿cuántos fallos se notan sin la respuesta correcta?
+    bs = [b for b in ("B", "Bp", "C") if any(f["brazo"] == b for f in filas)]
+    det = [sum(1 for f in filas if f["brazo"] == b and f["resultado"] != "correcto" and f["detectable"] == "si") for b in bs]
+    sil = [sum(1 for f in filas if f["brazo"] == b and f["resultado"] != "correcto" and f["detectable"] != "si") for b in bs]
+    x = range(len(bs))
+    a2.bar(x, det, color="#55A868", label="se detecta sin gold")
+    a2.bar(x, sil, bottom=det, color="#C44E52", label="silencioso")
+    for i, (d, s_) in enumerate(zip(det, sil)):
+        a2.annotate(f"{d} / {s_}", (i, d + s_), ha="center", va="bottom", fontsize=8)
+    a2.set_xticks(list(x), [NOMBRES[b] for b in bs], fontsize=8)
+    a2.set_ylim(0, max(d + s_ for d, s_ in zip(det, sil)) * 1.15 + 1)
+    a2.set_ylabel("fallos")
+    a2.set_title("Fallos que se anuncian vs silenciosos", fontsize=10)
+    a2.legend(fontsize=8, loc="lower right")
+    a2.grid(axis="y", alpha=0.3)
+    fig.suptitle("Taxonomía de errores · verde: detectable sin gold · rojo: silencioso", fontsize=10)
     fig.tight_layout()
     fig.savefig(salida / "taxonomia_b.png")
     plt.close(fig)
