@@ -31,8 +31,11 @@ def correr_problema(p: dict, llm, repeticion: int, semilla: int,
                     variante: str = VARIANTE_POR_DEFECTO) -> dict:
     t0 = time.perf_counter()
     r = llm.llamar(construir_prompt(p, variante), semilla=semilla)
-    respuesta, cat = leer_respuesta(r.texto, p) if not r.error else (None, "sin_formato")
-    resultado, detalles = calificar(p, respuesta if cat != "sin_formato" else None)
+    if r.error:
+        respuesta, cat = None, ("no_termina" if r.error == "no_termina" else "sin_formato")
+    else:
+        respuesta, cat = leer_respuesta(r.texto, p)
+    resultado, detalles = calificar(p, respuesta if cat not in ("sin_formato", "no_termina") else None)
     if resultado == "correcto":
         categoria = ""
     else:

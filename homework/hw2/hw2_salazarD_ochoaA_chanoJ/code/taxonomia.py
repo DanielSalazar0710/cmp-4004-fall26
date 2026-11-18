@@ -31,6 +31,7 @@ NOMBRES = {
     "problema_errado": "Modelo válido del problema equivocado (premisas perdidas o inventadas)",
     "aridad_alcance": "Errores de alcance / aridad (variable inexistente, argumentos o tipos mal)",
     "timeout": "Timeout del solver",
+    "no_termina": "El LLM no terminó en 300 s (no hubo modelo)",
 }
 
 

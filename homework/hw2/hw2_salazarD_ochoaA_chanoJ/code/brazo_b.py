@@ -173,9 +173,14 @@ def correr_problema(p: dict, llm, repeticion: int, semilla: int, registro: list)
     t0 = time.perf_counter()
     for it in range(1, config.MAX_REFINAMIENTOS + 2):
         r = llm.llamar(prompt, semilla=semilla)
-        ev = evaluar_salida(r.texto, p) if not r.error else {
-            "categoria": "sintaxis", "mensaje": f"LLM error: {r.error}", "estado_solver": "",
-            "solucion": None, "tiempo_solver_s": 0.0}
+        if r.error:
+            # el LLM no terminó (o falló la llamada): no hay modelo y no hay mensaje del solver
+            # que devolver, así que no se refina (mismo criterio que en el HW1)
+            cat_err = "no_termina" if r.error == "no_termina" else "sintaxis"
+            ev = {"categoria": cat_err, "mensaje": f"LLM: {r.error}", "estado_solver": "",
+                  "solucion": None, "tiempo_solver_s": 0.0}
+        else:
+            ev = evaluar_salida(r.texto, p)
         acumulado["t_llm"] += r.tiempo_llm_s
         acumulado["t_sol"] += ev["tiempo_solver_s"]
         acumulado["tin"] += r.tokens_entrada
@@ -204,7 +209,7 @@ def correr_problema(p: dict, llm, repeticion: int, semilla: int, registro: list)
         if it == 1:
             filas.append(dict(fila, brazo="B"))
         # Se refina solo si el solver avisó de algo (sin mirar el gold).
-        if not ev["categoria"] or it == config.MAX_REFINAMIENTOS + 1:
+        if not ev["categoria"] or it == config.MAX_REFINAMIENTOS + 1 or r.error:
             filas.append(dict(fila, brazo="Bp"))
             break
         prompt = prompt_refinamiento(prompt0, r.texto, ev["mensaje"])

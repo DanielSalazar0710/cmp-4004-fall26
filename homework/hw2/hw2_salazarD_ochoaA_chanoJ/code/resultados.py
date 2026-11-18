@@ -50,12 +50,14 @@ TAXONOMIA = {
     "problema_errado":   "no",   # modelo válido y de solución única, pero de otro problema
     "aridad_alcance":    "si",   # variable inexistente / argumentos mal puestos
     "timeout":           "si",   # el solver se queda sin presupuesto
+    "no_termina":        "si",   # el LLM no terminó en 300 s (no hay modelo que evaluar)
 }
 # Errores del brazo C (respuesta directa).
 ERRORES_C = {
     "sin_formato":  "si",   # no se pudo leer una respuesta
     "incompleta":   "si",   # faltan variables o hay valores fuera de los posibles
     "incorrecta":   "no",   # respuesta bien formada pero equivocada: falla en silencio
+    "no_termina":   "si",   # el LLM no terminó en 300 s
 }
 
 

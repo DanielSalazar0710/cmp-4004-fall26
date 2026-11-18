@@ -8,3 +8,4 @@ SEMILLAS = (0, 1, 2)           # 3 repeticiones por problema y brazo
 MAX_REFINAMIENTOS = 3          # B': hasta 3 reintentos después del primer intento
 LIMITE_LLAMADAS_SOLVER = 200_000
 LIMITE_SEGUNDOS_SOLVER = 10.0
+LIMITE_LLM_S = 300.0           # una llamada al LLM que pasa de 300 s cuenta como 'no_termina' (criterio del HW1)

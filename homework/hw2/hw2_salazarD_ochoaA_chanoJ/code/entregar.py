@@ -58,7 +58,7 @@ def main() -> int:
     # Revisión de tono: nada de notas internas ni de mensajes dirigidos a alguien.
     # (AI_LOG.md sí declara el uso de IA, como pide la política del curso; no se revisa aquí.)
     prohibido = ["[JALIL]", "TODO Jalil", "TODO Andretty", "INDICACIONES", "_(pendiente",
-                 "Claude", "DATO FALSO", "Corríjanlos", "avisen"]
+                 "Claude", "DATO FALSO", "Corríjanlos", "avisen", "laptop", "Daniel:"]
     for p in archivos:
         if ".llm_cache" in p.parts or p.name == "AI_LOG.md" or "aicourse" in p.parts:
             continue
