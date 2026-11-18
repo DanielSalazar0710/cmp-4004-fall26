@@ -34,6 +34,36 @@ NOMBRES = {
 }
 
 
+def _numeros(x):
+    """Convierte "3" -> 3 dentro de un modelo (para el análisis de tipos estrictos)."""
+    if isinstance(x, dict):
+        return {k: _numeros(v) for k, v in x.items()}
+    if isinstance(x, list):
+        return [_numeros(v) for v in x]
+    if isinstance(x, str) and x.strip().lstrip("-").isdigit():
+        return int(x)
+    return x
+
+
+def rescatables_por_tipos(fallos, por_clave, problemas) -> int:
+    """Cuántos fallos de B serían correctos si convirtiéramos números escritos como texto."""
+    from brazo_b import evaluar_salida
+    from problemas import calificar
+    from respuesta_c import extraer_json
+    n = 0
+    for f in fallos:
+        it = por_clave[(f["problema_id"], int(f["semilla"]))][0]
+        p = problemas.get(f["problema_id"])
+        try:
+            modelo = _numeros(extraer_json(it["salida"]))
+        except Exception:  # noqa: BLE001
+            continue
+        ev = evaluar_salida(json.dumps(modelo), p)
+        if not ev["categoria"] and calificar(p, ev["solucion"])[0] == "correcto":
+            n += 1
+    return n
+
+
 def _pct(a, b):
     return f"{100 * a / b:.0f} %" if b else "-"
 
@@ -70,7 +100,9 @@ def main() -> None:
         visto = "-" if n == 0 else ("sí, en los %d" % n if TAXONOMIA[cat] == "si" else "no: solo con el gold")
         out.append(f"| {nombre} | {n} | {_pct(n, len(fallos))} | {teoria} | {visto} |")
     det = sum(1 for f in fallos if f["detectable"] == "si")
-    out += ["", f"**Fallos de B detectables sin ground truth: {det}/{len(fallos)} ({_pct(det, len(fallos))}).**", ""]
+    rescate = rescatables_por_tipos(fallos, por_clave, problemas)
+    out += [f"Si el solver aceptara números escritos como texto (`\"3\"` en vez de `3`), {rescate} de estos "
+            f"{len(fallos)} fallos serían correctos (análisis de honestidad, no cambia la clasificación).", "","", f"**Fallos de B detectables sin ground truth: {det}/{len(fallos)} ({_pct(det, len(fallos))}).**", ""]
 
     out.append("## Cada fallo, con la salida del modelo\n")
     for f in sorted(fallos, key=lambda x: (x["categoria_error"], x["problema_id"], x["semilla"])):

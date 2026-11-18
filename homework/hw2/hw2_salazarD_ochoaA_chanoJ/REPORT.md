@@ -27,7 +27,18 @@ _(pendiente: iteraciones hasta acertar, fracción que nunca converge, diferencia
 _(pendiente: tabla de `costos.py`)_
 
 ## 6. Dónde pudimos haber sido injustos
-_(pendiente)_
+- **Tipos estrictos.** Nuestro solver rechaza `"b": "3"` (texto) cuando el dominio es numérico y lo cuenta como error de alcance. Un parser que convirtiera números escritos como texto habría rescatado esos casos. Lo dejamos estricto porque así se comporta un solver real, pero reportamos cuántos fallos de B se salvarían con esa conversión _(pendiente: número)_.
+- **El vocabulario lo diseñamos nosotros.** Los 7 tipos de restricción (`alldiff`, `eq`, `neq`, `lt`, `gt`, `adj`, `offset`) cubren exactamente los problemas que escribimos. Un acertijo con disyunciones ("vive en la casa 1 o en la 5") no cabe, así que el dataset favorece al brazo B: las pistas se traducen casi una a una.
+- **Ejemplo few-shot de una sola familia.** El prompt de B lleva un ejemplo resuelto tipo Einstein; los problemas de horario y coloreo no tienen uno propio. El prompt de C no lleva ejemplo resuelto. _(pendiente: confirmar con el prompt final de C)_
+- **Retroalimentación generosa.** B′ solo recibe el mensaje del solver, pero ese mensaje lo redactamos nosotros y es informativo (por ejemplo, "dos soluciones difieren en Bird, Dog"). Un solver de caja negra daría menos señal.
+- **Ajustamos los prompts solo con los 3 ejemplos**, que no cuentan en la evaluación. Aun así, el ejemplo few-shot de B es uno de esos 3, así que los números de B sobre los ejemplos no son una medición limpia y no los reportamos como resultado.
+- **Modelo pequeño y temperatura 0.7.** Un modelo de 3B a temperatura 0.7 se equivoca más en todos los brazos; elegimos 0.7 para medir varianza entre semillas. Con temperatura 0 los números de B y C probablemente suban, y la varianza sería cero por construcción.
+- **El brazo A es 100 % por construcción:** la misma persona escribió el enunciado, el modelo a mano y el gold, y el verificador exige que coincidan. Sirve como techo y control, no como evidencia de que modelar a mano sea fácil.
 
 ## 7. Recomendación
-_(pendiente)_
+_(pendiente: qué brazo desplegaríamos, defendido con nuestros números)_
+
+**Monitoreo que adjuntaríamos (borrador):**
+- Alarma por cada respuesta que el solver marca como sin solución, con varias soluciones, con error de construcción o con timeout: son fallos que se anuncian solos y no deben llegar al usuario.
+- Muestreo y revisión humana de un porcentaje de los modelos de solución única, porque el "problema equivocado" es el único fallo silencioso de B.
+- Seguimiento de la tasa de cada categoría por semana y de las iteraciones de B′, para detectar si cambió el modelo o el tipo de problemas.
