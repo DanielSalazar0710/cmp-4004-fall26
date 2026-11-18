@@ -47,9 +47,16 @@ VOCABULARIO = """Constraint types (use only these):
 
 
 def _ejemplo_fewshot() -> str:
+    """El ejemplo fácil, con cada restricción etiquetada con su pista ("clue": 0 = alldiff)."""
     ej = next(p for p in ejemplos() if p["id"] == "ej-facil-01")
+    restricciones, pista = [], 0
+    for r in ej["modelo_mano"]["constraints"]:
+        if r["type"] != "alldiff":
+            pista += 1
+        restricciones.append({"clue": 0 if r["type"] == "alldiff" else pista, **r})
+    modelo = {"variables": ej["modelo_mano"]["variables"], "constraints": restricciones}
     return ("Puzzle:\n" + ej["enunciado"] + "\n" + texto_formato(ej) + "\nJSON:\n"
-            + json.dumps(ej["modelo_mano"], ensure_ascii=False))
+            + json.dumps(modelo, ensure_ascii=False))
 
 
 def construir_prompt(problema: dict) -> str:
@@ -59,11 +66,37 @@ def construir_prompt(problema: dict) -> str:
         "Do not solve it. Output only the JSON object.\n\n"
         'Format: {"variables": {"Name": [possible values]}, "constraints": [...]}\n'
         "Use exactly the variable names and possible values listed under the puzzle. "
-        "Every listed variable must appear in \"variables\" with all the possible values.\n\n"
+        "Every listed variable must appear in \"variables\" with all the possible values.\n"
+        "Rules: add one alldiff for each group of things that are all different (\"clue\": 0); "
+        "then translate EVERY numbered clue, in order, into one constraint whose \"clue\" is the clue number; "
+        "use only the names that the clue mentions; write numbers without quotes.\n"
+        "\"X is immediately to the right of Y\" is offset a=X, b=Y, k=1; "
+        "\"X is immediately to the left of Y\" is offset a=Y, b=X, k=1.\n\n"
         + VOCABULARIO + "\n\nExample.\n" + _ejemplo_fewshot()
         + "\n\nNow this puzzle.\nPuzzle:\n" + problema["enunciado"] + "\n"
         + texto_formato(problema) + "\nJSON:\n"
     )
+
+
+def _culpables(modelo: dict, maximo: int = 6) -> list[str]:
+    """Diagnóstico del solver para un modelo sin solución: las restricciones (no
+    alldiff) cuya eliminación individual vuelve el modelo satisfacible. Solo usa
+    el modelo del LLM, nunca el gold."""
+    restricciones = modelo.get("constraints", [])
+    culpables = []
+    for i, r in enumerate(restricciones):
+        if not isinstance(r, dict) or r.get("type") == "alldiff":
+            continue
+        prueba = {"variables": modelo["variables"], "constraints": restricciones[:i] + restricciones[i + 1:]}
+        try:
+            rr = resolver(prueba, max_soluciones=1, limite_llamadas=20_000, limite_segundos=1.0)
+        except ErrorModelo:
+            continue
+        if rr.estado in ("unica", "multiple"):
+            culpables.append(json.dumps(r, ensure_ascii=False))
+        if len(culpables) >= maximo:
+            break
+    return culpables
 
 
 def evaluar_salida(texto: str, problema: dict) -> dict:
@@ -95,8 +128,12 @@ def evaluar_salida(texto: str, problema: dict) -> dict:
                  limite_segundos=config.LIMITE_SEGUNDOS_SOLVER)
     salida.update(estado_solver=r.estado, solucion=r.solucion, tiempo_solver_s=r.tiempo_s)
     if r.estado == "sin_solucion":
+        sospechosas = _culpables(modelo)
+        extra = (" Removing any ONE of these constraints would make it solvable, so check them against the "
+                 "puzzle: " + "; ".join(sospechosas) + ".") if sospechosas else ""
         salida.update(categoria="sobre_restringido",
-                      mensaje="The solver proved the model has NO solution: some constraint is wrong or too strong.")
+                      mensaje="The solver proved the model has NO solution: some constraint is wrong or too strong."
+                              + extra)
     elif r.estado == "multiple":
         a, b = r.soluciones[:2]
         dif = sorted(k for k in a if a[k] != b[k])

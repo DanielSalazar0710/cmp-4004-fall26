@@ -8,6 +8,7 @@
 - **Dataset:** 21 problemas propios en 3 niveles por número de variables (fácil ≤ 8, medio 9–15, difícil ≥ 16), con verdad base verificada a mano y por el solver (solución única). Ver `problems/README.md`.
 - **Brazos:** A (modelo a mano → solver), B (LLM → modelo → solver), B′ (B + hasta 3 rondas con el mensaje del solver, sin ver el gold), C (LLM responde directo).
 - **Instrumentación por instancia:** correcto / incorrecto / sin respuesta, reloj de pared, tokens de entrada y salida, tiempo del LLM y del solver por separado (`results/*.csv`).
+- **Desarrollo del prompt de B (solo con los 3 ejemplos, que no cuentan en la evaluación):** la versión 1 (formato + vocabulario + un ejemplo resuelto) dio 2/9 en los ejemplos. En la versión 2 pedimos una restricción por pista con su número (`"clue"`), números sin comillas y dos reglas de dirección para "inmediatamente a la derecha/izquierda"; subió a 3/9. Después agregamos al mensaje de B′ un diagnóstico del solver: qué restricciones, quitadas una a la vez, vuelven el modelo satisfacible. En los ejemplos no cambió el resultado. Ahí congelamos el prompt para no ajustarlo de más a 3 problemas.
 - **Detección sin ground truth:** nuestro solver cuenta hasta 2 soluciones, así que un modelo sub-restringido se detecta sin conocer la respuesta.
 
 ## 1. Duel Scorecard
