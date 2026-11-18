@@ -18,8 +18,9 @@ from pathlib import Path
 ORIGEN = Path(__file__).resolve().parent.parent
 
 INCLUIR = ["REPORT.md", "taxonomy.md", "AI_LOG.md", "README.md", "requirements.txt",
-           ".gitignore", "code", "problems", "results", "fig", ".llm_cache"]
-EXCLUIR_NOMBRES = {"__pycache__", "falso", "test_jalil.py", "datos_falsos.py", "entregar.py"}
+           ".gitignore", "code", "problems", "results", "fig", ".llm_cache",
+           "hw2_salazarD_ochoaA_chanoJ.ipynb", "hw2_salazarD_ochoaA_chanoJ.html"]
+EXCLUIR_NOMBRES = {"__pycache__", "falso", "test_jalil.py", "datos_falsos.py", "entregar.py", "log_brazo_b.txt", "log_brazo_c.txt"}
 EXCLUIR_SUFIJOS = ("_ejemplos.csv", "_ejemplos.jsonl", "_ejemplos.md", "_parcial.csv", "_parcial.jsonl")
 OBLIGATORIOS = ["REPORT.md", "taxonomy.md", "AI_LOG.md", "results/brazo_a.csv", "results/brazo_b.csv",
                 "results/brazo_c.csv", "fig/precision_vs_dificultad.png"]
