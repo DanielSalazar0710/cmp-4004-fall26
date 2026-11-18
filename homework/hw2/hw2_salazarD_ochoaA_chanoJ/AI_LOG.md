@@ -9,7 +9,7 @@ Política del curso: [`resources/ai-policy.md`](../../../resources/ai-policy.md)
 ## Andretty Ochoa
 - **Herramienta.** Codex (OpenAI).
 - **Qué pedí.** Revisar el avance del Issue #5, completar los 21 CSP de mi parte, ejecutar el verificador y el brazo A y preparar la documentación.
-- **Qué obtuve.** Codex detectó que `facil-02.json` era una copia de `facil-01.json`, escribió un caso distinto y creó los otros 19 problemas que faltaban, incluidos los enunciados, modelos, golds y deducciones. Conservó `facil-01.json`, redactó el README y ejecutó el verificador (21 soluciones únicas) y el brazo A (63/63).
+- **Cómo trabajamos.** Pensamos juntos el conjunto de 21 problemas. Yo aporté el primer caso, facilité el avance y definí qué debía cumplir el conjunto. Codex conservó `facil-01.json`, detectó la copia en `facil-02.json` y desarrolló los 20 casos pendientes con sus enunciados, modelos, golds y deducciones. También redactó el README y ejecutó el verificador (21 soluciones únicas) y el brazo A (63/63).
 - **Qué revisé y qué puedo explicar.** Mi revisión personal de los casos generados está pendiente. Antes de la entrega voy a contrastar los enunciados y sus deducciones con los modelos y anotar aquí qué revisé, qué corregí y qué puedo explicar por mi cuenta.
 
 ## Jalil Chano
