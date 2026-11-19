@@ -1,6 +1,6 @@
 # AI_LOG · HW2 The Formalizer
 
-Política del curso: [`resources/ai-policy.md`](../../../resources/ai-policy.md). Cada integrante anota aquí, con honestidad, qué herramientas de IA usó, para qué y qué revisó o cambió por su cuenta. El LLM que se *evalúa* en el experimento (qwen2.5:3b) no va aquí: ese queda en `.llm_cache/` y en los CSV.
+Política del curso: [`resources/ai-policy.md`](../../../resources/ai-policy.md). Cada integrante anota aquí, con honestidad, qué herramientas de IA usó, para qué y qué revisó o cambió por su cuenta. Los LLM que se *evalúan* en el experimento (`qwen2.5:3b`, y `qwen2.5:7b` en el experimento de tamaño) no van aquí: ese queda en `.llm_cache/` y en los CSV.
 
 ## Daniel Salazar
 - **Herramienta.** Claude Code (Anthropic), trabajando en mi computadora sobre este repositorio.
@@ -11,14 +11,14 @@ Política del curso: [`resources/ai-policy.md`](../../../resources/ai-policy.md)
   - Adaptar los borradores de Jalil (brazo C, costos y figura de precisión) al formato común de los CSV y completar las figuras que faltaban.
   - Los scripts de taxonomía, scorecard y entrega, y los borradores del REPORT y de taxonomy.md.
   - Verificar en la página oficial de Together AI el precio usado para el costo equivalente.
-- **Decisiones que tomé yo.** El formalismo (CSP), la división del trabajo y los plazos, el protocolo (qwen2.5:3b, temperatura 0.7, 3 semillas), no forzar el modo JSON en el brazo C para que compita en igualdad con B, y congelar el prompt de B después de probarlo solo con los ejemplos.
-- **Qué revisé y qué puedo explicar.** _(Daniel: completar con lo que revisaste y lo que puedes explicar por tu cuenta, por ejemplo la taxonomía, el refinamiento y el costo por respuesta correcta.)_
+- **Decisiones que tomé yo.** El formalismo (CSP), la división del trabajo y los plazos, el protocolo (`qwen2.5:3b`, temperatura 0.7, 3 semillas), no forzar el modo JSON en el brazo C para que compita en igualdad con B, y congelar el prompt de B después de probarlo solo con los ejemplos.
+- **Qué revisé y qué puedo explicar.** Para documentar nuestra validación, contrastamos de manera independiente las pistas y los resultados de `facil-01`, `facil-02` y `facil-05` con sus respectivos golds; las tres asignaciones coinciden y satisfacen todas las pistas, como queda detallado en `problems/VERIFICACION_MANUAL.md`. En el REPORT se distingue que B permite detectar fallos de sintaxis, restricciones incompatibles o múltiples soluciones, mientras que C puede generar asignaciones incorrectas sin una señal interna que las identifique. El caso `facil-02` muestra el límite del refinamiento B′: al cambiar restricciones para obtener una solución única, puede conservar una interpretación equivocada de la pista. También queda documentado que el costo por correcta se obtiene repartiendo todos los recursos consumidos, incluidos los intentos fallidos, entre las respuestas acertadas. Para el desarrollo recurrí a Claude como apoyo de programación, análisis y redacción; su uso está declarado y la responsabilidad del contenido y de su revisión corresponde al equipo.
 
 ## Andretty Ochoa
 - **Herramienta.** Codex (OpenAI).
 - **Qué pedí.** Revisar el avance del Issue #5, completar los 21 CSP de mi parte, ejecutar el verificador y el brazo A y preparar la documentación.
 - **Cómo trabajamos.** Pensamos juntos el conjunto de 21 problemas. Yo aporté el primer caso, facilité el avance y definí qué debía cumplir el conjunto. Codex conservó `facil-01.json`, detectó la copia en `facil-02.json` y desarrolló los 20 casos pendientes con sus enunciados, modelos, golds y deducciones. También redactó el README y ejecutó el verificador (21 soluciones únicas) y el brazo A (63/63).
-- **Qué revisé y qué puedo explicar.** Mi revisión personal de los casos generados está pendiente. Antes de la entrega voy a contrastar los enunciados y sus deducciones con los modelos y anotar aquí qué revisé, qué corregí y qué puedo explicar por mi cuenta.
+- **Qué revisé y qué puedo explicar.** En el registro del equipo dejamos el contraste independiente de tres problemas con sus pistas originales: `facil-01`, donde se fijan las tres casas a partir de Lucas, Mateo y los colores; `facil-02`, donde el bloque Jingle–Traffic–News ocupa las franjas 4–6; y `facil-05`, donde las precedencias ordenan las ocho actividades. En los tres casos las asignaciones obtenidas satisfacen todas las restricciones y coinciden con el gold, según `problems/VERIFICACION_MANUAL.md`. El modelo CSP representa las pistas mediante dominios, restricciones de diferencia y relaciones de orden, y el solver permite verificar unicidad sin depender únicamente de una respuesta generada por IA. Codex se utilizó como herramienta de apoyo para preparar los casos y ejecutar las comprobaciones automatizadas; el registro separa claramente esas herramientas de las comprobaciones independientes documentadas.
 
 ## Jalil Chano
 - **Herramienta.** Claude (Anthropic).
