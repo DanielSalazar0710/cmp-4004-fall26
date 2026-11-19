@@ -59,9 +59,10 @@ def main() -> None:
     ap.add_argument("--falso", action="store_true", help="usar ClienteFalso (sin Ollama)")
     ap.add_argument("--variante", default=VARIANTE_POR_DEFECTO, choices=sorted(VARIANTES))
     ap.add_argument("--semillas", nargs="*", type=int, default=list(config.SEMILLAS))
+    ap.add_argument("--modelo", default=config.MODELO, help="otro modelo de Ollama (experimento de tamaño)")
     args = ap.parse_args()
     problemas = ejemplos() if args.solo == "ejemplos" else cargar()
-    llm = ClienteFalso('{"Ana": 1}') if args.falso else ClienteLLM()
+    llm = ClienteFalso('{"Ana": 1}') if args.falso else ClienteLLM(modelo=args.modelo)
     filas = []
     for p in problemas:
         for rep, semilla in enumerate(args.semillas):
@@ -71,7 +72,7 @@ def main() -> None:
                   f"{f['tiempo_llm_s']}s", flush=True)
     nombre = "brazo_c" + ("_ejemplos" if args.solo == "ejemplos" else "") + \
              (f"_{args.variante}" if args.variante != VARIANTE_POR_DEFECTO else "") + \
-             ".csv"
+             (f"_{args.modelo.replace(':', '-')}" if args.modelo != config.MODELO else "") + ".csv"
     ruta = escribir(filas, nombre, CARPETA / "falso" if args.falso else None)
     ok = sum(f["resultado"] == "correcto" for f in filas)
     print(f"Brazo C: {ok}/{len(filas)} correctos -> {ruta}")

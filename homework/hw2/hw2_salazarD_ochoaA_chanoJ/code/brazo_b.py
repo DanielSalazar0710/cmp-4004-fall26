@@ -221,11 +221,12 @@ def main() -> None:
     ap.add_argument("--solo", choices=["ejemplos"])
     ap.add_argument("--ids", nargs="*", help="correr solo estos problemas")
     ap.add_argument("--semillas", nargs="*", type=int, default=list(config.SEMILLAS))
+    ap.add_argument("--modelo", default=config.MODELO, help="otro modelo de Ollama (experimento de tamaño)")
     args = ap.parse_args()
     problemas = ejemplos() if args.solo == "ejemplos" else cargar()
     if args.ids:
         problemas = [p for p in problemas if p["id"] in args.ids]
-    llm = ClienteLLM()
+    llm = ClienteLLM(modelo=args.modelo)
     filas, registro = [], []
     for p in problemas:
         for rep, semilla in enumerate(args.semillas):
@@ -236,6 +237,8 @@ def main() -> None:
                   f" B'={bp['resultado']:<13} it={bp['iteraciones']}  {bp['tiempo_llm_s']}s",
                   flush=True)
     sufijo = "_ejemplos" if args.solo == "ejemplos" else ("_parcial" if args.ids else "")
+    if args.modelo != config.MODELO:
+        sufijo += "_" + args.modelo.replace(":", "-")
     escribir(filas, f"brazo_b{sufijo}.csv")
     with open(CARPETA / f"intentos_b{sufijo}.jsonl", "w", encoding="utf-8") as fh:
         for r in registro:
