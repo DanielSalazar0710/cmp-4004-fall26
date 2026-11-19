@@ -27,7 +27,7 @@ OBLIGATORIOS = ["REPORT.md", "taxonomy.md", "AI_LOG.md", "results/brazo_a.csv", 
 
 
 def _ignorar(directorio, nombres):
-    return [n for n in nombres if n in EXCLUIR_NOMBRES or n.endswith(EXCLUIR_SUFIJOS) or "_ejemplos_" in n]
+    return [n for n in nombres if n in EXCLUIR_NOMBRES or n.endswith(EXCLUIR_SUFIJOS) or "_ejemplos_" in n or n.startswith("log_")]
 
 
 def main() -> int:

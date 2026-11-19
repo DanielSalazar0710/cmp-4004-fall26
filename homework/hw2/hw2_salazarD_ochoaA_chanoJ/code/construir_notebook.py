@@ -30,7 +30,7 @@ md("""
 # HW2 · The Formalizer: ¿traducir a CSP o responder directo?
 **Equipo: Daniel Salazar, Andretty Ochoa y Jalil Chano · CMP-4004 · USFQ · 18 de noviembre de 2026**
 
-**Pregunta:** si un modelo de lenguaje pequeño (`qwen2.5:3b`, local) traduce un acertijo a un modelo CSP y un solver lo resuelve, ¿acierta más que si responde directo? Y sobre todo: **cuando falla, ¿nos damos cuenta?**
+**Pregunta:** si un modelo de lenguaje pequeño (`qwen2.5:3b`, local; y `qwen2.5:7b` como experimento de tamaño) traduce un acertijo a un modelo CSP y un solver lo resuelve, ¿acierta más que si responde directo? Y sobre todo: **cuando falla, ¿nos damos cuenta?**
 
 Cuatro brazos sobre los mismos 21 problemas propios (7 fáciles, 7 medios, 7 difíciles) y 3 semillas:
 **A** modelo a mano → solver · **B** LLM → modelo → solver · **B′** B con hasta 3 rondas de mensajes del solver · **C** LLM responde directo.
@@ -104,14 +104,22 @@ code("""
 display(Image(filename="fig/tiempo_llm_vs_solver.png"))
 """)
 
-md("## 8. Las pruebas del código pasan")
+md("## 8. Experimento de tamaño: el mismo pipeline con qwen2.5:7b")
+code("""
+display(Image(filename="fig/modelos.png"))
+display(Markdown(open("results/comparacion_modelos.md", encoding="utf-8").read()))
+""")
+
+md("## 9. Las pruebas del código pasan")
 code("""
 subprocess.run([sys.executable, "code/tests/test_base.py"], check=False)
+subprocess.run([sys.executable, "code/tests/test_sin_fugas.py"], check=False)
+subprocess.run([sys.executable, "code/verificar_enumeracion.py"], check=False)
 """)
 
 md("""
-## 9. Conclusión
-Las conclusiones, el análisis de dónde pudimos ser injustos y la recomendación de despliegue están en `REPORT.md`, secciones 6 y 7.
+## 10. Conclusión
+Con 3B, B y C aciertan lo mismo, pero **todos** los fallos de B se anuncian solos y 46 de 60 de C son silenciosos. Con 7B, B pasa a 22/63 mientras C sigue en 3/63, y B sigue sin fallos silenciosos. La recomendación (B con abstención) y el análisis de dónde pudimos ser injustos están en `REPORT.md`.
 """)
 
 nb = nbf.v4.new_notebook()

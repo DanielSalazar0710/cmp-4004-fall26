@@ -1,6 +1,6 @@
 # HW2 · The Formalizer (CSP) · Salazar, Ochoa, Chano
 
-Probamos la arquitectura "el LLM traduce a un modelo formal y un solver lo resuelve" con CSP, sobre 21 problemas propios, con `qwen2.5:3b` y cuatro brazos (A a mano, B híbrido, B′ con refinamiento, C directo).
+Probamos la arquitectura "el LLM traduce a un modelo formal y un solver lo resuelve" con CSP, sobre 21 problemas propios, con `qwen2.5:3b` (y `qwen2.5:7b` como experimento de tamaño) y cuatro brazos (A a mano, B híbrido, B′ con refinamiento, C directo).
 
 | Qué | Dónde |
 |---|---|
